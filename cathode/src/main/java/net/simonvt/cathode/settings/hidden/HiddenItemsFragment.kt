@@ -112,7 +112,7 @@ class HiddenItemsFragment @Inject constructor(
     showScheduler.hideFromCollected(showId, false)
   }
 
-  override fun onMovieClicked(movieId: Long, title: String, overview: String) {
+  override fun onMovieClicked(movieId: Long, title: String?, overview: String?) {
     navigationListener.onDisplayMovie(movieId, title, overview)
   }
 

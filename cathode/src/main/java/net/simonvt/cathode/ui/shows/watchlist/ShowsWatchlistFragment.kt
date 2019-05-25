@@ -120,7 +120,7 @@ class ShowsWatchlistFragment @Inject constructor(
     showScheduler.setIsInWatchlist(showId, false)
   }
 
-  override fun onEpisodeClicked(episodeId: Long, showTitle: String) {
+  override fun onEpisodeClicked(episodeId: Long, showTitle: String?) {
     navigationListener.onDisplayEpisode(episodeId, showTitle)
   }
 

@@ -178,7 +178,7 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
       Timber.d("onCollapse")
     }
 
-    override fun onEpisodeClicked(view: WatchingView, episodeId: Long, showTitle: String) {
+    override fun onEpisodeClicked(view: WatchingView, episodeId: Long, showTitle: String?) {
       watchingView.collapse()
 
       val top = stack.peek()

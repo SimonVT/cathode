@@ -126,7 +126,7 @@ class UpcomingShowsFragment @Inject constructor(
     }
   }
 
-  override fun onEpisodeClicked(episodeId: Long, showTitle: String) {
+  override fun onEpisodeClicked(episodeId: Long, showTitle: String?) {
     navigationListener.onDisplayEpisode(episodeId, showTitle)
   }
 

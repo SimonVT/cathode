@@ -133,7 +133,7 @@ class TrendingShowsFragment @Inject constructor(
     }
   }
 
-  override fun onShowClick(showId: Long, title: String, overview: String) {
+  override fun onShowClick(showId: Long, title: String?, overview: String?) {
     navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED)
   }
 

@@ -161,11 +161,11 @@ class ListFragment @Inject constructor(
     }
   }
 
-  override fun onShowClick(showId: Long, title: String, overview: String) {
+  override fun onShowClick(showId: Long, title: String?, overview: String?) {
     navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED)
   }
 
-  override fun onSeasonClick(showId: Long, seasonId: Long, showTitle: String, seasonNumber: Int) {
+  override fun onSeasonClick(showId: Long, seasonId: Long, showTitle: String?, seasonNumber: Int) {
     navigationListener.onDisplaySeason(
       showId,
       seasonId,
@@ -179,7 +179,7 @@ class ListFragment @Inject constructor(
     navigationListener.onDisplayEpisode(id, null)
   }
 
-  override fun onMovieClicked(movieId: Long, title: String, overview: String) {
+  override fun onMovieClicked(movieId: Long, title: String?, overview: String?) {
     navigationListener.onDisplayMovie(movieId, title, overview)
   }
 
