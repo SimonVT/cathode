@@ -86,7 +86,7 @@ abstract class BaseActivity : CathodeActivity() {
     val startPageAdapter = StartPageAdapter()
     debugViews.startPage.adapter = startPageAdapter
     debugViews.startPage.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-      override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+      override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
         val startPage = startPageAdapter.getItem(position)
         Settings.get(this@BaseActivity)
           .edit()
@@ -198,7 +198,7 @@ abstract class BaseActivity : CathodeActivity() {
     debugViews.logLevel.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
       override fun onItemSelected(
         adapterView: AdapterView<*>,
-        view: View,
+        view: View?,
         position: Int,
         id: Long
       ) {
@@ -217,7 +217,7 @@ abstract class BaseActivity : CathodeActivity() {
     debugViews.httpStatusCode.adapter = httpStatusCodeAdapter
     debugViews.httpStatusCode.onItemSelectedListener =
       object : AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
           // TODO: httpStatusCodePreference.set(httpStatusCodeAdapter.getItem(position)!!)
         }
 
