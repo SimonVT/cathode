@@ -20,8 +20,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
-import net.simonvt.cathode.common.database.DatabaseUtils;
 import net.simonvt.cathode.common.database.SimpleCursor;
+import timber.log.Timber;
 
 abstract class BaseCursorLiveData<D> extends ListenableLiveData<D>
     implements ThrottleContentObserver.Callback {
@@ -76,7 +76,7 @@ abstract class BaseCursorLiveData<D> extends ListenableLiveData<D>
       }
       return result;
     } catch (SQLiteException e) {
-      e.printStackTrace();
+      Timber.e(e, "Query failed");
     }
 
     return null;

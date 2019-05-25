@@ -23,7 +23,7 @@ data class NextEpisode(
   val showId: Long,
   val season: Int,
   val episode: Int,
-  val title: String,
+  val title: String?,
   val firstAired: Long,
   val watched: Boolean,
   val checkinStartedAt: Long,
