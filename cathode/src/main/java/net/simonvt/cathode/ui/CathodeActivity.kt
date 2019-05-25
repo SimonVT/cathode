@@ -17,10 +17,10 @@ abstract class CathodeActivity : AppCompatActivity() {
   lateinit var fragmentFactory: CathodeFragmentFactory
 
   override fun onCreate(inState: Bundle?) {
-    super.onCreate(inState)
     AndroidInjection.inject(this)
-    updateNightMode()
     supportFragmentManager.fragmentFactory = fragmentFactory
+    super.onCreate(inState)
+    updateNightMode()
   }
 
   override fun onStart() {
