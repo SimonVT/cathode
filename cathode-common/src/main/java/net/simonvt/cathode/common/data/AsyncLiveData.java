@@ -12,7 +12,6 @@ public abstract class AsyncLiveData<D> extends LiveData<D> {
   }
 
   private LoadTask mTask;
-  private LoadTask mPendingTask;
 
   public void loadData() {
     if (mTask != null) {
@@ -44,7 +43,7 @@ public abstract class AsyncLiveData<D> extends LiveData<D> {
     }
 
     @Override protected void onPostExecute(D data) {
-      if (!isCancelled()) {
+      if (!isCancelled() && data != null) {
         postResult(this, data);
       }
     }
