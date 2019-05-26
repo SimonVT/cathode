@@ -27,6 +27,7 @@ import net.simonvt.cathode.ui.comments.AddCommentDialog
 import net.simonvt.cathode.ui.comments.CommentFragment
 import net.simonvt.cathode.ui.comments.CommentsFragment
 import net.simonvt.cathode.ui.comments.UpdateCommentDialog
+import net.simonvt.cathode.ui.credits.CreditFragment
 import net.simonvt.cathode.ui.credits.CreditsFragment
 import net.simonvt.cathode.ui.dashboard.DashboardFragment
 import net.simonvt.cathode.ui.dialog.CheckInDialog
@@ -202,6 +203,11 @@ abstract class FragmentModuleBinds {
   @IntoMap
   @FragmentKey(CreateListFragment::class)
   abstract fun createListFragment(fragment: CreateListFragment): Fragment
+
+  @Binds
+  @IntoMap
+  @FragmentKey(CreditFragment::class)
+  abstract fun creditFragment(fragment: CreditFragment): Fragment
 
   @Binds
   @IntoMap
