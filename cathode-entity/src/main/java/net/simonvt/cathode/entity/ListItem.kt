@@ -33,9 +33,9 @@ data class ListItem(
 
 data class ListShow(
   val id: Long,
-  val title: String,
-  val titleNoArticle: String,
-  val overview: String,
+  val title: String?,
+  val titleNoArticle: String?,
+  val overview: String?,
   val firstAired: Long,
   val watchedCount: Int,
   val collectedCount: Int,
@@ -55,30 +55,30 @@ data class ListSeason(
   val rating: Float,
   val userRating: Int,
   val airedRuntime: Int,
-  val showTitle: String,
-  val showTitleNoArticle: String
+  val showTitle: String?,
+  val showTitleNoArticle: String?
 )
 
 data class ListEpisode(
   val id: Long,
   val season: Int,
   val episode: Int,
-  val title: String,
+  val title: String?,
   val runtime: Int,
   val watched: Boolean,
   val firstAired: Long,
   val votes: Int,
   val rating: Float,
   val userRating: Int,
-  val showTitle: String,
-  val showTitleNoArticle: String
+  val showTitle: String?,
+  val showTitleNoArticle: String?
 )
 
 data class ListMovie(
   val id: Long,
-  val title: String,
-  val titleNoArticle: String,
-  val overview: String,
+  val title: String?,
+  val titleNoArticle: String?,
+  val overview: String?,
   val releaseDate: Long,
   val watched: Boolean,
   val collected: Boolean,
@@ -93,5 +93,5 @@ data class ListMovie(
 
 data class ListPerson(
   val id: Long,
-  val name: String
+  val name: String?
 )

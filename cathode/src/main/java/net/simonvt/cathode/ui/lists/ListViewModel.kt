@@ -18,9 +18,9 @@ package net.simonvt.cathode.ui.lists
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import net.simonvt.cathode.actions.invokeSync
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.lists.SyncList
 import net.simonvt.cathode.api.enumeration.ItemType.EPISODE
 import net.simonvt.cathode.api.enumeration.ItemType.MOVIE
@@ -125,7 +125,7 @@ class ListViewModel @Inject constructor(
   }
 
   private fun sortAndPostList(unsortedList: List<ListItem>) {
-    var sortedList = if (sortBy == RANK) {
+    val sortedList = if (sortBy == RANK) {
       unsortedList.sortedBy { it.rank }
     } else if (sortBy == ADDED) {
       unsortedList.sortedByDescending { it.listedAt }
@@ -195,13 +195,21 @@ class ListViewModel @Inject constructor(
     if (itemOneValue == itemTwoValue) {
       val itemOneTitle = getTitle(itemOne)
       val itemTwoTitle = getTitle(itemTwo)
-      return itemOneTitle.compareTo(itemTwoTitle)
+      if (itemOneTitle == null && itemTwoTitle == null) {
+        return itemOne.listItemId.compareTo(itemTwo.listItemId)
+      } else if (itemOneTitle == null) {
+        return 1
+      } else if (itemTwoTitle == null) {
+        return -1
+      } else {
+        return itemOneTitle.compareTo(itemTwoTitle)
+      }
     } else {
       return itemTwoValue.compareTo(itemOneValue)
     }
   }
 
-  private fun getTitle(listItem: ListItem): String {
+  private fun getTitle(listItem: ListItem): String? {
     return when (listItem.type) {
       SHOW -> listItem.show!!.titleNoArticle
       SEASON -> listItem.season!!.showTitleNoArticle

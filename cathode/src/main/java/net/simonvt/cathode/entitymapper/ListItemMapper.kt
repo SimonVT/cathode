@@ -71,9 +71,9 @@ object ListItemMapper : MappedCursorLiveData.CursorMapper<ListItem> {
 
     when (itemType) {
       SHOW -> {
-        val title = cursor.getString(ShowColumns.TITLE)
-        val titleNoArticle = cursor.getString(ShowColumns.TITLE_NO_ARTICLE)
-        val overview = cursor.getString(COLUMN_OVERVIEW)
+        val title = cursor.getStringOrNull(ShowColumns.TITLE)
+        val titleNoArticle = cursor.getStringOrNull(ShowColumns.TITLE_NO_ARTICLE)
+        val overview = cursor.getStringOrNull(COLUMN_OVERVIEW)
         val firstAired = cursor.getLong(COLUMN_FIRST_AIRED)
         val airedCount = cursor.getInt(SHOW_AIRED_COUNT)
         val watchedCount = cursor.getInt(ShowColumns.WATCHED_COUNT)
@@ -113,8 +113,8 @@ object ListItemMapper : MappedCursorLiveData.CursorMapper<ListItem> {
         val votes = cursor.getInt(COLUMN_VOTES)
         val userRating = cursor.getInt(COLUMN_USER_RATING)
         val runtime = cursor.getInt(SEASON_RUNTIME)
-        val showTitle = cursor.getString(SeasonColumns.SHOW_TITLE)
-        val showTitleNoArticle = cursor.getString(SEASON_SHOW_TITLE_NO_ARTICLE)
+        val showTitle = cursor.getStringOrNull(SeasonColumns.SHOW_TITLE)
+        val showTitleNoArticle = cursor.getStringOrNull(SEASON_SHOW_TITLE_NO_ARTICLE)
 
         val airedRuntime = airedCount * runtime
 
@@ -141,7 +141,7 @@ object ListItemMapper : MappedCursorLiveData.CursorMapper<ListItem> {
       }
 
       EPISODE -> {
-        val title = cursor.getString(EpisodeColumns.TITLE)
+        val title = cursor.getStringOrNull(EpisodeColumns.TITLE)
         val season = cursor.getInt(COLUMN_SEASON)
         val episodeNumber = cursor.getInt(EpisodeColumns.EPISODE)
         val watched = cursor.getBoolean(COLUMN_WATCHED)
@@ -153,8 +153,8 @@ object ListItemMapper : MappedCursorLiveData.CursorMapper<ListItem> {
         val votes = cursor.getInt(COLUMN_VOTES)
         val userRating = cursor.getInt(COLUMN_USER_RATING)
         val runtime = cursor.getInt(EPISODE_RUNTIME)
-        val showTitle = cursor.getString(EpisodeColumns.SHOW_TITLE)
-        val showTitleNoArticle = cursor.getString(EPISODE_SHOW_TITLE_NO_ARTICLE)
+        val showTitle = cursor.getStringOrNull(EpisodeColumns.SHOW_TITLE)
+        val showTitleNoArticle = cursor.getStringOrNull(EPISODE_SHOW_TITLE_NO_ARTICLE)
 
         val episode =
           ListEpisode(
@@ -182,9 +182,9 @@ object ListItemMapper : MappedCursorLiveData.CursorMapper<ListItem> {
       }
 
       MOVIE -> {
-        val title = cursor.getString(MovieColumns.TITLE)
-        val titleNoArticle = cursor.getString(MovieColumns.TITLE_NO_ARTICLE)
-        val overview = cursor.getString(COLUMN_OVERVIEW)
+        val title = cursor.getStringOrNull(MovieColumns.TITLE)
+        val titleNoArticle = cursor.getStringOrNull(MovieColumns.TITLE_NO_ARTICLE)
+        val overview = cursor.getStringOrNull(COLUMN_OVERVIEW)
         val released = cursor.getStringOrNull(MovieColumns.RELEASED)
         // TODO: Add releasedMillis field to DB
         val releaseDate: Long = if (released.isNullOrEmpty()) {
@@ -237,7 +237,7 @@ object ListItemMapper : MappedCursorLiveData.CursorMapper<ListItem> {
       }
 
       PERSON -> {
-        val name = cursor.getString(PersonColumns.NAME)
+        val name = cursor.getStringOrNull(PersonColumns.NAME)
         val person = ListPerson(itemId, name)
         return ListItem(
           listItemId,
