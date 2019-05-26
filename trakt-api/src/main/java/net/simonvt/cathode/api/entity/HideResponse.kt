@@ -16,6 +16,10 @@
 
 package net.simonvt.cathode.api.entity
 
-data class HideResponse(val added: HiddenItems, val deleted: HiddenItems, val not_found: NotFound)
+data class HideResponse(
+  val added: HiddenItems?,
+  val deleted: HiddenItems?,
+  val not_found: NotFound?
+)
 
 data class HiddenItems(val movies: Int? = null, val shows: Int? = null, val seasons: Int? = null)
