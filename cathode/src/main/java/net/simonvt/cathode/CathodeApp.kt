@@ -17,7 +17,6 @@ package net.simonvt.cathode
 
 import android.app.Activity
 import android.app.Application
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -150,7 +149,7 @@ class CathodeApp : Application(), HasActivityInjector, HasServiceInjector, HasVi
       .setContentTitle(getString(R.string.auth_failed))
       .setContentText(getString(R.string.auth_failed_desc))
       .setContentIntent(pi)
-      .setPriority(Notification.PRIORITY_HIGH)
+      .setPriority(NotificationCompat.PRIORITY_HIGH)
       .setAutoCancel(true)
 
     val nm = NotificationManagerCompat.from(this@CathodeApp)
@@ -268,9 +267,19 @@ class CathodeApp : Application(), HasActivityInjector, HasServiceInjector, HasVi
   companion object {
 
     const val CHANNEL_ERRORS = "channel_errors"
+    const val CHANNEL_SYNC = "channel_sync"
 
     private const val AUTH_NOTIFICATION = 2
 
     private const val SYNC_DELAY = 15 * DateUtils.MINUTE_IN_MILLIS
+
+    fun createSyncChannel(context: Context) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val name = context.getString(R.string.channel_sync)
+        val channel = NotificationChannel(CHANNEL_SYNC, name, NotificationManager.IMPORTANCE_LOW)
+        nm.createNotificationChannel(channel)
+      }
+    }
   }
 }

@@ -18,6 +18,10 @@ package net.simonvt.cathode.notification
 import android.app.IntentService
 import android.content.Context
 import android.content.Intent
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import net.simonvt.cathode.CathodeApp
+import net.simonvt.cathode.R
 import net.simonvt.cathode.common.util.WakeLock
 
 class NotificationService : IntentService("NotificationService") {
@@ -25,6 +29,14 @@ class NotificationService : IntentService("NotificationService") {
   override fun onCreate() {
     super.onCreate()
     WakeLock.acquire(this, LOCK_TAG)
+
+    CathodeApp.createSyncChannel(this)
+    val notification = NotificationCompat.Builder(this, CathodeApp.CHANNEL_SYNC)
+      .setContentTitle(getText(R.string.notification_reminders_title))
+      .setSmallIcon(R.drawable.ic_notification)
+      .setPriority(NotificationCompat.PRIORITY_LOW)
+      .build()
+    startForeground(NotificationHelper.GROUP_NOTIFICATION_ID - 1, notification)
   }
 
   override fun onDestroy() {
@@ -44,7 +56,7 @@ class NotificationService : IntentService("NotificationService") {
     @JvmStatic
     fun start(context: Context) {
       val i = Intent(context, NotificationService::class.java)
-      context.startService(i)
+      ContextCompat.startForegroundService(context, i)
     }
   }
 }
