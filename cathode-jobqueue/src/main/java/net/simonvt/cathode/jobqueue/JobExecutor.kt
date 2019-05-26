@@ -128,7 +128,7 @@ class JobExecutor(
 
   private fun jobFailed(job: Job, t: Throwable) {
     synchronized(lock) {
-      Timber.d(t, "Job failed: %s", job.key())
+      Timber.e(t, "Job failed: %s", job.key())
       jobFailed()
     }
   }
