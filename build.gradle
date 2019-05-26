@@ -30,7 +30,6 @@ allprojects {
 }
 
 ext {
-  enableCrashlytics = false
   versionMajor = 7
   versionMinor = 0
   versionPatch = 3
