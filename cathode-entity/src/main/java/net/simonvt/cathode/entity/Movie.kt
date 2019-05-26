@@ -21,7 +21,7 @@ data class Movie(
   val traktId: Long,
   val imdbId: String?,
   val tmdbId: Int,
-  val title: String,
+  val title: String?,
   val titleNoArticle: String?,
   val year: Int,
   val released: String?,

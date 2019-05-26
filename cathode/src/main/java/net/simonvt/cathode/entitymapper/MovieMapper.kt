@@ -22,7 +22,6 @@ import net.simonvt.cathode.common.database.getBoolean
 import net.simonvt.cathode.common.database.getFloat
 import net.simonvt.cathode.common.database.getInt
 import net.simonvt.cathode.common.database.getLong
-import net.simonvt.cathode.common.database.getString
 import net.simonvt.cathode.common.database.getStringOrNull
 import net.simonvt.cathode.entity.Movie
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns
@@ -41,7 +40,7 @@ object MovieMapper : MappedCursorLiveData.CursorMapper<Movie> {
     val traktId = cursor.getLong(MovieColumns.TRAKT_ID)
     val imdbId = cursor.getStringOrNull(MovieColumns.IMDB_ID)
     val tmdbId = cursor.getInt(MovieColumns.TMDB_ID)
-    val title = cursor.getString(MovieColumns.TITLE)
+    val title = cursor.getStringOrNull(MovieColumns.TITLE)
     val titleNoArticle = cursor.getStringOrNull(MovieColumns.TITLE_NO_ARTICLE)
     val year = cursor.getInt(MovieColumns.YEAR)
     val released = cursor.getStringOrNull(MovieColumns.RELEASED)
