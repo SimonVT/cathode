@@ -125,20 +125,17 @@ class SyncShow internal constructor(
   val ids: TraktId,
   val watched_at: String? = null,
   val collected_at: String? = null,
-  val listed_at: String? = null
-) {
-  val seasons = mutableListOf<SyncSeason>()
-}
+  val listed_at: String? = null,
+  val seasons: MutableList<SyncSeason> = mutableListOf()
+)
 
 class SyncSeason(
   val number: Int,
   val watched_at: String? = null,
   val collected_at: String? = null,
-  val listed_at: String? = null
-) {
-
-  val episodes = mutableListOf<SyncEpisode>()
-}
+  val listed_at: String? = null,
+  val episodes: MutableList<SyncEpisode> = mutableListOf()
+)
 
 class SyncEpisode(
   val number: Int,

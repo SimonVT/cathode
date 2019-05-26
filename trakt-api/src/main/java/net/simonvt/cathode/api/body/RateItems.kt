@@ -98,14 +98,15 @@ class RatingMovie internal constructor(val ids: TraktId, val rating: Int, val ra
 class RatingShow internal constructor(
   val ids: TraktId,
   val rating: Int? = null,
-  val rated_at: String? = null
-) {
-  val seasons = mutableListOf<RatingSeason>()
-}
+  val rated_at: String? = null,
+  val seasons: MutableList<RatingSeason> = mutableListOf()
+)
 
-class RatingSeason(val number: Int, val rating: Int? = null, val rated_at: String? = null) {
-
-  val episodes = mutableListOf<RatingEpisode>()
-}
+class RatingSeason(
+  val number: Int,
+  val rating: Int? = null,
+  val rated_at: String? = null,
+  val episodes: MutableList<RatingEpisode> = mutableListOf()
+)
 
 class RatingEpisode(val number: Int, val rating: Int, val rated_at: String)
