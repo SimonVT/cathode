@@ -20,7 +20,7 @@ import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson
 
 enum class Action(val value: String) {
-  SCROBBLE("scrobble"), CHECKIN("checkin");
+  SCROBBLE("scrobble"), CHECKIN("checkin"), WATCH("watch");
 
   override fun toString(): String {
     return value
