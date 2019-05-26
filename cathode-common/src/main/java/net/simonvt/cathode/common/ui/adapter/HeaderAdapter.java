@@ -247,7 +247,7 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
   }
 
   private boolean areContentsTheSame(@NonNull Item<Type> oldItem, @NonNull Item<Type> newItem) {
-    if (oldItem.isHeader && newItem.isHeader) {
+    if (oldItem.isHeader || newItem.isHeader) {
       return oldItem.headerRes == newItem.headerRes;
     }
 
