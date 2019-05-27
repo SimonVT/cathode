@@ -21,14 +21,13 @@ import android.content.Context;
 import android.os.Bundle;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.Settings;
-import net.simonvt.cathode.settings.Timestamps;
 import net.simonvt.cathode.settings.TraktLinkSettings;
 import net.simonvt.cathode.settings.TraktTimestamps;
 
 public final class Upgrader {
 
   private static final String SETTINGS_VERSION = "settingsVersion";
-  private static final int VERSION = 5;
+  private static final int VERSION = 6;
 
   private Upgrader() {
   }
@@ -79,17 +78,8 @@ public final class Upgrader {
         }
       }
 
-      if (currentVersion < 5) {
-        long showsLastUpdated = Timestamps.get(context)
-            .getLong(Timestamps.SHOWS_LAST_UPDATED, System.currentTimeMillis());
-        long moviesLastUpdated = Timestamps.get(context)
-            .getLong(Timestamps.MOVIES_LAST_UPDATED, System.currentTimeMillis());
+      if (currentVersion < 6) {
         TraktTimestamps.clear(context);
-        Timestamps.get(context)
-            .edit()
-            .putLong(Timestamps.SHOWS_LAST_UPDATED, showsLastUpdated)
-            .putLong(Timestamps.MOVIES_LAST_UPDATED, moviesLastUpdated)
-            .apply();
       }
 
       Settings.get(context).edit().putInt(SETTINGS_VERSION, VERSION).apply();
