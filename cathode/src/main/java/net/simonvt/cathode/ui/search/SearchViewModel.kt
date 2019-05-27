@@ -64,16 +64,18 @@ class SearchViewModel @Inject constructor(
 
   private suspend fun start() = coroutineScope {
     launch {
-      var query = ""
+      var query: String
       var searchJob: Job? = null
       this@SearchViewModel.query.consumeEach {
-        if (it != query) {
-          query = it
-          searchJob?.cancel()
-          searchJob = launch(Dispatchers.IO) {
-            delay(DEBOUNCE_DELAY)
+        query = it
+        searchJob?.cancel()
+        searchJob = launch(Dispatchers.IO) {
+          delay(DEBOUNCE_DELAY)
+          if (query.isNotEmpty()) {
             val result = searchHandler.search(query)
             _liveResults.postValue(result)
+          } else {
+            _liveResults.postValue(SearchResult(true, emptyList()))
           }
         }
       }

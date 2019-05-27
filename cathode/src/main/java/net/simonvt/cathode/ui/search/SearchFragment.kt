@@ -34,7 +34,6 @@ import net.simonvt.cathode.sync.scheduler.SearchTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.LibraryType
 import net.simonvt.cathode.ui.NavigationListener
-import java.util.Locale
 import javax.inject.Inject
 
 class SearchFragment @Inject constructor(
@@ -67,16 +66,8 @@ class SearchFragment @Inject constructor(
     }
 
     companion object {
-      private val STRING_MAPPING = mutableMapOf<String, SortBy>()
-
-      init {
-        for (via in SortBy.values()) {
-          STRING_MAPPING[via.toString().toUpperCase(Locale.US)] = via
-        }
-      }
-
       fun fromValue(value: String): SortBy? {
-        return STRING_MAPPING[value.toUpperCase(Locale.US)]
+        return values().firstOrNull { it.key == value }
       }
     }
   }
