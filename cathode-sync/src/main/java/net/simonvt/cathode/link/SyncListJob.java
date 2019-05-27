@@ -33,7 +33,6 @@ import net.simonvt.cathode.remote.action.lists.AddShow;
 import net.simonvt.cathode.sync.trakt.UserList;
 import retrofit2.Call;
 import retrofit2.Response;
-import timber.log.Timber;
 
 public class SyncListJob extends Job {
 
@@ -142,7 +141,6 @@ public class SyncListJob extends Job {
 
       return true;
     } catch (IOException e) {
-      Timber.d(e, "Job failed: %s", key());
       return false;
     }
   }

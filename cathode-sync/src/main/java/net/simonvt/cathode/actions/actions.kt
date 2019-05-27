@@ -40,7 +40,6 @@ abstract class CallAction<Params, T> : ErrorHandlerAction<Params>() {
         }
       }
     } catch (e: IOException) {
-      Timber.d(e, "Action failed")
       throw ActionFailedException(e)
     }
   }
@@ -69,7 +68,6 @@ abstract class OptionalBodyCallAction<Params, T> : ErrorHandlerAction<Params>() 
         }
       }
     } catch (e: IOException) {
-      Timber.d(e, "Action failed")
       throw ActionFailedException(e)
     }
   }
@@ -113,7 +111,6 @@ abstract class PagedAction<Params, T> : ErrorHandlerAction<Params>() {
         val response = call.execute()
         return createPage(params, response, newPage, pageCount)
       } catch (e: IOException) {
-        Timber.d(e, "Action failed")
         throw ActionFailedException(e)
       }
     }
@@ -139,16 +136,12 @@ abstract class PagedAction<Params, T> : ErrorHandlerAction<Params>() {
   final override suspend fun invoke(params: Params) {
     Timber.d("Invoking action: %s", javaClass.name)
     try {
-      var page = 1
-      var pageCount = 0
-      val call = getCall(params, page)
+      val page = 1
+      val call = getCall(params, 1)
       val response = call.execute()
 
       val headers = response.headers()
-      val pageCountStr = headers.get(HEADER_PAGE_COUNT)
-      if (pageCountStr != null) {
-        pageCount = Integer.valueOf(pageCountStr)
-      }
+      val pageCount = headers.get(HEADER_PAGE_COUNT)?.toIntOrNull() ?: 0
 
       val pagedResult = createPage(params, response, page, pageCount)
       if (pagedResult != null) {
@@ -159,7 +152,7 @@ abstract class PagedAction<Params, T> : ErrorHandlerAction<Params>() {
         onDone()
       }
     } catch (e: IOException) {
-      Timber.d(e, "Action failed")
+
       throw ActionFailedException(e)
     }
   }

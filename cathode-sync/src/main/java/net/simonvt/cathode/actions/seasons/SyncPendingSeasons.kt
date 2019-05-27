@@ -103,7 +103,6 @@ class SyncPendingSeasons @Inject constructor(
 
       ItemsUpdatedEvent.post()
     } catch (e: IOException) {
-      Timber.d(e)
       throw ActionFailedException(e)
     } finally {
       seasons.close()

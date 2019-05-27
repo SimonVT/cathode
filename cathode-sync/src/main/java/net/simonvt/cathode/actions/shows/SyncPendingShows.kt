@@ -189,7 +189,6 @@ class SyncPendingShows @Inject constructor(
 
       ItemsUpdatedEvent.post()
     } catch (e: IOException) {
-      Timber.d(e)
       throw ActionFailedException(e)
     }
   }

@@ -38,7 +38,15 @@ object ActionManager {
       }
 
       Timber.d("Creating action: $key")
-      deferred = scope.async(Dispatchers.IO) { action(params) }
+      deferred = scope.async(Dispatchers.IO) {
+        try {
+          action(params)
+        } catch (e: ActionFailedException) {
+          Timber.d(e, "Action failed: $key")
+        } catch (t: Throwable) {
+          Timber.e(t, "Action failed: $key")
+        }
+      }
       inFlight[key] = deferred!!
     }
 
@@ -46,10 +54,8 @@ object ActionManager {
       try {
         Timber.d("Awaiting action: $key")
         deferred!!.await()
-      } catch (e: ActionFailedException) {
-        Timber.d(e, "Action failed: $key")
       } catch (t: Throwable) {
-        Timber.e(t, "Action failed: $key")
+        // Handled above
       }
 
       synchronized(inFlight) {

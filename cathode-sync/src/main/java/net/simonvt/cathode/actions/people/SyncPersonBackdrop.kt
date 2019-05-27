@@ -29,7 +29,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.People
 import net.simonvt.cathode.provider.helper.PersonDatabaseHelper
 import net.simonvt.cathode.provider.update
 import retrofit2.Call
-import timber.log.Timber
 import javax.inject.Inject
 
 class SyncPersonBackdrop @Inject constructor(
@@ -51,8 +50,6 @@ class SyncPersonBackdrop @Inject constructor(
     if (response.results!!.size > 0) {
       val taggedImage = response.results!![0]
       val path = ImageUri.create(ImageType.STILL, taggedImage.file_path)
-      Timber.d("Backdrop: %s", path)
-
       values.put(PersonColumns.SCREENSHOT, path)
     } else {
       values.putNull(PersonColumns.SCREENSHOT)

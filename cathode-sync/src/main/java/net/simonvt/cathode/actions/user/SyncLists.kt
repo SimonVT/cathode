@@ -30,7 +30,6 @@ import net.simonvt.cathode.provider.helper.ListDatabaseHelper
 import net.simonvt.cathode.provider.query
 import net.simonvt.cathode.settings.TraktTimestamps
 import retrofit2.Call
-import timber.log.Timber
 import javax.inject.Inject
 
 class SyncLists @Inject constructor(
@@ -54,7 +53,6 @@ class SyncLists @Inject constructor(
     listsCursor.close()
 
     response.map { list ->
-      Timber.d("Sort direction: %s", list.sort_how)
       val traktId = list.ids.trakt!!
       val listId = listHelper.updateOrInsert(list)
       listIds.remove(listId)

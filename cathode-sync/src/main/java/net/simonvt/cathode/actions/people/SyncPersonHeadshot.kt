@@ -29,7 +29,6 @@ import net.simonvt.cathode.provider.ProviderSchematic.People
 import net.simonvt.cathode.provider.helper.PersonDatabaseHelper
 import net.simonvt.cathode.provider.update
 import retrofit2.Call
-import timber.log.Timber
 import javax.inject.Inject
 
 class SyncPersonHeadshot @Inject constructor(
@@ -50,8 +49,6 @@ class SyncPersonHeadshot @Inject constructor(
     if (response.profiles!!.size > 0) {
       val still = response.profiles!![0]
       val path = ImageUri.create(ImageType.STILL, still.file_path)
-      Timber.d("Profile: %s", path)
-
       values.put(PersonColumns.HEADSHOT, path)
     } else {
       values.putNull(PersonColumns.HEADSHOT)
