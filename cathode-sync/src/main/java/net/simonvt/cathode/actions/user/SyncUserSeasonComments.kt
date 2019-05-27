@@ -19,6 +19,7 @@ package net.simonvt.cathode.actions.user
 import android.content.ContentProviderOperation
 import android.content.Context
 import net.simonvt.cathode.actions.PagedAction
+import net.simonvt.cathode.actions.PagedResponse
 import net.simonvt.cathode.actions.user.SyncUserSeasonComments.Params
 import net.simonvt.cathode.api.entity.CommentItem
 import net.simonvt.cathode.api.enumeration.CommentType
@@ -53,7 +54,10 @@ class SyncUserSeasonComments @Inject constructor(
   override fun getCall(params: Params, page: Int): Call<List<CommentItem>> =
     usersService.getUserComments(CommentType.ALL, ItemTypes.SEASONS, page, LIMIT)
 
-  override suspend fun handleResponse(params: Params, page: Int, response: List<CommentItem>) {
+  override suspend fun handleResponse(
+    params: Params,
+    pagedResponse: PagedResponse<Params, CommentItem>
+  ) {
     val ops = arrayListOf<ContentProviderOperation>()
     val existingComments = mutableListOf<Long>()
     val addedLater = mutableMapOf<Long, CommentItem>()
@@ -69,59 +73,64 @@ class SyncUserSeasonComments @Inject constructor(
 
     var profileId = -1L
 
-    for (commentItem in response) {
-      val comment = commentItem.comment
-      val commentId = comment.id
+    var page: PagedResponse<Params, CommentItem>? = pagedResponse
+    do {
+      for (commentItem in page!!.response) {
+        val comment = commentItem.comment
+        val commentId = comment.id
 
-      // Old issue where two comments could have the same ID.
-      if (addedLater[commentId] != null) {
-        continue
+        // Old issue where two comments could have the same ID.
+        if (addedLater[commentId] != null) {
+          continue
+        }
+
+        val values = CommentsHelper.getValues(comment)
+        values.put(CommentColumns.IS_USER_COMMENT, true)
+
+        if (profileId == -1L) {
+          val profile = commentItem.comment.user
+          val result = userHelper.updateOrCreate(profile)
+          profileId = result.id
+        }
+        values.put(CommentColumns.USER_ID, profileId)
+
+        val traktId = commentItem.show!!.ids.trakt!!
+        val showResult = showHelper.getIdOrCreate(traktId)
+        val showId = showResult.showId
+
+        val season = commentItem.season
+        val seasonNumber = season!!.number
+        val seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber)
+        val seasonId = seasonResult.id
+
+        values.put(CommentColumns.ITEM_TYPE, ItemType.SEASON.toString())
+        values.put(CommentColumns.ITEM_ID, seasonId)
+
+        var exists = existingComments.contains(commentId)
+        if (!exists) {
+          // May have been created by user likes
+          val commentCursor = context.contentResolver.query(
+            Comments.withId(commentId),
+            arrayOf(CommentColumns.ID)
+          )
+          exists = commentCursor.moveToFirst()
+          commentCursor.close()
+        }
+
+        if (exists) {
+          existingComments.remove(commentId)
+          val op = ContentProviderOperation.newUpdate(Comments.withId(commentId)).withValues(values)
+          ops.add(op.build())
+        } else {
+          val op = ContentProviderOperation.newInsert(Comments.COMMENTS).withValues(values)
+          ops.add(op.build())
+
+          addedLater[commentId] = commentItem
+        }
       }
 
-      val values = CommentsHelper.getValues(comment)
-      values.put(CommentColumns.IS_USER_COMMENT, true)
-
-      if (profileId == -1L) {
-        val profile = commentItem.comment.user
-        val result = userHelper.updateOrCreate(profile)
-        profileId = result.id
-      }
-      values.put(CommentColumns.USER_ID, profileId)
-
-      val traktId = commentItem.show!!.ids.trakt!!
-      val showResult = showHelper.getIdOrCreate(traktId)
-      val showId = showResult.showId
-
-      val season = commentItem.season
-      val seasonNumber = season!!.number
-      val seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber)
-      val seasonId = seasonResult.id
-
-      values.put(CommentColumns.ITEM_TYPE, ItemType.SEASON.toString())
-      values.put(CommentColumns.ITEM_ID, seasonId)
-
-      var exists = existingComments.contains(commentId)
-      if (!exists) {
-        // May have been created by user likes
-        val commentCursor = context.contentResolver.query(
-          Comments.withId(commentId),
-          arrayOf(CommentColumns.ID)
-        )
-        exists = commentCursor.moveToFirst()
-        commentCursor.close()
-      }
-
-      if (exists) {
-        existingComments.remove(commentId)
-        val op = ContentProviderOperation.newUpdate(Comments.withId(commentId)).withValues(values)
-        ops.add(op.build())
-      } else {
-        val op = ContentProviderOperation.newInsert(Comments.COMMENTS).withValues(values)
-        ops.add(op.build())
-
-        addedLater[commentId] = commentItem
-      }
-    }
+      page = page.nextPage()
+    } while (page != null)
 
     for (id in existingComments) {
       val op = ContentProviderOperation.newDelete(Comments.withId(id))

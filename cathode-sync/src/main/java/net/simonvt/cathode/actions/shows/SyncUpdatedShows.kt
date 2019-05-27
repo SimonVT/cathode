@@ -20,6 +20,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.text.format.DateUtils
 import net.simonvt.cathode.actions.PagedAction
+import net.simonvt.cathode.actions.PagedResponse
 import net.simonvt.cathode.api.entity.UpdatedItem
 import net.simonvt.cathode.api.service.ShowsService
 import net.simonvt.cathode.api.util.TimeUtils
@@ -49,23 +50,30 @@ class SyncUpdatedShows @Inject constructor(
     return showsService.getUpdatedShows(updatedSince, page, LIMIT)
   }
 
-  override suspend fun handleResponse(params: Unit, page: Int, response: List<UpdatedItem>) {
+  override suspend fun handleResponse(
+    params: Unit,
+    pagedResponse: PagedResponse<Unit, UpdatedItem>
+  ) {
     val ops = arrayListOf<ContentProviderOperation>()
 
-    for (item in response) {
-      val updatedAt = item.updated_at.timeInMillis
-
-      val show = item.show!!
-      val traktId = show.ids.trakt!!
-      val id = showHelper.getId(traktId)
-      if (id != -1L) {
-        if (showHelper.isUpdated(traktId, updatedAt)) {
-          val values = ContentValues()
-          values.put(ShowColumns.NEEDS_SYNC, true)
-          ops.add(ContentProviderOperation.newUpdate(Shows.withId(id)).withValues(values).build())
+    var page: PagedResponse<Unit, UpdatedItem>? = pagedResponse
+    do {
+      for (item in page!!.response) {
+        val updatedAt = item.updated_at.timeInMillis
+        val show = item.show!!
+        val traktId = show.ids.trakt!!
+        val id = showHelper.getId(traktId)
+        if (id != -1L) {
+          if (showHelper.isUpdated(traktId, updatedAt)) {
+            val values = ContentValues()
+            values.put(ShowColumns.NEEDS_SYNC, true)
+            ops.add(ContentProviderOperation.newUpdate(Shows.withId(id)).withValues(values).build())
+          }
         }
       }
-    }
+
+      page = page.nextPage()
+    } while (page != null)
 
     context.contentResolver.batch(ops)
   }

@@ -20,6 +20,7 @@ import android.content.ContentProviderOperation
 import android.content.Context
 import androidx.work.WorkManager
 import net.simonvt.cathode.actions.PagedAction
+import net.simonvt.cathode.actions.PagedResponse
 import net.simonvt.cathode.api.entity.HiddenItem
 import net.simonvt.cathode.api.enumeration.HiddenSection
 import net.simonvt.cathode.api.enumeration.ItemType
@@ -53,7 +54,10 @@ class SyncHiddenCollected @Inject constructor(
   override fun getCall(params: Unit, page: Int): Call<List<HiddenItem>> =
     usersService.getHiddenItems(HiddenSection.PROGRESS_COLLECTED, null, page, 25)
 
-  override suspend fun handleResponse(params: Unit, page: Int, response: List<HiddenItem>) {
+  override suspend fun handleResponse(
+    params: Unit,
+    pagedResponse: PagedResponse<Unit, HiddenItem>
+  ) {
     val ops = arrayListOf<ContentProviderOperation>()
     val unhandledShows = mutableListOf<Long>()
     val unhandledSeasons = mutableListOf<Long>()
@@ -74,50 +78,55 @@ class SyncHiddenCollected @Inject constructor(
     hiddenSeasons.forEach { cursor -> unhandledSeasons.add(cursor.getLong(SeasonColumns.ID)) }
     hiddenSeasons.close()
 
-    for (hiddenItem in response) {
-      when (hiddenItem.type) {
-        ItemType.SHOW -> {
-          val show = hiddenItem.show!!
-          val traktId = show.ids.trakt!!
-          val showResult = showHelper.getIdOrCreate(traktId)
-          val showId = showResult.showId
+    var page: PagedResponse<Unit, HiddenItem>? = pagedResponse
+    do {
+      for (hiddenItem in page!!.response) {
+        when (hiddenItem.type) {
+          ItemType.SHOW -> {
+            val show = hiddenItem.show!!
+            val traktId = show.ids.trakt!!
+            val showResult = showHelper.getIdOrCreate(traktId)
+            val showId = showResult.showId
 
-          if (!unhandledShows.remove(showId)) {
-            val op = ContentProviderOperation.newUpdate(Shows.withId(showId))
-              .withValue(ShowColumns.HIDDEN_COLLECTED, 1)
-              .build()
-            ops.add(op)
-          }
-        }
-
-        ItemType.SEASON -> {
-          val show = hiddenItem.show!!
-          val season = hiddenItem.season!!
-
-          val traktId = show.ids.trakt!!
-          val showResult = showHelper.getIdOrCreate(traktId)
-          val showId = showResult.showId
-
-          val seasonNumber = season.number
-          val result = seasonHelper.getIdOrCreate(showId, seasonNumber)
-          val seasonId = result.id
-          if (result.didCreate) {
-            if (!showResult.didCreate) {
-              showHelper.markPending(showId)
+            if (!unhandledShows.remove(showId)) {
+              val op = ContentProviderOperation.newUpdate(Shows.withId(showId))
+                .withValue(ShowColumns.HIDDEN_COLLECTED, 1)
+                .build()
+              ops.add(op)
             }
           }
 
-          if (!unhandledSeasons.remove(seasonId)) {
-            val op = ContentProviderOperation.newUpdate(Seasons.withId(seasonId))
-              .withValue(SeasonColumns.HIDDEN_COLLECTED, 1)
-              .build()
-            ops.add(op)
-          }
-        }
+          ItemType.SEASON -> {
+            val show = hiddenItem.show!!
+            val season = hiddenItem.season!!
 
-        else -> throw RuntimeException("Unknown item type: ${hiddenItem.type}")
+            val traktId = show.ids.trakt!!
+            val showResult = showHelper.getIdOrCreate(traktId)
+            val showId = showResult.showId
+
+            val seasonNumber = season.number
+            val result = seasonHelper.getIdOrCreate(showId, seasonNumber)
+            val seasonId = result.id
+            if (result.didCreate) {
+              if (!showResult.didCreate) {
+                showHelper.markPending(showId)
+              }
+            }
+
+            if (!unhandledSeasons.remove(seasonId)) {
+              val op = ContentProviderOperation.newUpdate(Seasons.withId(seasonId))
+                .withValue(SeasonColumns.HIDDEN_COLLECTED, 1)
+                .build()
+              ops.add(op)
+            }
+          }
+
+          else -> throw RuntimeException("Unknown item type: ${hiddenItem.type}")
+        }
       }
-    }
+
+      page = page.nextPage()
+    } while (page != null)
 
     workManager.enqueueUniqueNow(SyncPendingShowsWorker.TAG, SyncPendingShowsWorker::class.java)
     workManager.enqueueUniqueNow(SyncPendingMoviesWorker.TAG, SyncPendingMoviesWorker::class.java)

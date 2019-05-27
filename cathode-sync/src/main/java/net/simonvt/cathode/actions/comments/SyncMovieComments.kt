@@ -19,6 +19,7 @@ package net.simonvt.cathode.actions.comments
 import android.content.ContentProviderOperation
 import android.content.Context
 import net.simonvt.cathode.actions.PagedAction
+import net.simonvt.cathode.actions.PagedResponse
 import net.simonvt.cathode.actions.comments.SyncMovieComments.Params
 import net.simonvt.cathode.api.entity.Comment
 import net.simonvt.cathode.api.enumeration.Extended
@@ -56,7 +57,10 @@ class SyncMovieComments @Inject constructor(
     )
   }
 
-  override suspend fun handleResponse(params: Params, page: Int, response: List<Comment>) {
+  override suspend fun handleResponse(
+    params: Params,
+    pagedResponse: PagedResponse<Params, Comment>
+  ) {
     val movieId = movieHelper.getId(params.traktId)
 
     val ops = arrayListOf<ContentProviderOperation>()
@@ -76,41 +80,46 @@ class SyncMovieComments @Inject constructor(
     }
     localComments.close()
 
-    for (comment in response) {
-      val profile = comment.user
-      val idResult = userHelper.updateOrCreate(profile)
-      val userId = idResult.id
+    var page: PagedResponse<Params, Comment>? = pagedResponse
+    do {
+      for (comment in page!!.response) {
+        val profile = comment.user
+        val idResult = userHelper.updateOrCreate(profile)
+        val userId = idResult.id
 
-      val values = CommentsHelper.getValues(comment)
-      values.put(CommentColumns.USER_ID, userId)
+        val values = CommentsHelper.getValues(comment)
+        values.put(CommentColumns.USER_ID, userId)
 
-      values.put(CommentColumns.ITEM_TYPE, ItemTypeString.MOVIE)
-      values.put(CommentColumns.ITEM_ID, movieId)
+        values.put(CommentColumns.ITEM_TYPE, ItemTypeString.MOVIE)
+        values.put(CommentColumns.ITEM_ID, movieId)
 
-      val commentId = comment.id
-      var exists = existingComments.contains(commentId)
-      if (!exists) {
-        // May have been created by user likes
-        val c = context.contentResolver.query(
-          Comments.withId(commentId),
-          arrayOf(CommentColumns.ID)
-        )
-        exists = c.moveToFirst()
-        c.close()
+        val commentId = comment.id
+        var exists = existingComments.contains(commentId)
+        if (!exists) {
+          // May have been created by user likes
+          val c = context.contentResolver.query(
+            Comments.withId(commentId),
+            arrayOf(CommentColumns.ID)
+          )
+          exists = c.moveToFirst()
+          c.close()
+        }
+
+        if (exists) {
+          deleteComments.remove(commentId)
+          val op = ContentProviderOperation.newUpdate(Comments.withId(commentId)).withValues(values)
+          ops.add(op.build())
+        } else {
+          // The same comment can exist multiple times in the result from Trakt, so any comments we
+          // insert are added to the list of existing comments.
+          existingComments.add(commentId)
+          val op = ContentProviderOperation.newInsert(Comments.COMMENTS).withValues(values)
+          ops.add(op.build())
+        }
       }
 
-      if (exists) {
-        deleteComments.remove(commentId)
-        val op = ContentProviderOperation.newUpdate(Comments.withId(commentId)).withValues(values)
-        ops.add(op.build())
-      } else {
-        // The same comment can exist multiple times in the result from Trakt, so any comments we
-        // insert are added to the list of existing comments.
-        existingComments.add(commentId)
-        val op = ContentProviderOperation.newInsert(Comments.COMMENTS).withValues(values)
-        ops.add(op.build())
-      }
-    }
+      page = page.nextPage()
+    } while (page != null)
 
     for (id in deleteComments) {
       val op = ContentProviderOperation.newDelete(Comments.withId(id))

@@ -21,6 +21,7 @@ import android.content.Context
 import android.text.format.DateUtils
 import androidx.work.WorkManager
 import net.simonvt.cathode.actions.PagedAction
+import net.simonvt.cathode.actions.PagedResponse
 import net.simonvt.cathode.api.entity.UpdatedItem
 import net.simonvt.cathode.api.service.MoviesService
 import net.simonvt.cathode.api.util.TimeUtils
@@ -53,27 +54,35 @@ class SyncUpdatedMovies @Inject constructor(
     return moviesService.updated(updatedSince, page, LIMIT)
   }
 
-  override suspend fun handleResponse(params: Unit, page: Int, response: List<UpdatedItem>) {
+  override suspend fun handleResponse(
+    params: Unit,
+    pagedResponse: PagedResponse<Unit, UpdatedItem>
+  ) {
     val ops = arrayListOf<ContentProviderOperation>()
 
-    for (item in response) {
-      val updatedAt = item.updated_at.timeInMillis
-      val movie = item.movie!!
-      val traktId = movie.ids.trakt!!
+    var page: PagedResponse<Unit, UpdatedItem>? = pagedResponse
+    do {
+      for (item in page!!.response) {
+        val updatedAt = item.updated_at.timeInMillis
+        val movie = item.movie!!
+        val traktId = movie.ids.trakt!!
 
-      val movieId = movieHelper.getId(traktId)
-      if (movieId != -1L) {
-        if (movieHelper.isUpdated(traktId, updatedAt)) {
-          val values = ContentValues()
-          values.put(MovieColumns.NEEDS_SYNC, true)
-          ops.add(
-            ContentProviderOperation.newUpdate(Movies.withId(movieId))
-              .withValues(values)
-              .build()
-          )
+        val movieId = movieHelper.getId(traktId)
+        if (movieId != -1L) {
+          if (movieHelper.isUpdated(traktId, updatedAt)) {
+            val values = ContentValues()
+            values.put(MovieColumns.NEEDS_SYNC, true)
+            ops.add(
+              ContentProviderOperation.newUpdate(Movies.withId(movieId))
+                .withValues(values)
+                .build()
+            )
+          }
         }
       }
-    }
+
+      page = page.nextPage()
+    } while (page != null)
 
     context.contentResolver.batch(ops)
   }

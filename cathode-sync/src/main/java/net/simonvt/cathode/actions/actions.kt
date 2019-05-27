@@ -88,35 +88,72 @@ abstract class TmdbCallAction<Params, T> : CallAction<Params, T>() {
   }
 }
 
+class PagedResponse<Params, T> internal constructor(
+  private val action: PagedAction<Params, T>,
+  val params: Params,
+  val page: Int,
+  val pageCount: Int,
+  val response: List<T>
+) {
+
+  fun nextPage(): PagedResponse<Params, T>? {
+    return action.nextPage(params, page, pageCount)
+  }
+}
+
 abstract class PagedAction<Params, T> : ErrorHandlerAction<Params>() {
+
+  internal fun nextPage(params: Params, page: Int, pageCount: Int): PagedResponse<Params, T>? {
+    if (stopped || page >= pageCount) {
+      return null
+    } else {
+      try {
+        val newPage = page + 1
+        val call = getCall(params, newPage)
+        val response = call.execute()
+        return createPage(params, response, newPage, pageCount)
+      } catch (e: IOException) {
+        Timber.d(e, "Action failed")
+        throw ActionFailedException(e)
+      }
+    }
+  }
+
+  private fun createPage(
+    params: Params,
+    response: Response<List<T>>,
+    page: Int,
+    pageCount: Int
+  ): PagedResponse<Params, T>? {
+    if (!response.isSuccessful) {
+      if (!isError(response)) {
+        return null
+      } else {
+        throw ActionFailedException()
+      }
+    }
+    val result = response.requireBody()
+    return PagedResponse(this, params, page, pageCount, result)
+  }
 
   final override suspend fun invoke(params: Params) {
     Timber.d("Invoking action: %s", javaClass.name)
     try {
       var page = 1
       var pageCount = 0
-      do {
-        val call = getCall(params, page)
-        val response = call.execute()
-        if (!response.isSuccessful) {
-          if (!isError(response)) {
-            return
-          } else {
-            throw ActionFailedException()
-          }
-        }
+      val call = getCall(params, page)
+      val response = call.execute()
 
-        val headers = response.headers()
-        val pageCountStr = headers.get(HEADER_PAGE_COUNT)
-        if (pageCountStr != null) {
-          pageCount = Integer.valueOf(pageCountStr)
-        }
+      val headers = response.headers()
+      val pageCountStr = headers.get(HEADER_PAGE_COUNT)
+      if (pageCountStr != null) {
+        pageCount = Integer.valueOf(pageCountStr)
+      }
 
-        val result = response.body()!!
-        handleResponse(params, page, result)
-
-        page++
-      } while (page <= pageCount && !stopped)
+      val pagedResult = createPage(params, response, page, pageCount)
+      if (pagedResult != null) {
+        handleResponse(params, pagedResult)
+      }
 
       if (!stopped) {
         onDone()
@@ -129,7 +166,10 @@ abstract class PagedAction<Params, T> : ErrorHandlerAction<Params>() {
 
   internal abstract fun getCall(params: Params, page: Int): Call<List<T>>
 
-  internal abstract suspend fun handleResponse(params: Params, page: Int, response: List<T>)
+  internal abstract suspend fun handleResponse(
+    params: Params,
+    pagedResponse: PagedResponse<Params, T>
+  )
 
   internal open fun onDone() {}
 

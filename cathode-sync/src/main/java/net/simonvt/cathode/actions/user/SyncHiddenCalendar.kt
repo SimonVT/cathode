@@ -20,6 +20,7 @@ import android.content.ContentProviderOperation
 import android.content.Context
 import androidx.work.WorkManager
 import net.simonvt.cathode.actions.PagedAction
+import net.simonvt.cathode.actions.PagedResponse
 import net.simonvt.cathode.api.entity.HiddenItem
 import net.simonvt.cathode.api.enumeration.HiddenSection
 import net.simonvt.cathode.api.enumeration.ItemType
@@ -53,7 +54,10 @@ class SyncHiddenCalendar @Inject constructor(
   override fun getCall(params: Unit, page: Int): Call<List<HiddenItem>> =
     usersService.getHiddenItems(HiddenSection.CALENDAR, null, page, 25)
 
-  override suspend fun handleResponse(params: Unit, page: Int, response: List<HiddenItem>) {
+  override suspend fun handleResponse(
+    params: Unit,
+    pagedResponse: PagedResponse<Unit, HiddenItem>
+  ) {
     val ops = arrayListOf<ContentProviderOperation>()
     val unhandledShows = mutableListOf<Long>()
     val unhandledMovies = mutableListOf<Long>()
@@ -74,39 +78,44 @@ class SyncHiddenCalendar @Inject constructor(
     hiddenMovies.forEach { cursor -> unhandledMovies.add(cursor.getLong(MovieColumns.ID)) }
     hiddenMovies.close()
 
-    for (hiddenItem in response) {
-      when (hiddenItem.type) {
-        ItemType.SHOW -> {
-          val show = hiddenItem.show!!
-          val traktId = show.ids.trakt!!
-          val showResult = showHelper.getIdOrCreate(traktId)
-          val showId = showResult.showId
+    var page: PagedResponse<Unit, HiddenItem>? = pagedResponse
+    do {
+      for (hiddenItem in page!!.response) {
+        when (hiddenItem.type) {
+          ItemType.SHOW -> {
+            val show = hiddenItem.show!!
+            val traktId = show.ids.trakt!!
+            val showResult = showHelper.getIdOrCreate(traktId)
+            val showId = showResult.showId
 
-          if (!unhandledShows.remove(showId)) {
-            val op = ContentProviderOperation.newUpdate(Shows.withId(showId))
-              .withValue(ShowColumns.HIDDEN_CALENDAR, 1)
-              .build()
-            ops.add(op)
+            if (!unhandledShows.remove(showId)) {
+              val op = ContentProviderOperation.newUpdate(Shows.withId(showId))
+                .withValue(ShowColumns.HIDDEN_CALENDAR, 1)
+                .build()
+              ops.add(op)
+            }
           }
-        }
 
-        ItemType.MOVIE -> {
-          val movie = hiddenItem.movie!!
-          val traktId = movie.ids.trakt!!
-          val result = movieHelper.getIdOrCreate(traktId)
-          val movieId = result.movieId
+          ItemType.MOVIE -> {
+            val movie = hiddenItem.movie!!
+            val traktId = movie.ids.trakt!!
+            val result = movieHelper.getIdOrCreate(traktId)
+            val movieId = result.movieId
 
-          if (!unhandledMovies.remove(movieId)) {
-            val op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
-              .withValue(MovieColumns.HIDDEN_CALENDAR, 1)
-              .build()
-            ops.add(op)
+            if (!unhandledMovies.remove(movieId)) {
+              val op = ContentProviderOperation.newUpdate(Movies.withId(movieId))
+                .withValue(MovieColumns.HIDDEN_CALENDAR, 1)
+                .build()
+              ops.add(op)
+            }
           }
-        }
 
-        else -> throw RuntimeException("Unknown item type: ${hiddenItem.type}")
+          else -> throw RuntimeException("Unknown item type: ${hiddenItem.type}")
+        }
       }
-    }
+
+      page = page.nextPage()
+    } while (page != null)
 
     workManager.enqueueUniqueNow(SyncPendingShowsWorker.TAG, SyncPendingShowsWorker::class.java)
     workManager.enqueueUniqueNow(SyncPendingMoviesWorker.TAG, SyncPendingMoviesWorker::class.java)

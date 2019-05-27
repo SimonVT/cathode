@@ -19,6 +19,7 @@ package net.simonvt.cathode.actions.user
 import android.content.ContentProviderOperation
 import android.content.Context
 import net.simonvt.cathode.actions.PagedAction
+import net.simonvt.cathode.actions.PagedResponse
 import net.simonvt.cathode.actions.user.SyncCommentLikes.Params
 import net.simonvt.cathode.api.entity.Like
 import net.simonvt.cathode.api.enumeration.ItemTypes
@@ -46,7 +47,7 @@ class SyncCommentLikes @Inject constructor(
   override fun getCall(params: Params, page: Int): Call<List<Like>> =
     usersService.getLikes(ItemTypes.COMMENTS, page, LIMIT)
 
-  override suspend fun handleResponse(params: Params, page: Int, response: List<Like>) {
+  override suspend fun handleResponse(params: Params, pagedResponse: PagedResponse<Params, Like>) {
     val ops = arrayListOf<ContentProviderOperation>()
     val existingLikes = mutableListOf<Long>()
     val deleteLikes = mutableListOf<Long>()
@@ -63,47 +64,52 @@ class SyncCommentLikes @Inject constructor(
     }
     localComments.close()
 
-    for (like in response) {
-      val comment = like.comment!!
-      val commentId = comment.id
-      val likedAt = like.liked_at.timeInMillis
+    var page: PagedResponse<Params, Like>? = pagedResponse
+    do {
+      for (like in page!!.response) {
+        val comment = like.comment!!
+        val commentId = comment.id
+        val likedAt = like.liked_at.timeInMillis
 
-      var exists = existingLikes.contains(commentId)
-      if (!exists) {
-        // May have been created by user likes
-        val commentCursor = context.contentResolver.query(
-          Comments.withId(commentId),
-          arrayOf(CommentColumns.ID)
-        )
-        exists = commentCursor.moveToFirst()
-        commentCursor.close()
+        var exists = existingLikes.contains(commentId)
+        if (!exists) {
+          // May have been created by user likes
+          val commentCursor = context.contentResolver.query(
+            Comments.withId(commentId),
+            arrayOf(CommentColumns.ID)
+          )
+          exists = commentCursor.moveToFirst()
+          commentCursor.close()
+        }
+
+        if (exists) {
+          deleteLikes.remove(commentId)
+
+          val op = ContentProviderOperation.newUpdate(Comments.withId(commentId))
+            .withValue(CommentColumns.LIKED, true)
+            .withValue(CommentColumns.LIKED_AT, likedAt)
+            .withValue(CommentColumns.IS_USER_COMMENT, true)
+          ops.add(op.build())
+        } else {
+          val profile = comment.user
+          val idResult = userHelper.updateOrCreate(profile)
+          val userId = idResult.id
+
+          val values = CommentsHelper.getValues(comment)
+          values.put(CommentColumns.USER_ID, userId)
+
+          values.put(CommentColumns.LIKED, true)
+          values.put(CommentColumns.LIKED_AT, likedAt)
+          values.put(CommentColumns.IS_USER_COMMENT, true)
+
+          val op = ContentProviderOperation.newInsert(Comments.COMMENTS).withValues(values)
+          ops.add(op.build())
+          existingLikes.add(commentId)
+        }
       }
 
-      if (exists) {
-        deleteLikes.remove(commentId)
-
-        val op = ContentProviderOperation.newUpdate(Comments.withId(commentId))
-          .withValue(CommentColumns.LIKED, true)
-          .withValue(CommentColumns.LIKED_AT, likedAt)
-          .withValue(CommentColumns.IS_USER_COMMENT, true)
-        ops.add(op.build())
-      } else {
-        val profile = comment.user
-        val idResult = userHelper.updateOrCreate(profile)
-        val userId = idResult.id
-
-        val values = CommentsHelper.getValues(comment)
-        values.put(CommentColumns.USER_ID, userId)
-
-        values.put(CommentColumns.LIKED, true)
-        values.put(CommentColumns.LIKED_AT, likedAt)
-        values.put(CommentColumns.IS_USER_COMMENT, true)
-
-        val op = ContentProviderOperation.newInsert(Comments.COMMENTS).withValues(values)
-        ops.add(op.build())
-        existingLikes.add(commentId)
-      }
-    }
+      page = page.nextPage()
+    } while (page != null)
 
     for (id in deleteLikes) {
       val op = ContentProviderOperation.newUpdate(Comments.withId(id))
