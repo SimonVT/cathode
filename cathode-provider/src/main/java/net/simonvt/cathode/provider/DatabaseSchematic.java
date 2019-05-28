@@ -58,7 +58,7 @@ public final class DatabaseSchematic {
   private DatabaseSchematic() {
   }
 
-  static final int DATABASE_VERSION = 46;
+  static final int DATABASE_VERSION = 47;
 
   public interface Tables {
 
@@ -780,6 +780,15 @@ public final class DatabaseSchematic {
     if (oldVersion < 46) {
       db.execSQL("DROP TRIGGER IF EXISTS " + TriggerName.EPISODE_UPDATE_WATCHING);
       db.execSQL(TRIGGER_EPISODE_UPDATE_WATCHING);
+    }
+
+    if (oldVersion < 47) {
+      SqlUtils.createColumnIfNotExists(db, Tables.LISTS, ListsColumns.SORT_BY, DataType.Type.TEXT,
+          null);
+      SqlUtils.createColumnIfNotExists(db, Tables.LISTS, ListsColumns.SORT_ORIENTATION,
+          DataType.Type.TEXT, null);
+      SqlUtils.createColumnIfNotExists(db, Tables.LIST_ITEMS, ListItemColumns.RANK,
+          DataType.Type.INTEGER, null);
     }
   }
 }
