@@ -24,6 +24,6 @@ data class CheckinResponse(
   var episode: CheckInEpisode? = null
 )
 
-data class CheckInMovie(val title: String, val year: Int, val ids: Ids)
-data class CheckInShow(val title: String, val year: Int, val ids: Ids)
-data class CheckInEpisode(val season: Int, val number: Int, val title: String, val ids: Ids)
+data class CheckInMovie(val title: String?, val year: Int?, val ids: Ids)
+data class CheckInShow(val title: String?, val year: Int?, val ids: Ids)
+data class CheckInEpisode(val season: Int, val number: Int, val title: String?, val ids: Ids)
