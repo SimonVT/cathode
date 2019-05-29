@@ -176,8 +176,6 @@ public final class DatabaseContract {
     @DataType(INTEGER) @DefaultValue("0") String IN_COLLECTION_COUNT = "inCollectionCount";
     @DataType(INTEGER) @DefaultValue("0") String IN_WATCHLIST_COUNT = "inWatchlistCount";
 
-    @DataType(INTEGER) @DefaultValue("0") String NEEDS_SYNC = "needsSync";
-
     String SHOW_TITLE = "seasonShowTitle";
 
     String AIRED_COUNT = "airedCount";

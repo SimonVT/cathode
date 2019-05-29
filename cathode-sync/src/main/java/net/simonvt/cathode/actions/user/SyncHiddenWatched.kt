@@ -107,10 +107,8 @@ class SyncHiddenWatched @Inject constructor(
             val seasonNumber = season.number
             val result = seasonHelper.getIdOrCreate(showId, seasonNumber)
             val seasonId = result.id
-            if (result.didCreate) {
-              if (!showResult.didCreate) {
-                showHelper.markPending(showId)
-              }
+            if (result.didCreate && !showResult.didCreate) {
+              showHelper.markPending(showId)
             }
 
             if (!unhandledSeasons.remove(seasonId)) {

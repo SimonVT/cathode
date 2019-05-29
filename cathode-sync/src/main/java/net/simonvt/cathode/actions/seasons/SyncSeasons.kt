@@ -18,6 +18,7 @@ package net.simonvt.cathode.actions.seasons
 
 import android.content.Context
 import net.simonvt.cathode.actions.CallAction
+import net.simonvt.cathode.actions.invokeAsync
 import net.simonvt.cathode.actions.seasons.SyncSeasons.Params
 import net.simonvt.cathode.api.entity.Season
 import net.simonvt.cathode.api.enumeration.Extended
@@ -54,12 +55,11 @@ class SyncSeasons @Inject constructor(
     currentSeasons.forEach { cursor -> seasonIds.add(cursor.getLong(SeasonColumns.ID)) }
     currentSeasons.close()
 
-    for (season in response) {
-      val result = seasonHelper.getIdOrCreate(showId, season.number)
-      seasonHelper.updateSeason(showId, season)
+    response.map {
+      val result = seasonHelper.getIdOrCreate(showId, it.number)
       seasonIds.remove(result.id)
-      syncSeason(SyncSeason.Params(params.traktId, season.number))
-    }
+      syncSeason.invokeAsync(SyncSeason.Params(params.traktId, it.number))
+    }.forEach { it.await() }
 
     for (seasonId in seasonIds) {
       context.contentResolver.delete(Seasons.withId(seasonId))

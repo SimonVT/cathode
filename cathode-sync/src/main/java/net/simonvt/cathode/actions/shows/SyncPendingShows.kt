@@ -16,30 +16,24 @@
 
 package net.simonvt.cathode.actions.shows
 
-import android.content.ContentValues
 import android.content.Context
 import net.simonvt.cathode.actions.ActionFailedException
 import net.simonvt.cathode.actions.ErrorHandlerAction
-import net.simonvt.cathode.api.enumeration.Extended
+import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.api.service.SeasonService
 import net.simonvt.cathode.api.service.ShowsService
 import net.simonvt.cathode.common.database.Cursors
 import net.simonvt.cathode.common.database.forEach
-import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.common.event.ItemsUpdatedEvent
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns
-import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns
 import net.simonvt.cathode.provider.ProviderSchematic.ListItems
-import net.simonvt.cathode.provider.ProviderSchematic.Seasons
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
-import net.simonvt.cathode.provider.delete
 import net.simonvt.cathode.provider.entity.ItemTypeString
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
 import net.simonvt.cathode.provider.query
-import net.simonvt.cathode.provider.update
 import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
@@ -50,7 +44,8 @@ class SyncPendingShows @Inject constructor(
   private val seasonService: SeasonService,
   private val showHelper: ShowDatabaseHelper,
   private val seasonHelper: SeasonDatabaseHelper,
-  private val episodeHelper: EpisodeDatabaseHelper
+  private val episodeHelper: EpisodeDatabaseHelper,
+  private val syncShow: SyncShow
 ) : ErrorHandlerAction<Unit>() {
 
   override fun key(params: Unit): String = "SyncPendingShows"
@@ -140,47 +135,7 @@ class SyncPendingShows @Inject constructor(
     try {
       for ((showId, traktId) in syncItems) {
         Timber.d("Syncing pending show %d", traktId)
-
-        val showCall = showsService.getSummary(traktId, Extended.FULL)
-        val showResponse = showCall.execute()
-
-        val seasonsCall = seasonService.getSummary(traktId, Extended.FULL)
-        val seasonsResponse = seasonsCall.execute()
-
-        if (showResponse.isSuccessful && seasonsResponse.isSuccessful) {
-          val show = showResponse.body()!!
-          val seasons = seasonsResponse.body()!!
-
-          val seasonIds = mutableListOf<Long>()
-          val currentSeasons = context.contentResolver.query(
-            Seasons.fromShow(showId),
-            arrayOf(SeasonColumns.ID)
-          )
-          currentSeasons.forEach { cursor ->
-            seasonIds.add(cursor.getLong(SeasonColumns.ID))
-          }
-          currentSeasons.close()
-
-          seasons.forEach { season ->
-            val result = seasonHelper.getIdOrCreate(showId, season.number)
-            seasonHelper.updateSeason(showId, season)
-            seasonIds.remove(result.id)
-
-            val values = ContentValues()
-            values.put(SeasonColumns.NEEDS_SYNC, true)
-            context.contentResolver.update(Seasons.withId(result.id), values)
-          }
-
-          seasonIds.forEach { seasonId -> context.contentResolver.delete(Seasons.withId(seasonId)) }
-
-          showHelper.fullUpdate(show)
-        } else {
-          val showError = isError(showResponse)
-          val seasonsError = isError(seasonsResponse)
-          if (showError || seasonsError) {
-            throw ActionFailedException()
-          }
-        }
+        syncShow.invokeSync(SyncShow.Params(traktId))
 
         if (stopped) {
           return

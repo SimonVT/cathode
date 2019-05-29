@@ -49,7 +49,6 @@ object SeasonMapper : MappedCursorLiveData.CursorMapper<Season> {
     val airdateCount = cursor.getInt(SeasonColumns.AIRDATE_COUNT)
     val inCollectionCount = cursor.getInt(SeasonColumns.IN_COLLECTION_COUNT)
     val inWatchlistCount = cursor.getInt(SeasonColumns.IN_WATCHLIST_COUNT)
-    val needsSync = cursor.getBoolean(SeasonColumns.NEEDS_SYNC)
     val showTitle = cursor.getStringOrNull(SeasonColumns.SHOW_TITLE)
     val airedCount = cursor.getInt(SeasonColumns.AIRED_COUNT)
     val unairedCount = cursor.getInt(SeasonColumns.UNAIRED_COUNT)
@@ -74,7 +73,6 @@ object SeasonMapper : MappedCursorLiveData.CursorMapper<Season> {
       airdateCount,
       inCollectionCount,
       inWatchlistCount,
-      needsSync,
       showTitle,
       airedCount,
       unairedCount,
@@ -101,7 +99,6 @@ object SeasonMapper : MappedCursorLiveData.CursorMapper<Season> {
     SeasonColumns.AIRDATE_COUNT,
     SeasonColumns.IN_COLLECTION_COUNT,
     SeasonColumns.IN_WATCHLIST_COUNT,
-    SeasonColumns.NEEDS_SYNC,
     SeasonColumns.SHOW_TITLE,
     SeasonColumns.AIRED_COUNT,
     SeasonColumns.UNAIRED_COUNT,

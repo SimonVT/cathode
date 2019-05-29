@@ -117,7 +117,6 @@ class SeasonDatabaseHelper @Inject constructor(
     val values = ContentValues()
     values.put(SeasonColumns.SHOW_ID, showId)
     values.put(SeasonColumns.SEASON, season)
-    values.put(SeasonColumns.NEEDS_SYNC, true)
 
     val uri = context.contentResolver.insert(Seasons.SEASONS, values)
     return Seasons.getId(uri!!)

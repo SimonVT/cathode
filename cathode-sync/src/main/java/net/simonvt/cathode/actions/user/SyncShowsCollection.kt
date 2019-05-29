@@ -117,16 +117,11 @@ class SyncShowsCollection @Inject constructor(
       var collectedShow = showsMap[traktId]
 
       val showId: Long
-      var markedPending = false
-      val didShowExist: Boolean
+      var markPending = false
       if (collectedShow == null) {
         val showResult = showHelper.getIdOrCreate(traktId)
         showId = showResult.showId
-        didShowExist = !showResult.didCreate
-        if (!didShowExist) {
-          markedPending = true
-        }
-
+        markPending = markPending || showResult.didCreate
         collectedShow = CollectedShow(showId)
         showsMap[traktId] = collectedShow
       } else {
@@ -147,14 +142,7 @@ class SyncShowsCollection @Inject constructor(
           val seasonResult =
             seasonHelper.getIdOrCreate(collectedShow.id, seasonCollectedResponse.number)
           val seasonId = seasonResult.id
-
-          if (seasonResult.didCreate) {
-            if (!markedPending) {
-              showHelper.markPending(showId)
-              markedPending = true
-            }
-          }
-
+          markPending = markPending || seasonResult.didCreate
           collectedSeason = LocalCollectedSeason(seasonId)
           collectedShow.seasons[seasonCollectedResponse.number] = collectedSeason
         }
@@ -167,13 +155,7 @@ class SyncShowsCollection @Inject constructor(
             val episodeResult =
               episodeHelper.getIdOrCreate(collectedShow.id, collectedSeason.id, episode.number)
             val episodeId = episodeResult.id
-
-            if (episodeResult.didCreate) {
-              if (!markedPending) {
-                showHelper.markPending(showId)
-                markedPending = true
-              }
-            }
+            markPending = markPending || episodeResult.didCreate
 
             val builder = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
             val values = ContentValues()
@@ -185,6 +167,10 @@ class SyncShowsCollection @Inject constructor(
             episodeIds.remove(syncEpisode.id)
           }
         }
+      }
+
+      if (markPending) {
+        showHelper.markPending(showId)
       }
 
       apply(ops)

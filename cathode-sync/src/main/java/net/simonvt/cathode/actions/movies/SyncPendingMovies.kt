@@ -17,8 +17,8 @@
 package net.simonvt.cathode.actions.movies
 
 import android.content.Context
+import net.simonvt.cathode.actions.ActionManager
 import net.simonvt.cathode.actions.ErrorHandlerAction
-import net.simonvt.cathode.actions.movies.SyncMovie.Params
 import net.simonvt.cathode.api.service.MoviesService
 import net.simonvt.cathode.common.database.forEach
 import net.simonvt.cathode.common.database.getLong
@@ -85,7 +85,7 @@ class SyncPendingMovies @Inject constructor(
 
     syncItems.forEach { (_, traktId) ->
       Timber.d("Syncing pending movie %d", traktId)
-      syncMovie(Params(traktId))
+      ActionManager.invokeSync(syncMovie, SyncMovie.Params(traktId))
 
       if (stopped) {
         return

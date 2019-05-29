@@ -120,16 +120,11 @@ class SyncWatchedShows @Inject constructor(
       var watchedShow = showsMap[traktId]
 
       val showId: Long
-      var markedPending = false
-      val didShowExist: Boolean
+      var markPending = false
       if (watchedShow == null) {
         val showResult = showHelper.getIdOrCreate(traktId)
         showId = showResult.showId
-        didShowExist = !showResult.didCreate
-        if (!didShowExist) {
-          markedPending = true
-        }
-
+        markPending = markPending || showResult.didCreate
         watchedShow = WatchedShow(showId)
         showsMap[traktId] = watchedShow
       } else {
@@ -149,12 +144,7 @@ class SyncWatchedShows @Inject constructor(
         if (localWatchedSeason == null) {
           val seasonResult = seasonHelper.getIdOrCreate(watchedShow.id, seasonNumber)
           val seasonId = seasonResult.id
-          if (seasonResult.didCreate) {
-            if (!markedPending) {
-              showHelper.markPending(showId)
-              markedPending = true
-            }
-          }
+          markPending = markPending || seasonResult.didCreate
           localWatchedSeason = LocalWatchedSeason(seasonId)
           watchedShow.seasons[seasonNumber] = localWatchedSeason
         }
@@ -171,12 +161,7 @@ class SyncWatchedShows @Inject constructor(
                 watchedEpisode.number
               )
             val episodeId = episodeResult.id
-            if (episodeResult.didCreate) {
-              if (!markedPending) {
-                showHelper.markPending(showId)
-                markedPending = true
-              }
-            }
+            markPending = markPending || episodeResult.didCreate
 
             val builder = ContentProviderOperation.newUpdate(Episodes.withId(episodeId))
             val values = ContentValues()
@@ -198,7 +183,8 @@ class SyncWatchedShows @Inject constructor(
         }
       }
 
-      if (markedPending) {
+      if (markPending) {
+        showHelper.markPending(showId)
         workManager.enqueueUniqueNow(SyncPendingShowsWorker.TAG, SyncPendingShowsWorker::class.java)
       }
 

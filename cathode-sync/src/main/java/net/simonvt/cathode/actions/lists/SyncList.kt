@@ -138,12 +138,11 @@ class SyncList @Inject constructor(
           val showTraktId = show!!.ids.trakt!!
           val showResult = showHelper.getIdOrCreate(showTraktId)
           val showId = showResult.showId
-          val lastSync = showHelper.lastSync(showId)
 
           val seasonNumber = listItem.season!!.number
           val seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber)
           val seasonId = seasonResult.id
-          if (lastSync == 0L || seasonResult.didCreate) {
+          if (seasonResult.didCreate) {
             showHelper.markPending(showId)
             syncPendingShows = true
           }
@@ -168,7 +167,6 @@ class SyncList @Inject constructor(
           val showTraktId = show.ids.trakt!!
           val showResult = showHelper.getIdOrCreate(showTraktId)
           val showId = showResult.showId
-          val lastSync = showHelper.lastSync(showId)
 
           val seasonNumber = episode.season!!
           val seasonResult = seasonHelper.getIdOrCreate(showId, seasonNumber)
@@ -177,7 +175,7 @@ class SyncList @Inject constructor(
           val episodeResult =
             episodeHelper.getIdOrCreate(showId, seasonId, episode.number!!)
           val episodeId = episodeResult.id
-          if (lastSync == 0L || episodeResult.didCreate) {
+          if (episodeResult.didCreate) {
             showHelper.markPending(showId)
             syncPendingShows = true
           }

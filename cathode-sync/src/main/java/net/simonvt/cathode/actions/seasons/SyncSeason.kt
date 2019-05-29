@@ -15,7 +15,6 @@
  */
 package net.simonvt.cathode.actions.seasons
 
-import android.content.ContentValues
 import android.content.Context
 import net.simonvt.cathode.actions.CallAction
 import net.simonvt.cathode.actions.seasons.SyncSeason.Params
@@ -25,15 +24,12 @@ import net.simonvt.cathode.api.service.SeasonService
 import net.simonvt.cathode.common.database.forEach
 import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
-import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes
-import net.simonvt.cathode.provider.ProviderSchematic.Seasons
 import net.simonvt.cathode.provider.delete
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
 import net.simonvt.cathode.provider.query
-import net.simonvt.cathode.provider.update
 import retrofit2.Call
 import javax.inject.Inject
 
@@ -75,10 +71,6 @@ class SyncSeason @Inject constructor(
     for (episodeId in episodeIds) {
       context.contentResolver.delete(Episodes.withId(episodeId))
     }
-
-    val values = ContentValues()
-    values.put(SeasonColumns.NEEDS_SYNC, false)
-    context.contentResolver.update(Seasons.withId(seasonId), values)
   }
 
   data class Params(val traktId: Long, val season: Int)

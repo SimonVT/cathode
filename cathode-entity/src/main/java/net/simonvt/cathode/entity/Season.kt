@@ -33,7 +33,6 @@ data class Season(
   val airdateCount: Int?,
   val inCollectionCount: Int?,
   val inWatchlistCount: Int?,
-  val needsSync: Boolean?,
   val showTitle: String?,
   val airedCount: Int?,
   val unairedCount: Int?,
