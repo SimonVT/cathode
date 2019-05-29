@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
@@ -147,7 +148,7 @@ public class WatchingView extends ViewGroup {
   private void init(Context context) {
     setWillNotDraw(false);
 
-    backgroundPaint.setColor(0xFFFAFAFA);
+    backgroundPaint.setColor(ContextCompat.getColor(context, R.color.watchingBackground));
 
     collapsedDiameter = ViewUtils.dpToPx(context, 48);
     expandedDiameter = ViewUtils.dpToPx(context, 16);

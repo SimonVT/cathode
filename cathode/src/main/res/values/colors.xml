@@ -49,6 +49,8 @@
 
   <color name="listRatingTextBackground">#80FFFFFF</color>
 
+  <color name="watchingBackground">@color/blue_grey_50</color>
+
   <!-- Navigation -->
   <color name="drawerBackground">#FFFFFFFF</color>
   <color name="nav_item">#FF757575</color>

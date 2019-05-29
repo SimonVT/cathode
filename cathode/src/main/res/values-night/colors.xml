@@ -25,6 +25,8 @@
   <color name="divider">#2AFFFFFF</color>
   <color name="activatedItemBackground">#FF383838</color>
 
+  <color name="watchingBackground">#FF484848</color>
+
   <!-- Navigation -->
   <color name="drawerBackground">#FF282828</color>
   <color name="nav_item">#FFEEEEEE</color>
