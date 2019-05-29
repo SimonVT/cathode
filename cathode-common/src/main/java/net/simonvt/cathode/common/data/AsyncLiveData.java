@@ -43,7 +43,7 @@ public abstract class AsyncLiveData<D> extends LiveData<D> {
     }
 
     @Override protected void onPostExecute(D data) {
-      if (!isCancelled() && data != null) {
+      if (!isCancelled()) {
         postResult(this, data);
       }
     }
