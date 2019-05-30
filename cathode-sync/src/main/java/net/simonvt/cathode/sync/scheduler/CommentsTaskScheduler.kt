@@ -20,13 +20,14 @@ import android.content.ContentValues
 import android.content.Context
 import kotlinx.coroutines.launch
 import net.simonvt.cathode.api.enumeration.ItemType
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getInt
 import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Comments
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
+import net.simonvt.cathode.provider.query
 import net.simonvt.cathode.remote.action.comments.AddCommentJob
 import net.simonvt.cathode.remote.action.comments.CommentReplyJob
 import net.simonvt.cathode.remote.action.comments.DeleteCommentJob
@@ -102,13 +103,10 @@ constructor(
 
       val c = context.contentResolver.query(
         Comments.withId(commentId),
-        arrayOf(CommentColumns.LIKES),
-        null,
-        null,
-        null
+        arrayOf(CommentColumns.LIKES)
       )
-      if (c!!.moveToFirst()) {
-        val likes = Cursors.getInt(c, CommentColumns.LIKES)
+      if (c.moveToFirst()) {
+        val likes = c.getInt(CommentColumns.LIKES)
 
         val values = ContentValues()
         values.put(CommentColumns.LIKED, true)
@@ -125,13 +123,10 @@ constructor(
 
       val c = context.contentResolver.query(
         Comments.withId(commentId),
-        arrayOf(CommentColumns.LIKES),
-        null,
-        null,
-        null
+        arrayOf(CommentColumns.LIKES)
       )
-      if (c!!.moveToFirst()) {
-        val likes = Cursors.getInt(c, CommentColumns.LIKES)
+      if (c.moveToFirst()) {
+        val likes = c.getInt(CommentColumns.LIKES)
 
         val values = ContentValues()
         values.put(CommentColumns.LIKED, false)

@@ -24,12 +24,15 @@ import kotlinx.coroutines.launch
 import net.simonvt.cathode.api.body.SyncItems
 import net.simonvt.cathode.api.service.CheckinService
 import net.simonvt.cathode.api.util.TimeUtils
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getInt
+import net.simonvt.cathode.common.database.getLong
+import net.simonvt.cathode.common.database.getStringOrNull
 import net.simonvt.cathode.common.event.ErrorEvent
 import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Movies
 import net.simonvt.cathode.provider.helper.MovieDatabaseHelper
+import net.simonvt.cathode.provider.query
 import net.simonvt.cathode.remote.action.RemoveHistoryItem
 import net.simonvt.cathode.remote.action.movies.AddMovieToHistory
 import net.simonvt.cathode.remote.action.movies.CalendarHideMovie
@@ -206,19 +209,16 @@ constructor(
 
       if (watching!!.moveToFirst()) {
         val currentTime = System.currentTimeMillis()
-        val runtime = Cursors.getInt(watching, MovieColumns.RUNTIME)
-        val expires = Cursors.getLong(watching, MovieColumns.EXPIRES_AT)
+        val runtime = watching.getInt(MovieColumns.RUNTIME)
+        val expires = watching.getLong(MovieColumns.EXPIRES_AT)
         val watchSlop = (runtime.toFloat() * DateUtils.MINUTE_IN_MILLIS.toFloat() * 0.8f).toLong()
 
         val movie = context.contentResolver.query(
           Movies.withId(movieId),
-          arrayOf(MovieColumns.TITLE),
-          null,
-          null,
-          null
+          arrayOf(MovieColumns.TITLE)
         )
-        movie!!.moveToFirst()
-        val title = Cursors.getString(movie, MovieColumns.TITLE)
+        movie.moveToFirst()
+        val title = movie.getStringOrNull(MovieColumns.TITLE)
         movie.close()
 
         if (expires - watchSlop < currentTime && expires > 0) {
@@ -249,16 +249,13 @@ constructor(
       try {
         movie = context.contentResolver.query(
           Movies.WATCHING,
-          arrayOf(MovieColumns.ID, MovieColumns.STARTED_AT, MovieColumns.EXPIRES_AT),
-          null,
-          null,
-          null
+          arrayOf(MovieColumns.ID, MovieColumns.STARTED_AT, MovieColumns.EXPIRES_AT)
         )
 
-        if (movie!!.moveToFirst()) {
-          val id = Cursors.getLong(movie, MovieColumns.ID)
-          val startedAt = Cursors.getLong(movie, MovieColumns.STARTED_AT)
-          val expiresAt = Cursors.getLong(movie, MovieColumns.EXPIRES_AT)
+        if (movie.moveToFirst()) {
+          val id = movie.getLong(MovieColumns.ID)
+          val startedAt = movie.getLong(MovieColumns.STARTED_AT)
+          val expiresAt = movie.getLong(MovieColumns.EXPIRES_AT)
 
           val values = ContentValues()
           values.put(MovieColumns.CHECKED_IN, false)

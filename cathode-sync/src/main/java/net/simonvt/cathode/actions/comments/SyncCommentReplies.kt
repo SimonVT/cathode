@@ -24,7 +24,8 @@ import net.simonvt.cathode.actions.comments.SyncCommentReplies.Params
 import net.simonvt.cathode.api.entity.Comment
 import net.simonvt.cathode.api.enumeration.Extended
 import net.simonvt.cathode.api.service.CommentsService
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getInt
+import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables
 import net.simonvt.cathode.provider.ProviderSchematic.Comments
@@ -66,8 +67,8 @@ class SyncCommentReplies @Inject constructor(
       arrayOf(CommentColumns.ITEM_TYPE, CommentColumns.ITEM_ID)
     )
     parentComment.moveToFirst()
-    itemType = Cursors.getInt(parentComment, CommentColumns.ITEM_TYPE)
-    itemId = Cursors.getLong(parentComment, CommentColumns.ITEM_ID)
+    itemType = parentComment.getInt(CommentColumns.ITEM_TYPE)
+    itemId = parentComment.getLong(CommentColumns.ITEM_ID)
 
     val existingComments = mutableListOf<Long>()
     val deleteComments = mutableListOf<Long>()
@@ -77,7 +78,7 @@ class SyncCommentReplies @Inject constructor(
       arrayOf(Tables.COMMENTS + "." + CommentColumns.ID)
     )
     while (localComments.moveToNext()) {
-      val id = Cursors.getLong(localComments, CommentColumns.ID)
+      val id = localComments.getLong(CommentColumns.ID)
       existingComments.add(id)
       deleteComments.add(id)
     }

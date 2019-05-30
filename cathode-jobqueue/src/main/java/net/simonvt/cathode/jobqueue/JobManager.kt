@@ -19,7 +19,7 @@ package net.simonvt.cathode.jobqueue
 import android.content.ContentValues
 import android.content.Context
 import dagger.android.DispatchingAndroidInjector
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getBlob
 import net.simonvt.cathode.common.util.MainHandler
 import net.simonvt.cathode.jobqueue.JobDatabaseSchematic.Tables
 import net.simonvt.cathode.jobqueue.database.JobDatabase
@@ -82,7 +82,7 @@ class JobManager @Inject constructor(
       val c = db.query(Tables.JOBS, null, null, null, null, null, null)
 
       while (c.moveToNext()) {
-        val bytes = Cursors.getBlob(c, JobColumns.JOB)
+        val bytes = c.getBlob(JobColumns.JOB)
         val job = converter.from(bytes)
         addJobInternal(job)
       }

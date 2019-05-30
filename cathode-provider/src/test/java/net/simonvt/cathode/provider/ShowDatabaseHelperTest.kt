@@ -22,7 +22,7 @@ import android.content.pm.ProviderInfo
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import net.simonvt.cathode.TestApp
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getInt
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
 import net.simonvt.cathode.provider.DatabaseContract.SeasonColumns
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns
@@ -105,8 +105,8 @@ class ShowDatabaseHelperTest {
     assertThat(episodeCursor!!.count).isEqualTo(1)
 
     if (episodeCursor.moveToNext()) {
-      val season = Cursors.getInt(episodeCursor, EpisodeColumns.SEASON)
-      val episode = Cursors.getInt(episodeCursor, EpisodeColumns.EPISODE)
+      val season = episodeCursor.getInt(EpisodeColumns.SEASON)
+      val episode = episodeCursor.getInt(EpisodeColumns.EPISODE)
       assertThat(season).isEqualTo(assertSeason)
       assertThat(episode).isEqualTo(assertEpisode)
     }

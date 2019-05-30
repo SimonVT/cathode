@@ -25,7 +25,7 @@ import net.simonvt.cathode.api.entity.Credits
 import net.simonvt.cathode.api.enumeration.Department
 import net.simonvt.cathode.api.enumeration.Extended
 import net.simonvt.cathode.api.service.PeopleService
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.provider.DatabaseContract.ShowCastColumns
 import net.simonvt.cathode.provider.DatabaseContract.ShowCrewColumns
 import net.simonvt.cathode.provider.DatabaseSchematic.Tables
@@ -62,8 +62,8 @@ class SyncPersonShowCredits @Inject constructor(
     val oldCast = mutableListOf<Long>()
     val showToCastIdMap = mutableMapOf<Long, Long>()
     while (oldCastCursor.moveToNext()) {
-      val id = Cursors.getLong(oldCastCursor, ShowCastColumns.ID)
-      val showId = Cursors.getLong(oldCastCursor, ShowCastColumns.SHOW_ID)
+      val id = oldCastCursor.getLong(ShowCastColumns.ID)
+      val showId = oldCastCursor.getLong(ShowCastColumns.SHOW_ID)
       oldCast.add(showId)
       showToCastIdMap[showId] = id
     }
@@ -129,8 +129,8 @@ class SyncPersonShowCredits @Inject constructor(
     val oldCrew = mutableListOf<Long>()
     val showToCrewIdMap = mutableMapOf<Long, Long>()
     while (oldCrewCursor.moveToNext()) {
-      val id = Cursors.getLong(oldCrewCursor, ShowCrewColumns.ID)
-      val showId = Cursors.getLong(oldCrewCursor, ShowCrewColumns.SHOW_ID)
+      val id = oldCrewCursor.getLong(ShowCrewColumns.ID)
+      val showId = oldCrewCursor.getLong(ShowCrewColumns.SHOW_ID)
       oldCrew.add(showId)
       showToCrewIdMap[showId] = id
     }

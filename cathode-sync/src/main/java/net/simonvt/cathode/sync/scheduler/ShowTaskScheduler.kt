@@ -21,13 +21,15 @@ import androidx.work.WorkManager
 import kotlinx.coroutines.launch
 import net.simonvt.cathode.api.body.SyncItems
 import net.simonvt.cathode.api.util.TimeUtils
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getInt
+import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
+import net.simonvt.cathode.provider.query
 import net.simonvt.cathode.remote.action.shows.AddShowToHistory
 import net.simonvt.cathode.remote.action.shows.CalendarHideShow
 import net.simonvt.cathode.remote.action.shows.CollectedHideShow
@@ -60,10 +62,10 @@ class ShowTaskScheduler @Inject constructor(
         "inCollection=0 AND season<>0",
         null,
         EpisodeColumns.SEASON + " ASC, " + EpisodeColumns.EPISODE + " ASC LIMIT 1"
-      )
+      )!!
 
-      if (c!!.moveToNext()) {
-        val episodeId = Cursors.getLong(c, EpisodeColumns.ID)
+      if (c.moveToNext()) {
+        val episodeId = c.getLong(EpisodeColumns.ID)
         episodeScheduler.setIsInCollection(episodeId, true)
       }
 
@@ -116,13 +118,10 @@ class ShowTaskScheduler @Inject constructor(
     scope.launch {
       val c = context.contentResolver.query(
         Shows.withId(showId),
-        arrayOf(ShowColumns.TRAKT_ID, ShowColumns.EPISODE_COUNT),
-        null,
-        null,
-        null
+        arrayOf(ShowColumns.TRAKT_ID, ShowColumns.EPISODE_COUNT)
       )
 
-      if (c!!.moveToFirst()) {
+      if (c.moveToFirst()) {
         var listedAt: String? = null
         var listedAtMillis = 0L
         if (inWatchlist) {
@@ -130,10 +129,10 @@ class ShowTaskScheduler @Inject constructor(
           listedAtMillis = TimeUtils.getMillis(listedAt)
         }
 
-        val traktId = Cursors.getLong(c, ShowColumns.TRAKT_ID)
+        val traktId = c.getLong(ShowColumns.TRAKT_ID)
         showHelper.setIsInWatchlist(showId, inWatchlist, listedAtMillis)
 
-        val episodeCount = Cursors.getInt(c, ShowColumns.EPISODE_COUNT)
+        val episodeCount = c.getInt(ShowColumns.EPISODE_COUNT)
         if (episodeCount == 0) {
           workManager.enqueueUniqueNow(
             SyncPendingShowsWorker.TAG,

@@ -23,7 +23,7 @@ import net.simonvt.cathode.actions.lists.SyncList
 import net.simonvt.cathode.actions.user.SyncLists.Params
 import net.simonvt.cathode.api.entity.CustomList
 import net.simonvt.cathode.api.service.UsersService
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Lists
 import net.simonvt.cathode.provider.helper.ListDatabaseHelper
@@ -48,7 +48,7 @@ class SyncLists @Inject constructor(
     val listsCursor =
       context.contentResolver.query(Lists.LISTS, arrayOf(ListsColumns.ID, ListsColumns.TRAKT_ID))
     while (listsCursor.moveToNext()) {
-      listIds.add(Cursors.getLong(listsCursor, ListsColumns.ID))
+      listIds.add(listsCursor.getLong(ListsColumns.ID))
     }
     listsCursor.close()
 

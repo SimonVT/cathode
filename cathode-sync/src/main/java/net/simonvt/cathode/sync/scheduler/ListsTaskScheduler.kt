@@ -25,7 +25,8 @@ import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.enumeration.Privacy
 import net.simonvt.cathode.api.enumeration.SortBy
 import net.simonvt.cathode.api.enumeration.SortOrientation
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getLong
+import net.simonvt.cathode.common.database.getString
 import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns
 import net.simonvt.cathode.provider.DatabaseContract.ListsColumns
@@ -37,6 +38,7 @@ import net.simonvt.cathode.provider.helper.MovieDatabaseHelper
 import net.simonvt.cathode.provider.helper.PersonDatabaseHelper
 import net.simonvt.cathode.provider.helper.SeasonDatabaseHelper
 import net.simonvt.cathode.provider.helper.ShowDatabaseHelper
+import net.simonvt.cathode.provider.query
 import net.simonvt.cathode.remote.action.lists.AddEpisode
 import net.simonvt.cathode.remote.action.lists.AddMovie
 import net.simonvt.cathode.remote.action.lists.AddPerson
@@ -143,16 +145,13 @@ class ListsTaskScheduler @Inject constructor(
     scope.launch {
       val list = context.contentResolver.query(
         Lists.withId(listId),
-        arrayOf(ListsColumns.NAME, ListsColumns.TRAKT_ID),
-        null,
-        null,
-        null
+        arrayOf(ListsColumns.NAME, ListsColumns.TRAKT_ID)
       )
-      if (list!!.moveToFirst()) {
-        val name = Cursors.getString(list, ListsColumns.NAME)
+      if (list.moveToFirst()) {
+        val name = list.getString(ListsColumns.NAME)
 
         if (TraktLinkSettings.isLinked(context)) {
-          val traktId = Cursors.getLong(list, ListsColumns.TRAKT_ID)
+          val traktId = list.getLong(ListsColumns.TRAKT_ID)
 
           if (userList.delete(traktId, name)) {
             context.contentResolver.delete(ListItems.inList(listId), null, null)

@@ -24,8 +24,8 @@ import net.simonvt.cathode.actions.comments.SyncMovieComments.Params
 import net.simonvt.cathode.api.entity.Comment
 import net.simonvt.cathode.api.enumeration.Extended
 import net.simonvt.cathode.api.service.MoviesService
-import net.simonvt.cathode.common.database.Cursors
 import net.simonvt.cathode.common.database.forEach
+import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns
 import net.simonvt.cathode.provider.DatabaseContract.MovieColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Comments
@@ -74,7 +74,7 @@ class SyncMovieComments @Inject constructor(
       arrayOf(ItemTypeString.MOVIE, movieId.toString())
     )
     localComments.forEach { cursor ->
-      val id = Cursors.getLong(cursor, CommentColumns.ID)
+      val id = cursor.getLong(CommentColumns.ID)
       existingComments.add(id)
       deleteComments.add(id)
     }

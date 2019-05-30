@@ -24,7 +24,9 @@ import kotlinx.coroutines.launch
 import net.simonvt.cathode.api.body.SyncItems
 import net.simonvt.cathode.api.service.CheckinService
 import net.simonvt.cathode.api.util.TimeUtils
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getBoolean
+import net.simonvt.cathode.common.database.getInt
+import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.common.event.ErrorEvent
 import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
@@ -66,7 +68,7 @@ class EpisodeTaskScheduler @Inject constructor(
     addToHistory(episodeId, System.currentTimeMillis())
   }
 
-  private fun getOlderEpisodes(episodeId: Long): Cursor? {
+  private fun getOlderEpisodes(episodeId: Long): Cursor {
     val showId = episodeHelper.getShowId(episodeId)
     val season = episodeHelper.getSeason(episodeId)
     val episode = episodeHelper.getNumber(episodeId)
@@ -79,17 +81,15 @@ class EpisodeTaskScheduler @Inject constructor(
           EpisodeColumns.SEASON + ">0 AND ((" +
           EpisodeColumns.SEASON + "=" + season + " AND " +
           EpisodeColumns.EPISODE + "<" + episode + ") OR " +
-          EpisodeColumns.SEASON + "<" + season + ")",
-      null,
-      null
+          EpisodeColumns.SEASON + "<" + season + ")"
     )
   }
 
   fun addOlderToHistoryNow(episodeId: Long) {
     scope.launch {
       val episodes = getOlderEpisodes(episodeId)
-      while (episodes!!.moveToNext()) {
-        val id = Cursors.getLong(episodes, EpisodeColumns.ID)
+      while (episodes.moveToNext()) {
+        val id = episodes.getLong(EpisodeColumns.ID)
         addToHistoryNow(id)
       }
       episodes.close()
@@ -103,8 +103,8 @@ class EpisodeTaskScheduler @Inject constructor(
   fun addOlderToHistoryOnRelease(episodeId: Long) {
     scope.launch {
       val episodes = getOlderEpisodes(episodeId)
-      while (episodes!!.moveToNext()) {
-        val id = Cursors.getLong(episodes, EpisodeColumns.ID)
+      while (episodes.moveToNext()) {
+        val id = episodes.getLong(EpisodeColumns.ID)
         addToHistory(id, SyncItems.TIME_RELEASED)
       }
       episodes.close()
@@ -121,8 +121,8 @@ class EpisodeTaskScheduler @Inject constructor(
   ) {
     scope.launch {
       val episodes = getOlderEpisodes(episodeId)
-      while (episodes!!.moveToNext()) {
-        val id = Cursors.getLong(episodes, EpisodeColumns.ID)
+      while (episodes.moveToNext()) {
+        val id = episodes.getLong(EpisodeColumns.ID)
         addToHistory(id, TimeUtils.getMillis(year, month, day, hour, minute))
       }
       episodes.close()
@@ -145,10 +145,10 @@ class EpisodeTaskScheduler @Inject constructor(
         arrayOf(EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE)
       )
       c.moveToFirst()
-      val showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID)
+      val showId = c.getLong(EpisodeColumns.SHOW_ID)
       val traktId = showHelper.getTraktId(showId)
-      val season = Cursors.getInt(c, EpisodeColumns.SEASON)
-      val number = Cursors.getInt(c, EpisodeColumns.EPISODE)
+      val season = c.getInt(EpisodeColumns.SEASON)
+      val number = c.getInt(EpisodeColumns.EPISODE)
       c.close()
 
       if (SyncItems.TIME_RELEASED == watchedAt) {
@@ -173,10 +173,10 @@ class EpisodeTaskScheduler @Inject constructor(
           arrayOf(EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE)
         )
         c.moveToFirst()
-        val showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID)
+        val showId = c.getLong(EpisodeColumns.SHOW_ID)
         val traktId = showHelper.getTraktId(showId)
-        val season = Cursors.getInt(c, EpisodeColumns.SEASON)
-        val number = Cursors.getInt(c, EpisodeColumns.EPISODE)
+        val season = c.getInt(EpisodeColumns.SEASON)
+        val number = c.getInt(EpisodeColumns.EPISODE)
         c.close()
 
         queue(RemoveEpisodeFromHistory(traktId, season, number))
@@ -215,7 +215,7 @@ class EpisodeTaskScheduler @Inject constructor(
       val currentTime = System.currentTimeMillis()
       var expires: Long = 0
       if (watching!!.moveToFirst()) {
-        expires = Cursors.getLong(watching, EpisodeColumns.EXPIRES_AT)
+        expires = watching.getLong(EpisodeColumns.EXPIRES_AT)
       }
 
       val episode = context.contentResolver.query(
@@ -229,10 +229,10 @@ class EpisodeTaskScheduler @Inject constructor(
         )
       )
       episode.moveToFirst()
-      val showId = Cursors.getLong(episode, EpisodeColumns.SHOW_ID)
-      val season = Cursors.getInt(episode, EpisodeColumns.SEASON)
-      val number = Cursors.getInt(episode, EpisodeColumns.EPISODE)
-      val watched = Cursors.getBoolean(episode, EpisodeColumns.WATCHED)
+      val showId = episode.getLong(EpisodeColumns.SHOW_ID)
+      val season = episode.getInt(EpisodeColumns.SEASON)
+      val number = episode.getInt(EpisodeColumns.EPISODE)
+      val watched = episode.getBoolean(EpisodeColumns.WATCHED)
       val title = DataHelper.getEpisodeTitle(context, episode, season, number, watched)
       episode.close()
 
@@ -244,7 +244,7 @@ class EpisodeTaskScheduler @Inject constructor(
         null
       )
       show!!.moveToFirst()
-      val runtime = Cursors.getInt(show, ShowColumns.RUNTIME)
+      val runtime = show.getInt(ShowColumns.RUNTIME)
       val watchSlop = (runtime.toFloat() * DateUtils.MINUTE_IN_MILLIS.toFloat() * 0.8f).toLong()
       show.close()
 
@@ -268,16 +268,13 @@ class EpisodeTaskScheduler @Inject constructor(
       try {
         episode = context.contentResolver.query(
           Episodes.EPISODE_WATCHING,
-          arrayOf(EpisodeColumns.ID, EpisodeColumns.STARTED_AT, EpisodeColumns.EXPIRES_AT),
-          null,
-          null,
-          null
+          arrayOf(EpisodeColumns.ID, EpisodeColumns.STARTED_AT, EpisodeColumns.EXPIRES_AT)
         )
 
-        if (episode!!.moveToFirst()) {
-          val id = Cursors.getLong(episode, EpisodeColumns.ID)
-          val startedAt = Cursors.getLong(episode, EpisodeColumns.STARTED_AT)
-          val expiresAt = Cursors.getLong(episode, EpisodeColumns.EXPIRES_AT)
+        if (episode.moveToFirst()) {
+          val id = episode.getLong(EpisodeColumns.ID)
+          val startedAt = episode.getLong(EpisodeColumns.STARTED_AT)
+          val expiresAt = episode.getLong(EpisodeColumns.EXPIRES_AT)
 
           val values = ContentValues()
           values.put(EpisodeColumns.CHECKED_IN, false)
@@ -331,10 +328,10 @@ class EpisodeTaskScheduler @Inject constructor(
           arrayOf(EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE)
         )
         c.moveToFirst()
-        val showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID)
+        val showId = c.getLong(EpisodeColumns.SHOW_ID)
         val traktId = showHelper.getTraktId(showId)
-        val season = Cursors.getInt(c, EpisodeColumns.SEASON)
-        val number = Cursors.getInt(c, EpisodeColumns.EPISODE)
+        val season = c.getInt(EpisodeColumns.SEASON)
+        val number = c.getInt(EpisodeColumns.EPISODE)
         c.close()
 
         queue(CollectEpisode(traktId, season, number, inCollection, collectedAt))
@@ -359,10 +356,10 @@ class EpisodeTaskScheduler @Inject constructor(
           arrayOf(EpisodeColumns.SHOW_ID, EpisodeColumns.SEASON, EpisodeColumns.EPISODE)
         )
         c.moveToFirst()
-        val showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID)
+        val showId = c.getLong(EpisodeColumns.SHOW_ID)
         val traktId = showHelper.getTraktId(showId)
-        val season = Cursors.getInt(c, EpisodeColumns.SEASON)
-        val number = Cursors.getInt(c, EpisodeColumns.EPISODE)
+        val season = c.getInt(EpisodeColumns.SEASON)
+        val number = c.getInt(EpisodeColumns.EPISODE)
         c.close()
 
         queue(WatchlistEpisode(traktId, season, number, inWatchlist, listedAt))
@@ -391,8 +388,8 @@ class EpisodeTaskScheduler @Inject constructor(
       )
 
       if (c.moveToFirst()) {
-        val episode = Cursors.getInt(c, EpisodeColumns.EPISODE)
-        val season = Cursors.getInt(c, EpisodeColumns.SEASON)
+        val episode = c.getInt(EpisodeColumns.EPISODE)
+        val season = c.getInt(EpisodeColumns.SEASON)
 
         val values = ContentValues()
         values.put(EpisodeColumns.USER_RATING, rating)

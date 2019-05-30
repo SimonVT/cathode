@@ -23,10 +23,9 @@ import net.simonvt.cathode.actions.PagedResponse
 import net.simonvt.cathode.actions.comments.SyncShowComments.Params
 import net.simonvt.cathode.api.entity.Comment
 import net.simonvt.cathode.api.enumeration.Extended
-import net.simonvt.cathode.api.service.CommentsService
 import net.simonvt.cathode.api.service.ShowsService
-import net.simonvt.cathode.common.database.Cursors
 import net.simonvt.cathode.common.database.forEach
+import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.provider.DatabaseContract.CommentColumns
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Comments
@@ -42,7 +41,6 @@ import javax.inject.Inject
 
 class SyncShowComments @Inject constructor(
   private val context: Context,
-  private val commentsService: CommentsService,
   private val showsService: ShowsService,
   private val showHelper: ShowDatabaseHelper,
   private val usersHelper: UserDatabaseHelper
@@ -70,7 +68,7 @@ class SyncShowComments @Inject constructor(
       arrayOf(ItemTypeString.SHOW, showId.toString())
     )
     localComments.forEach { cursor ->
-      val id = Cursors.getLong(cursor, CommentColumns.ID)
+      val id = cursor.getLong(CommentColumns.ID)
       existingComments.add(id)
       deleteComments.add(id)
     }

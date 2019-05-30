@@ -18,7 +18,10 @@ package net.simonvt.cathode.entitymapper
 
 import android.database.Cursor
 import net.simonvt.cathode.common.data.MappedCursorLiveData
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getBoolean
+import net.simonvt.cathode.common.database.getInt
+import net.simonvt.cathode.common.database.getLong
+import net.simonvt.cathode.common.database.getStringOrNull
 import net.simonvt.cathode.entity.NextEpisode
 import net.simonvt.cathode.entity.ShowWithEpisode
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
@@ -33,20 +36,20 @@ object ShowWithEpisodeMapper : MappedCursorLiveData.CursorMapper<ShowWithEpisode
   }
 
   fun mapShowAndEpisode(cursor: Cursor): ShowWithEpisode {
-    val showId = Cursors.getLong(cursor, ShowColumns.ID)
+    val showId = cursor.getLong(ShowColumns.ID)
     val show = ShowMapper.mapShow(cursor)
 
-    val episodeId = Cursors.getLong(cursor, COLUMN_EPISODE_ID)
-    val episodeTitle = Cursors.getString(cursor, EpisodeColumns.TITLE)
-    val watched = Cursors.getBoolean(cursor, EpisodeColumns.WATCHED)
-    var firstAired = Cursors.getLong(cursor, EpisodeColumns.FIRST_AIRED)
+    val episodeId = cursor.getLong(COLUMN_EPISODE_ID)
+    val episodeTitle = cursor.getStringOrNull(EpisodeColumns.TITLE)
+    val watched = cursor.getBoolean(EpisodeColumns.WATCHED)
+    var firstAired = cursor.getLong(EpisodeColumns.FIRST_AIRED)
     if (firstAired != 0L) {
       firstAired = DataHelper.getFirstAired(firstAired)
     }
-    val season = Cursors.getInt(cursor, EpisodeColumns.SEASON)
-    val number = Cursors.getInt(cursor, EpisodeColumns.EPISODE)
-    val checkinStartedAt = Cursors.getLong(cursor, EpisodeColumns.STARTED_AT)
-    val checkinExpiresAt = Cursors.getLong(cursor, EpisodeColumns.EXPIRES_AT)
+    val season = cursor.getInt(EpisodeColumns.SEASON)
+    val number = cursor.getInt(EpisodeColumns.EPISODE)
+    val checkinStartedAt = cursor.getLong(EpisodeColumns.STARTED_AT)
+    val checkinExpiresAt = cursor.getLong(EpisodeColumns.EXPIRES_AT)
 
     val episode = NextEpisode(
       episodeId,

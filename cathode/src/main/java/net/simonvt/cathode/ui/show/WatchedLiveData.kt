@@ -19,7 +19,8 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import net.simonvt.cathode.common.data.ListenableLiveData
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getBoolean
+import net.simonvt.cathode.common.database.getInt
 import net.simonvt.cathode.entity.Episode
 import net.simonvt.cathode.entitymapper.EpisodeMapper
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
@@ -43,7 +44,7 @@ class WatchedLiveData(context: Context, private val showId: Long) :
       arrayOf(ShowColumns.WATCHING)
     )
     show.moveToFirst()
-    val watching = Cursors.getBoolean(show, ShowColumns.WATCHING)
+    val watching = show.getBoolean(ShowColumns.WATCHING)
     show.close()
 
     var toWatch: Cursor? = null
@@ -66,8 +67,8 @@ class WatchedLiveData(context: Context, private val showId: Long) :
         var lastWatchedSeason: Long = 0
         var lastWatchedEpisode: Long = -1
         if (lastWatched.moveToFirst()) {
-          lastWatchedSeason = Cursors.getInt(lastWatched, EpisodeColumns.SEASON).toLong()
-          lastWatchedEpisode = Cursors.getInt(lastWatched, EpisodeColumns.EPISODE).toLong()
+          lastWatchedSeason = lastWatched.getInt(EpisodeColumns.SEASON).toLong()
+          lastWatchedEpisode = lastWatched.getInt(EpisodeColumns.EPISODE).toLong()
         }
         lastWatched.close()
 

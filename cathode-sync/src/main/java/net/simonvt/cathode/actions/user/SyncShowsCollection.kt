@@ -23,7 +23,8 @@ import net.simonvt.cathode.actions.CallAction
 import net.simonvt.cathode.actions.user.SyncShowsCollection.Params
 import net.simonvt.cathode.api.entity.CollectionItem
 import net.simonvt.cathode.api.service.SyncService
-import net.simonvt.cathode.common.database.Cursors
+import net.simonvt.cathode.common.database.getInt
+import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.provider.DatabaseContract.EpisodeColumns
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns
 import net.simonvt.cathode.provider.ProviderSchematic.Episodes
@@ -72,11 +73,11 @@ class SyncShowsCollection @Inject constructor(
     val episodeIds = mutableListOf<Long>()
 
     while (c.moveToNext()) {
-      val id = Cursors.getLong(c, EpisodeColumns.ID)
-      val showId = Cursors.getLong(c, EpisodeColumns.SHOW_ID)
-      val season = Cursors.getInt(c, EpisodeColumns.SEASON)
-      val seasonId = Cursors.getLong(c, EpisodeColumns.SEASON_ID)
-      val collectedAt = Cursors.getLong(c, EpisodeColumns.COLLECTED_AT)
+      val id = c.getLong(EpisodeColumns.ID)
+      val showId = c.getLong(EpisodeColumns.SHOW_ID)
+      val season = c.getInt(EpisodeColumns.SEASON)
+      val seasonId = c.getLong(EpisodeColumns.SEASON_ID)
+      val collectedAt = c.getLong(EpisodeColumns.COLLECTED_AT)
 
       val collectedShow: CollectedShow?
       var showTraktId = showIdToTraktMap[showId]
@@ -97,7 +98,7 @@ class SyncShowsCollection @Inject constructor(
         collectedShow.seasons[season] = localCollectedSeason
       }
 
-      val number = Cursors.getInt(c, EpisodeColumns.EPISODE)
+      val number = c.getInt(EpisodeColumns.EPISODE)
 
       var localCollectedEpisode = localCollectedSeason.episodes[number]
       if (localCollectedEpisode == null) {

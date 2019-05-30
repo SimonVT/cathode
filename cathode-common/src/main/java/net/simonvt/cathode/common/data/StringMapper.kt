@@ -14,27 +14,20 @@
  * limitations under the License.
  */
 
-package net.simonvt.cathode.common.data;
+package net.simonvt.cathode.common.data
 
-import android.database.Cursor;
-import java.util.ArrayList;
-import java.util.List;
-import net.simonvt.cathode.common.database.Cursors;
+import android.database.Cursor
+import net.simonvt.cathode.common.database.getString
+import java.util.ArrayList
 
-public class StringMapper implements MappedCursorLiveData.CursorMapper<List<String>> {
+class StringMapper(private val column: String) : MappedCursorLiveData.CursorMapper<List<String>> {
 
-  private final String column;
-
-  public StringMapper(String column) {
-    this.column = column;
-  }
-
-  @Override public List<String> map(Cursor cursor) {
-    List<String> strings = new ArrayList<>();
-    cursor.moveToPosition(-1);
+  override fun map(cursor: Cursor): List<String> {
+    val strings = ArrayList<String>()
+    cursor.moveToPosition(-1)
     while (cursor.moveToNext()) {
-      strings.add(Cursors.getString(cursor, column));
+      strings.add(cursor.getString(column))
     }
-    return strings;
+    return strings
   }
 }

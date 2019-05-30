@@ -20,10 +20,8 @@ import android.content.Context
 import net.simonvt.cathode.actions.ActionFailedException
 import net.simonvt.cathode.actions.ErrorHandlerAction
 import net.simonvt.cathode.actions.invokeSync
-import net.simonvt.cathode.api.service.SeasonService
-import net.simonvt.cathode.api.service.ShowsService
-import net.simonvt.cathode.common.database.Cursors
 import net.simonvt.cathode.common.database.forEach
+import net.simonvt.cathode.common.database.getLong
 import net.simonvt.cathode.common.event.ItemsUpdatedEvent
 import net.simonvt.cathode.provider.DatabaseContract.ListItemColumns
 import net.simonvt.cathode.provider.DatabaseContract.ShowColumns
@@ -40,8 +38,6 @@ import javax.inject.Inject
 
 class SyncPendingShows @Inject constructor(
   private val context: Context,
-  private val showsService: ShowsService,
-  private val seasonService: SeasonService,
   private val showHelper: ShowDatabaseHelper,
   private val seasonHelper: SeasonDatabaseHelper,
   private val episodeHelper: EpisodeDatabaseHelper,
@@ -67,8 +63,8 @@ class SyncPendingShows @Inject constructor(
       where
     )
     userShows.forEach {
-      val showId = Cursors.getLong(userShows, ShowColumns.ID)
-      val traktId = Cursors.getLong(userShows, ShowColumns.TRAKT_ID)
+      val showId = userShows.getLong(ShowColumns.ID)
+      val traktId = userShows.getLong(ShowColumns.TRAKT_ID)
 
       if (syncItems[showId] == null) {
         syncItems[showId] = traktId
@@ -83,7 +79,7 @@ class SyncPendingShows @Inject constructor(
       arrayOf(ItemTypeString.SHOW)
     )
     listShows.forEach {
-      val showId = Cursors.getLong(listShows, ListItemColumns.ITEM_ID)
+      val showId = listShows.getLong(ListItemColumns.ITEM_ID)
       if (syncItems[showId] == null) {
         val traktId = showHelper.getTraktId(showId)
         val needsSync = showHelper.needsSync(showId)
@@ -101,7 +97,7 @@ class SyncPendingShows @Inject constructor(
       arrayOf(ItemTypeString.SEASON)
     )
     listSeasons.forEach {
-      val seasonId = Cursors.getLong(listSeasons, ListItemColumns.ITEM_ID)
+      val seasonId = listSeasons.getLong(ListItemColumns.ITEM_ID)
       val showId = seasonHelper.getShowId(seasonId)
       if (syncItems[showId] == null) {
         val traktId = showHelper.getTraktId(showId)
@@ -120,7 +116,7 @@ class SyncPendingShows @Inject constructor(
       arrayOf(ItemTypeString.EPISODE)
     )
     listEpisodes.forEach {
-      val episodeId = Cursors.getLong(listEpisodes, ListItemColumns.ITEM_ID)
+      val episodeId = listEpisodes.getLong(ListItemColumns.ITEM_ID)
       val showId = episodeHelper.getShowId(episodeId)
       if (syncItems[showId] == null) {
         val traktId = showHelper.getTraktId(showId)
