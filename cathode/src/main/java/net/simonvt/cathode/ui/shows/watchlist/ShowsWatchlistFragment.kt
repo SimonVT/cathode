@@ -112,7 +112,7 @@ class ShowsWatchlistFragment @Inject constructor(
     }
   }
 
-  override fun onShowClicked(showId: Long, title: String, overview: String) {
+  override fun onShowClicked(showId: Long, title: String?, overview: String?) {
     navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED)
   }
 
