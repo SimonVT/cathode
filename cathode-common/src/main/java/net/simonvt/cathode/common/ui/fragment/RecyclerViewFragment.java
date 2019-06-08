@@ -178,7 +178,7 @@ public abstract class RecyclerViewFragment<T extends RecyclerView.ViewHolder> ex
   }
 
   private void updateViewVisiblity(boolean animate) {
-    if (currentState == STATE_NONE) {
+    if (currentState == STATE_NONE || getView() == null) {
       return;
     }
 
