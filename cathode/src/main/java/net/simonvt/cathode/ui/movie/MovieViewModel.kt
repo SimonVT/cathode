@@ -84,7 +84,7 @@ class MovieViewModel @Inject constructor(
       movie = MappedCursorLiveData(
         context,
         Movies.withId(movieId),
-        null,
+        MovieMapper.projection,
         null,
         null,
         null,

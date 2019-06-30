@@ -38,6 +38,7 @@ import net.simonvt.cathode.entity.Movie;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.sync.scheduler.MovieTaskScheduler;
+import net.simonvt.cathode.ui.CathodeViewModelFactory;
 
 public class MovieHistoryFragment extends RefreshableAppBarFragment {
 
@@ -59,7 +60,7 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
   private long movieId;
   private String movieTitle;
 
-  private MovieHistoryViewModelFactory viewModelFactory;
+  private CathodeViewModelFactory viewModelFactory;
   private MovieHistoryViewModel viewModel;
 
   @BindView(R.id.topTitle) TextView released;
@@ -68,7 +69,7 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
   @BindView(R.id.watchedAtContainer) LinearLayout watchedAtContainer;
 
   @Inject public MovieHistoryFragment(MovieTaskScheduler movieScheduler,
-      MovieHistoryViewModelFactory viewModelFactory) {
+      CathodeViewModelFactory viewModelFactory) {
     this.movieScheduler = movieScheduler;
     this.viewModelFactory = viewModelFactory;
   }

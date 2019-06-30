@@ -24,7 +24,7 @@ import net.simonvt.cathode.entity.Movie
 import net.simonvt.cathode.entity.ShowWithEpisode
 import net.simonvt.cathode.entitymapper.MovieMapper
 import net.simonvt.cathode.entitymapper.ShowWithEpisodeMapper
-import net.simonvt.cathode.provider.ProviderSchematic
+import net.simonvt.cathode.provider.ProviderSchematic.Movies
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
@@ -44,8 +44,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     )
     watchingMovie = MappedCursorLiveData(
       application,
-      ProviderSchematic.Movies.WATCHING,
-      null,
+      Movies.WATCHING,
+      MovieMapper.projection,
       null,
       null,
       null,

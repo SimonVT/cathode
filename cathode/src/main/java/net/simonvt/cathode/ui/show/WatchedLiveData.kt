@@ -87,15 +87,17 @@ class WatchedLiveData(context: Context, private val showId: Long) :
       }
 
       if (toWatch!!.moveToFirst()) {
-        if (notificationUri != null) {
-          removeNotificationUri(notificationUri)
+        notificationUri?.let { removeNotificationUri(it) }
+        toWatch.notificationUri?.let {
+          notificationUri = it
+          addNotificationUri(it)
         }
-        notificationUri = toWatch.notificationUri
-        addNotificationUri(notificationUri)
         return EpisodeMapper.mapEpisode(toWatch)
       } else {
-        removeNotificationUri(notificationUri)
-        notificationUri = null
+        notificationUri?.let {
+          removeNotificationUri(it)
+          notificationUri = null
+        }
         return null
       }
     } finally {

@@ -41,6 +41,7 @@ import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.provider.helper.EpisodeDatabaseHelper;
 import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
+import net.simonvt.cathode.ui.CathodeViewModelFactory;
 
 public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
 
@@ -64,7 +65,7 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
   private long episodeId;
   private String showTitle;
 
-  private EpisodeHistoryViewModelFactory viewModelFactory;
+  private CathodeViewModelFactory viewModelFactory;
   private EpisodeHistoryViewModel viewModel;
 
   @BindView(R.id.topTitle) TextView title;
@@ -85,10 +86,9 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
     return args;
   }
 
-  @Inject public EpisodeHistoryFragment(
-      EpisodeTaskScheduler episodeScheduler, SyncService syncService,
-      EpisodeDatabaseHelper episodeHelper,
-      EpisodeHistoryViewModelFactory viewModelFactory) {
+  @Inject
+  public EpisodeHistoryFragment(EpisodeTaskScheduler episodeScheduler, SyncService syncService,
+      EpisodeDatabaseHelper episodeHelper, CathodeViewModelFactory viewModelFactory) {
     this.episodeScheduler = episodeScheduler;
     this.syncService = syncService;
     this.episodeHelper = episodeHelper;

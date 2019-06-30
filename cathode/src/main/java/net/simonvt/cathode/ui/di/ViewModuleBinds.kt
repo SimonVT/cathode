@@ -27,6 +27,7 @@ import net.simonvt.cathode.ui.credits.CreditsViewModel
 import net.simonvt.cathode.ui.dashboard.DashboardViewModel
 import net.simonvt.cathode.ui.lists.ListViewModel
 import net.simonvt.cathode.ui.lists.ListsViewModel
+import net.simonvt.cathode.ui.movie.MovieHistoryViewModel
 import net.simonvt.cathode.ui.movie.MovieViewModel
 import net.simonvt.cathode.ui.movie.RelatedMoviesViewModel
 import net.simonvt.cathode.ui.movies.collected.CollectedMoviesViewModel
@@ -34,6 +35,7 @@ import net.simonvt.cathode.ui.movies.watched.WatchedMoviesViewModel
 import net.simonvt.cathode.ui.movies.watchlist.MovieWatchlistViewModel
 import net.simonvt.cathode.ui.person.PersonViewModel
 import net.simonvt.cathode.ui.search.SearchViewModel
+import net.simonvt.cathode.ui.show.EpisodeHistoryViewModel
 import net.simonvt.cathode.ui.show.EpisodeViewModel
 import net.simonvt.cathode.ui.show.RelatedShowsViewModel
 import net.simonvt.cathode.ui.show.SeasonViewModel
@@ -191,4 +193,14 @@ abstract class ViewModuleBinds {
   @IntoMap
   @ViewModelKey(TraktLinkSyncViewModel::class)
   abstract fun traktLinkSyncViewModel(viewModel: TraktLinkSyncViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelKey(EpisodeHistoryViewModel::class)
+  abstract fun episodeHistoryViewModel(viewModel: EpisodeHistoryViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelKey(MovieHistoryViewModel::class)
+  abstract fun movieHistoryViewModel(viewModel: MovieHistoryViewModel): ViewModel
 }
