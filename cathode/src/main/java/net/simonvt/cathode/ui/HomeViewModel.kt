@@ -37,19 +37,15 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
       application,
       Shows.SHOW_WATCHING,
       ShowWithEpisodeMapper.projection,
-      null,
-      null,
-      null,
-      ShowWithEpisodeMapper
+      mapper = ShowWithEpisodeMapper,
+      allowNulls = true
     )
     watchingMovie = MappedCursorLiveData(
       application,
       Movies.WATCHING,
       MovieMapper.projection,
-      null,
-      null,
-      null,
-      MovieMapper
+      mapper = MovieMapper,
+      allowNulls = true
     )
   }
 }
