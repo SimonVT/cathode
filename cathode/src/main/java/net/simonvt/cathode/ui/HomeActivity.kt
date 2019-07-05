@@ -191,7 +191,7 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
       onDisplayEpisode(episodeId, showTitle)
     }
 
-    override fun onMovieClicked(view: WatchingView, id: Long, title: String, overview: String) {
+    override fun onMovieClicked(view: WatchingView, id: Long, title: String?, overview: String?) {
       watchingView.collapse()
 
       val top = stack.peek()
