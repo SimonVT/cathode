@@ -29,6 +29,7 @@ dependencies {
   implementation deps.retrofit
   implementation deps.timber
   implementation deps.androidx.lifecycle.extensions
+  implementation deps.androidx.swiperefreshlayout
   kapt deps.androidx.lifecycle.compiler
 
   testImplementation deps.junit
