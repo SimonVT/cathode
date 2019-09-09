@@ -177,9 +177,9 @@ class ListViewModel @Inject constructor(
       unsortedList
     }
 
-    //if (sortOrientation == SortOrientation.DESC) {
+    // if (sortOrientation == SortOrientation.DESC) {
     //  sortedList = sortedList.asReversed()
-    //}
+    // }
 
     listItems.postValue(sortedList)
   }

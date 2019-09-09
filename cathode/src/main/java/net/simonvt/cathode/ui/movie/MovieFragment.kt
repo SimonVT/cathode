@@ -83,7 +83,6 @@ class MovieFragment @Inject constructor(
   @BindView(R.id.info2)
   @JvmField
   var info2: TextView? = null
-  //@BindView(R.id.poster) RemoteImageView poster;
   @BindView(R.id.overview)
   @JvmField
   var overview: TextView? = null

@@ -78,7 +78,7 @@ class CommentFragment @Inject constructor(
     val args = arguments
     commentId = args!!.getLong(ARG_COMMENT_ID)
 
-    //columnCount = getResources().getInteger(R.integer.listColumns);
+    // columnCount = getResources().getInteger(R.integer.listColumns);
     columnCount = 1
 
     if (inState != null) {
