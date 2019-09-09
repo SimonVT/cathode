@@ -265,6 +265,7 @@ constructor(
             val call = checkinService.deleteCheckin()
             val response = call.execute()
             if (response.isSuccessful) {
+              workManager.enqueueNow(SyncWatchedMoviesWorker::class.java)
               return@launch
             }
           } catch (e: IOException) {
@@ -279,6 +280,7 @@ constructor(
           values.put(MovieColumns.EXPIRES_AT, expiresAt)
           context.contentResolver.update(Movies.withId(id), values, null, null)
 
+          workManager.enqueueNow(SyncWatchedMoviesWorker::class.java)
           workManager.enqueueNow(SyncWatchingWorker::class.java)
         }
       } finally {

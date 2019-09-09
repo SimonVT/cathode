@@ -23,6 +23,7 @@ import android.text.format.DateUtils;
 import androidx.work.WorkManager;
 import java.io.IOException;
 import javax.inject.Inject;
+import net.simonvt.cathode.actions.user.SyncWatchedShows;
 import net.simonvt.cathode.api.body.CheckinItem;
 import net.simonvt.cathode.api.entity.CheckinResponse;
 import net.simonvt.cathode.api.entity.Sharing;
@@ -40,6 +41,8 @@ import net.simonvt.cathode.provider.util.DataHelper;
 import net.simonvt.cathode.sync.BuildConfig;
 import net.simonvt.cathode.sync.R;
 import net.simonvt.cathode.work.WorkManagerUtils;
+import net.simonvt.cathode.work.user.SyncWatchedMoviesWorker;
+import net.simonvt.cathode.work.user.SyncWatchedShowsWorker;
 import net.simonvt.cathode.work.user.SyncWatchingWorker;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -95,8 +98,9 @@ public class CheckIn {
       Response<CheckinResponse> response = call.execute();
 
       if (response.isSuccessful()) {
+        WorkManagerUtils.enqueueNow(workManager, SyncWatchedShowsWorker.class);
         WorkManagerUtils.enqueueDelayed(workManager, SyncWatchingWorker.class,
-            runtime * DateUtils.MINUTE_IN_MILLIS);
+            (long) (runtime * DateUtils.MINUTE_IN_MILLIS * 0.9f));
         return true;
       } else {
         if (response.code() == 409) {
@@ -145,8 +149,9 @@ public class CheckIn {
       Response<CheckinResponse> response = call.execute();
 
       if (response.isSuccessful()) {
+        WorkManagerUtils.enqueueNow(workManager, SyncWatchedMoviesWorker.class);
         WorkManagerUtils.enqueueDelayed(workManager, SyncWatchingWorker.class,
-            runtime * DateUtils.MINUTE_IN_MILLIS);
+            (long) (runtime * DateUtils.MINUTE_IN_MILLIS * 0.9f));
         return true;
       } else {
         if (response.code() == 409) {

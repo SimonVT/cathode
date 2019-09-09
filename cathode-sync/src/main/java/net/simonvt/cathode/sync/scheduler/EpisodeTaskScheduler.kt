@@ -47,6 +47,7 @@ import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.sync.R
 import net.simonvt.cathode.sync.trakt.CheckIn
 import net.simonvt.cathode.work.enqueueNow
+import net.simonvt.cathode.work.user.SyncWatchedShowsWorker
 import net.simonvt.cathode.work.user.SyncWatchingWorker
 import timber.log.Timber
 import java.io.IOException
@@ -284,6 +285,7 @@ class EpisodeTaskScheduler @Inject constructor(
             val call = checkinService.deleteCheckin()
             val response = call.execute()
             if (response.isSuccessful) {
+              workManager.enqueueNow(SyncWatchedShowsWorker::class.java)
               return@launch
             }
           } catch (e: IOException) {
@@ -298,6 +300,7 @@ class EpisodeTaskScheduler @Inject constructor(
           values.put(EpisodeColumns.EXPIRES_AT, expiresAt)
           context.contentResolver.update(Episodes.withId(id), values, null, null)
 
+          workManager.enqueueNow(SyncWatchedShowsWorker::class.java)
           workManager.enqueueNow(SyncWatchingWorker::class.java)
         }
       } finally {
