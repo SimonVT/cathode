@@ -23,13 +23,17 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
 
-    <include layout="@layout/fragment_episode_top"/>
+    <include
+        layout="@layout/fragment_episode_top"
+        android:id="@+id/top"/>
   </FrameLayout>
 
   <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
 
-    <include layout="@layout/fragment_episode_content"/>
+    <include
+        layout="@layout/fragment_episode_content"
+        android:id="@+id/content"/>
   </FrameLayout>
 </LinearLayout>

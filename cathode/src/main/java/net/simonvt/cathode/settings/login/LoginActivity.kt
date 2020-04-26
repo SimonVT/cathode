@@ -21,22 +21,16 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import androidx.appcompat.widget.Toolbar
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import net.simonvt.cathode.BuildConfig
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.Authorization
 import net.simonvt.cathode.common.util.Intents
+import net.simonvt.cathode.databinding.ActivityLoginBinding
 import net.simonvt.cathode.ui.BaseActivity
 
 class LoginActivity : BaseActivity() {
 
-  @BindView(R.id.toolbar)
-  lateinit var toolbar: Toolbar
-  @BindView(R.id.login_in_app)
-  lateinit var loginInApp: View
+  private lateinit var binding: ActivityLoginBinding
 
   private var task: Int = 0
 
@@ -49,12 +43,15 @@ class LoginActivity : BaseActivity() {
     val intent = intent
     task = intent.getIntExtra(EXTRA_TASK, TASK_LOGIN)
 
-    setContentView(R.layout.activity_login)
-    ButterKnife.bind(this)
+    binding = ActivityLoginBinding.inflate(layoutInflater)
+    setContentView(binding.root)
 
-    toolbar.setTitle(R.string.login_title)
-    toolbar.setNavigationIcon(R.drawable.ic_action_cancel_24dp)
-    toolbar.setNavigationOnClickListener { finish() }
+    binding.toolbarInclude.toolbar.setTitle(R.string.login_title)
+    binding.toolbarInclude.toolbar.setNavigationIcon(R.drawable.ic_action_cancel_24dp)
+    binding.toolbarInclude.toolbar.setNavigationOnClickListener { finish() }
+
+    binding.loginInApp.setOnClickListener { onInAppClicked() }
+    binding.login.setOnClickListener(loginClickListener)
 
     browserIntent = Intent(Intent.ACTION_VIEW)
     browserIntent.data = Uri.parse(
@@ -63,8 +60,7 @@ class LoginActivity : BaseActivity() {
 
     if (!Intents.isAvailable(this, browserIntent)) {
       browserAvailable = false
-
-      loginInApp.visibility = View.GONE
+      binding.loginInApp.visibility = View.GONE
     }
 
     onNewIntent(getIntent())
@@ -103,14 +99,12 @@ class LoginActivity : BaseActivity() {
     finish()
   }
 
-  @OnClick(R.id.login_in_app)
-  internal fun onInAppClicked() {
+  private fun onInAppClicked() {
     val authorize = Intent(this@LoginActivity, OauthWebViewActivity::class.java)
     startActivityForResult(authorize, REQUEST_OAUTH)
   }
 
-  @OnClick(R.id.login)
-  internal fun onLoginClicked() {
+  private val loginClickListener = View.OnClickListener {
     if (browserAvailable) {
       startActivity(browserIntent)
     } else {

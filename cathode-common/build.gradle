@@ -5,15 +5,12 @@ plugins {
   id 'kotlin-kapt'
   id 'org.jlleitschuh.gradle.ktlint'
   id 'checkstyle'
-  id 'com.jakewharton.butterknife'
 }
 
 dependencies {
   implementation project(':trakt-api')
   implementation deps.kotlin.stdlib
   implementation deps.androidx.appcompat
-  implementation deps.butterknife
-  kapt deps.butterknifeCompiler
   implementation deps.dagger
   implementation deps.daggerAndroid
   implementation deps.daggerAndroidSupport
@@ -49,6 +46,10 @@ android {
 
     versionCode = parent.ext.versionCode;
     versionName = parent.ext.versionName
+  }
+
+  viewBinding {
+    enabled = true
   }
 
   lintOptions {

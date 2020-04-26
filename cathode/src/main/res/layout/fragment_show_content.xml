@@ -22,7 +22,9 @@
     android:animateLayoutChanges="true"
     android:orientation="vertical">
 
-  <include layout="@layout/checkmarks"/>
+  <include
+      layout="@layout/checkmarks"
+      android:id="@+id/checkmarks"/>
 
   <TextView
       android:id="@+id/overview"
@@ -91,16 +93,19 @@
 
   <include
       layout="@layout/section_cast"
+      android:id="@+id/cast"
       android:visibility="gone"
       tools:visibility="visible"/>
 
   <include
       layout="@layout/section_comments"
+      android:id="@+id/comments"
       android:visibility="gone"
       tools:visibility="visible"/>
 
   <include
       layout="@layout/section_related"
+      android:id="@+id/related"
       android:visibility="gone"
       tools:visibility="visible"/>
 
@@ -169,5 +174,7 @@
       tools:visibility="visible"
       style="@style/InfoLink"/>
 
-  <include layout="@layout/show_info_episodes"/>
+  <include
+      layout="@layout/show_info_episodes"
+      android:id="@+id/episodes"/>
 </LinearLayout>

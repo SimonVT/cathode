@@ -52,6 +52,10 @@ android {
     buildConfigField "String", "TMDB_API_KEY", "\"" + getTmdbApiKey() + "\""
   }
 
+  viewBinding {
+    enabled = true
+  }
+
   lintOptions {
     abortOnError false
   }

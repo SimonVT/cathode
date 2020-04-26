@@ -22,8 +22,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.ui.adapter.HeaderAdapter;
@@ -244,30 +242,39 @@ public class ShowWatchlistAdapter extends HeaderAdapter<Object, RecyclerView.Vie
 
   static class ShowViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.poster) RemoteImageView poster;
-    @BindView(R.id.indicator) IndicatorView indicator;
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.overview) TextView overview;
-    @BindView(R.id.overflow) OverflowView overflow;
-    @BindView(R.id.rating) CircularProgressIndicator rating;
+    RemoteImageView poster;
+    IndicatorView indicator;
+    TextView title;
+    TextView overview;
+    OverflowView overflow;
+    CircularProgressIndicator rating;
 
     ShowViewHolder(View v) {
       super(v);
-      ButterKnife.bind(this, v);
+      poster = v.findViewById(R.id.poster);
+      indicator = v.findViewById(R.id.indicator);
+      title = v.findViewById(R.id.title);
+      overview = v.findViewById(R.id.overview);
+      overflow = v.findViewById(R.id.overflow);
+      rating = v.findViewById(R.id.rating);
     }
   }
 
   static class EpisodeViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.screen) RemoteImageView screen;
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.firstAired) TimeStamp firstAired;
-    @BindView(R.id.episode) TextView episode;
-    @BindView(R.id.overflow) OverflowView overflow;
+    RemoteImageView screen;
+    TextView title;
+    TimeStamp firstAired;
+    TextView episode;
+    OverflowView overflow;
 
     EpisodeViewHolder(View v) {
       super(v);
-      ButterKnife.bind(this, v);
+      screen = v.findViewById(R.id.screen);
+      title = v.findViewById(R.id.title);
+      firstAired = v.findViewById(R.id.firstAired);
+      episode = v.findViewById(R.id.episode);
+      overflow = v.findViewById(R.id.overflow);
     }
   }
 }

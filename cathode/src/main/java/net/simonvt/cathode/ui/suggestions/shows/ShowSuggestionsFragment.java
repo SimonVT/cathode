@@ -49,10 +49,10 @@ public class ShowSuggestionsFragment extends SuggestionsFragment {
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.sort_by:
-        return adapter.getItem(pager.getCurrentItem()).onMenuItemClick(item);
+        return adapter.getItem(getBinding().pager.getCurrentItem()).onMenuItemClick(item);
 
       case R.id.menu_search:
-        navigationListener.onSearchClicked();
+        getNavigationListener().onSearchClicked();
         return true;
 
       default:

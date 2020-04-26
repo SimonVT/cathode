@@ -7,8 +7,6 @@ ext {
   okhttpVersion = '3.13.1'
   retrofitVersion = '2.5.0'
 
-  butterknifeVersion = '9.0.0-rc2'
-
   lintVersion = '26.4.0'
 
   deps = [
@@ -39,9 +37,6 @@ ext {
       javapoet: "com.squareup:javapoet:1.11.1",
 
       timber: 'com.jakewharton.timber:timber:4.7.1',
-      butterknife: "com.jakewharton:butterknife:$butterknifeVersion",
-      butterknifeCompiler: "com.jakewharton:butterknife-compiler:$butterknifeVersion",
-      butterknifeGradle: "com.jakewharton:butterknife-gradle-plugin:$butterknifeVersion",
 
       tmdb: 'com.uwetrottmann.tmdb2:tmdb-java:2.0.1',
 

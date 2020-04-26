@@ -20,11 +20,10 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.view.View
 import androidx.work.WorkManager
-import butterknife.ButterKnife
-import butterknife.OnClick
 import dagger.android.AndroidInjection
-import net.simonvt.cathode.R
+import net.simonvt.cathode.databinding.ActivityTraktLinkBinding
 import net.simonvt.cathode.settings.TraktLinkSettings
 import net.simonvt.cathode.settings.TraktTimestamps
 import net.simonvt.cathode.ui.BaseActivity
@@ -39,6 +38,8 @@ class TraktLinkActivity : BaseActivity() {
   @Inject
   lateinit var workManager: WorkManager
 
+  private lateinit var binding: ActivityTraktLinkBinding
+
   private lateinit var settings: SharedPreferences
 
   override fun onCreate(inState: Bundle?) {
@@ -46,18 +47,18 @@ class TraktLinkActivity : BaseActivity() {
     AndroidInjection.inject(this)
     settings = PreferenceManager.getDefaultSharedPreferences(this)
 
-    setContentView(R.layout.activity_trakt_link)
-    ButterKnife.bind(this)
+    binding = ActivityTraktLinkBinding.inflate(layoutInflater)
+    setContentView(binding.root)
+    binding.sync.setOnClickListener(syncClickListener)
+    binding.forget.setOnClickListener(forgetClickListener)
   }
 
-  @OnClick(R.id.sync)
-  internal fun sync() {
+  private val syncClickListener = View.OnClickListener {
     val i = Intent(this, TraktLinkSyncActivity::class.java)
     startActivity(i)
   }
 
-  @OnClick(R.id.forget)
-  internal fun forget() {
+  private val forgetClickListener = View.OnClickListener {
     TraktTimestamps.clear(this)
 
     settings.edit()

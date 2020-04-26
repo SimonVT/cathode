@@ -22,8 +22,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.OverflowView;
@@ -251,65 +249,79 @@ public class ListAdapter extends BaseAdapter<ListItem, ListAdapter.ListViewHolde
 
   public static class ListViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.overflow) OverflowView overflow;
+    OverflowView overflow;
 
     public ListViewHolder(View v) {
       super(v);
-      ButterKnife.bind(this, v);
+      overflow = v.findViewById(R.id.overflow);
     }
   }
 
   public static class ShowViewHolder extends ListViewHolder {
 
-    @BindView(R.id.poster) RemoteImageView poster;
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.overview) TextView overview;
+    RemoteImageView poster;
+    TextView title;
+    TextView overview;
 
     public ShowViewHolder(View v) {
       super(v);
+      poster = v.findViewById(R.id.poster);
+      title = v.findViewById(R.id.title);
+      overview = v.findViewById(R.id.overview);
     }
   }
 
   public static class SeasonViewHolder extends ListViewHolder {
 
-    @BindView(R.id.poster) RemoteImageView poster;
-    @BindView(R.id.season) TextView season;
-    @BindView(R.id.show) TextView show;
+    RemoteImageView poster;
+    TextView season;
+    TextView show;
 
     public SeasonViewHolder(View v) {
       super(v);
+      poster = v.findViewById(R.id.poster);
+      season = v.findViewById(R.id.season);
+      show = v.findViewById(R.id.show);
     }
   }
 
   public static class EpisodeViewHolder extends ListViewHolder {
 
-    @BindView(R.id.screen) RemoteImageView screen;
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.showTitle) TextView showTitle;
+    RemoteImageView screen;
+    TextView title;
+    TextView showTitle;
 
     EpisodeViewHolder(View v) {
       super(v);
+      screen = v.findViewById(R.id.screen);
+      title = v.findViewById(R.id.title);
+      showTitle = v.findViewById(R.id.showTitle);
     }
   }
 
   public static class MovieViewHolder extends ListViewHolder {
 
-    @BindView(R.id.poster) public RemoteImageView poster;
-    @BindView(R.id.title) public TextView title;
-    @BindView(R.id.overview) public TextView overview;
+    public RemoteImageView poster;
+    public TextView title;
+    public TextView overview;
 
     public MovieViewHolder(View v) {
       super(v);
+      poster = v.findViewById(R.id.poster);
+      title = v.findViewById(R.id.title);
+      overview = v.findViewById(R.id.overview);
     }
   }
 
   public static class PersonViewHolder extends ListViewHolder {
 
-    @BindView(R.id.headshot) RemoteImageView headshot;
-    @BindView(R.id.person_name) TextView name;
+    RemoteImageView headshot;
+    TextView name;
 
     public PersonViewHolder(View v) {
       super(v);
+      headshot = v.findViewById(R.id.headshot);
+      name = v.findViewById(R.id.person_name);
     }
   }
 }

@@ -19,13 +19,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import butterknife.BindView;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -35,6 +33,7 @@ import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.DateStringUtils;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
+import net.simonvt.cathode.databinding.HistoryFragmentBinding;
 import net.simonvt.cathode.entity.Episode;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
@@ -68,10 +67,7 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
   private CathodeViewModelFactory viewModelFactory;
   private EpisodeHistoryViewModel viewModel;
 
-  @BindView(R.id.topTitle) TextView title;
-  @BindView(R.id.topSubtitle) TextView firstAired;
-
-  @BindView(R.id.watchedAtContainer) LinearLayout watchedAtContainer;
+  private HistoryFragmentBinding binding;
 
   public static String getTag(long episodeId) {
     return TAG + "/" + episodeId + "/history/" + Ids.newId();
@@ -120,12 +116,18 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
   @Override
   protected View createView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle inState) {
-    return inflater.inflate(R.layout.history_fragment, container, false);
+    binding = HistoryFragmentBinding.inflate(inflater, container, false);
+    return binding.getRoot();
   }
 
   @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
     setResult(result);
+  }
+
+  @Override public void onDestroyView() {
+    binding = null;
+    super.onDestroyView();
   }
 
   public void onRemoveHistoryItem(long historyId, int position) {
@@ -148,12 +150,12 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
 
     final String firstAiredString =
         DateStringUtils.getAirdateInterval(requireContext(), episode.getFirstAired(), true);
-    this.firstAired.setText(firstAiredString);
+    binding.top.topSubtitle.setText(firstAiredString);
 
     showTitle = episode.getShowTitle();
 
     setTitle(showTitle);
-    this.title.setText(title);
+    binding.top.topTitle.setText(title);
     final String screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, episodeId);
     setBackdrop(screenshotUri);
   }
@@ -180,33 +182,33 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
     }
 
     if (result == null) {
-      if (typeOrClear(watchedAtContainer, Type.LOADING)) {
+      if (typeOrClear(binding.content.content, Type.LOADING)) {
         return;
       }
 
-      View v = LayoutInflater.from(watchedAtContainer.getContext())
-          .inflate(R.layout.history_progress, watchedAtContainer, false);
+      View v = LayoutInflater.from(binding.content.content.getContext())
+          .inflate(R.layout.history_progress, binding.content.content, false);
       v.setTag(Type.LOADING);
-      watchedAtContainer.addView(v);
+      binding.content.content.addView(v);
     } else if (!result.isSuccessful()) {
-      if (typeOrClear(watchedAtContainer, Type.ERROR)) {
+      if (typeOrClear(binding.content.content, Type.ERROR)) {
         return;
       }
 
-      View v = LayoutInflater.from(watchedAtContainer.getContext())
-          .inflate(R.layout.history_error, watchedAtContainer, false);
+      View v = LayoutInflater.from(binding.content.content.getContext())
+          .inflate(R.layout.history_error, binding.content.content, false);
       v.setTag(Type.ERROR);
-      watchedAtContainer.addView(v);
+      binding.content.content.addView(v);
     } else if (result.getItems().size() == 0) {
 
-      if (typeOrClear(watchedAtContainer, Type.EMPTY)) {
+      if (typeOrClear(binding.content.content, Type.EMPTY)) {
         return;
       }
 
-      View v = LayoutInflater.from(watchedAtContainer.getContext())
-          .inflate(R.layout.history_empty, watchedAtContainer, false);
+      View v = LayoutInflater.from(binding.content.content.getContext())
+          .inflate(R.layout.history_empty, binding.content.content, false);
       v.setTag(Type.ERROR);
-      watchedAtContainer.addView(v);
+      binding.content.content.addView(v);
     } else {
       List<HistoryItem> items = result.getItems();
       List<Long> ids = new ArrayList<>();
@@ -214,16 +216,16 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
         ids.add(item.historyId);
       }
 
-      for (int i = watchedAtContainer.getChildCount() - 1; i >= 0; i--) {
-        View v = watchedAtContainer.getChildAt(i);
+      for (int i = binding.content.content.getChildCount() - 1; i >= 0; i--) {
+        View v = binding.content.content.getChildAt(i);
         if (v.getTag() != Type.ITEM) {
-          watchedAtContainer.removeViewAt(i);
+          binding.content.content.removeViewAt(i);
           continue;
         }
 
         final long id = (long) v.getTag(R.id.historyId);
         if (!ids.contains(id)) {
-          watchedAtContainer.removeViewAt(i);
+          binding.content.content.removeViewAt(i);
         }
       }
 
@@ -233,8 +235,8 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
 
         View v = null;
 
-        if (i < watchedAtContainer.getChildCount()) {
-          v = watchedAtContainer.getChildAt(i);
+        if (i < binding.content.content.getChildCount()) {
+          v = binding.content.content.getChildAt(i);
         }
 
         if (v != null) {
@@ -255,8 +257,8 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
           }
         }
 
-        v = LayoutInflater.from(watchedAtContainer.getContext())
-            .inflate(R.layout.history_row, watchedAtContainer, false);
+        v = LayoutInflater.from(binding.content.content.getContext())
+            .inflate(R.layout.history_row, binding.content.content, false);
         TextView watchedAt = v.findViewById(R.id.watchedAt);
         View remove = v.findViewById(R.id.remove);
 
@@ -269,7 +271,7 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
           }
         });
 
-        watchedAtContainer.addView(v, i);
+        binding.content.content.addView(v, i);
       }
     }
   }

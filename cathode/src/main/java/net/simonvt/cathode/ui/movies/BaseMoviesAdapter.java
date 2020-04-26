@@ -21,8 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
@@ -167,15 +165,19 @@ public abstract class BaseMoviesAdapter<T extends BaseMoviesAdapter.ViewHolder>
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.poster) public RemoteImageView poster;
-    @BindView(R.id.title) public TextView title;
-    @BindView(R.id.overview) public TextView overview;
-    @BindView(R.id.overflow) public OverflowView overflow;
-    @BindView(R.id.rating) @Nullable public CircularProgressIndicator rating;
+    public RemoteImageView poster;
+    public TextView title;
+    public TextView overview;
+    public OverflowView overflow;
+    @Nullable public CircularProgressIndicator rating;
 
     public ViewHolder(View v) {
       super(v);
-      ButterKnife.bind(this, v);
+      poster = v.findViewById(R.id.poster);
+      title = v.findViewById(R.id.title);
+      overview = v.findViewById(R.id.overview);
+      overflow = v.findViewById(R.id.overflow);
+      rating = v.findViewById(R.id.rating);
     }
   }
 }

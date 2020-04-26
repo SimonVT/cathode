@@ -23,8 +23,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.CircularProgressIndicator;
@@ -163,16 +161,21 @@ public class ShowDescriptionAdapter extends BaseAdapter<Show, ShowDescriptionAda
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.poster) RemoteImageView poster;
-    @BindView(R.id.indicator) IndicatorView indicator;
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.overview) TextView overview;
-    @BindView(R.id.overflow) OverflowView overflow;
-    @BindView(R.id.rating) @Nullable CircularProgressIndicator rating;
+    RemoteImageView poster;
+    IndicatorView indicator;
+    TextView title;
+    TextView overview;
+    OverflowView overflow;
+    @Nullable CircularProgressIndicator rating;
 
     ViewHolder(View v) {
       super(v);
-      ButterKnife.bind(this, v);
+      poster = v.findViewById(R.id.poster);
+      indicator = v.findViewById(R.id.indicator);
+      title = v.findViewById(R.id.title);
+      overview = v.findViewById(R.id.overview);
+      overflow = v.findViewById(R.id.overflow);
+      rating = v.findViewById(R.id.rating);
     }
   }
 }

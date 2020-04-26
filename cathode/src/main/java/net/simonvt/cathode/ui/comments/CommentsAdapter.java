@@ -28,8 +28,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -278,15 +276,15 @@ public class CommentsAdapter extends BaseAdapter<Comment, CommentsAdapter.ViewHo
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.infoPane) View infoPane;
-    @BindView(R.id.avatar) RemoteImageView avatar;
-    @BindView(R.id.username) TextView username;
-    @BindView(R.id.date) TextView date;
-    @BindView(R.id.commentText) TextView commentText;
-    @BindView(R.id.likes) TextView likes;
-    @BindView(R.id.replies) @Nullable TextView replies;
-    @BindView(R.id.spoiler) View spoiler;
-    @BindView(R.id.spoilerOverlay) View spoilerOverlay;
+    View infoPane;
+    RemoteImageView avatar;
+    TextView username;
+    TextView date;
+    TextView commentText;
+    TextView likes;
+    @Nullable TextView replies;
+    View spoiler;
+    View spoilerOverlay;
 
     ViewPropertyAnimator commentAnimator;
     ViewPropertyAnimator spoilerAnimator;
@@ -304,7 +302,15 @@ public class CommentsAdapter extends BaseAdapter<Comment, CommentsAdapter.ViewHo
 
     public ViewHolder(View itemView) {
       super(itemView);
-      ButterKnife.bind(this, itemView);
+      infoPane = itemView.findViewById(R.id.infoPane);
+      avatar = itemView.findViewById(R.id.avatar);
+      username = itemView.findViewById(R.id.username);
+      date = itemView.findViewById(R.id.date);
+      commentText = itemView.findViewById(R.id.commentText);
+      likes = itemView.findViewById(R.id.likes);
+      replies = itemView.findViewById(R.id.replies);
+      spoiler = itemView.findViewById(R.id.spoiler);
+      spoilerOverlay = itemView.findViewById(R.id.spoilerOverlay);
     }
   }
 }

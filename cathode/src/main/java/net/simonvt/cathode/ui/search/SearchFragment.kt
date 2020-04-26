@@ -23,11 +23,10 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import butterknife.BindView
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment
-import net.simonvt.cathode.common.widget.ErrorView
 import net.simonvt.cathode.common.widget.SearchView
+import net.simonvt.cathode.databinding.SearchFragmentBinding
 import net.simonvt.cathode.search.SearchHandler.SearchResult
 import net.simonvt.cathode.settings.Settings
 import net.simonvt.cathode.sync.scheduler.SearchTaskScheduler
@@ -41,9 +40,8 @@ class SearchFragment @Inject constructor(
   private val searchScheduler: SearchTaskScheduler
 ) : ToolbarGridFragment<ViewHolder>(), SearchAdapter.OnResultClickListener {
 
-  @BindView(R.id.errorView)
-  @JvmField
-  var errorView: ErrorView? = null
+  private var _binding: SearchFragmentBinding? = null
+  private val binding get() = _binding!!
 
   private lateinit var viewModel: SearchViewModel
 
@@ -119,7 +117,8 @@ class SearchFragment @Inject constructor(
     container: ViewGroup?,
     inState: Bundle?
   ): View? {
-    return inflater.inflate(R.layout.search_fragment, container, false)
+    _binding = SearchFragmentBinding.inflate(inflater, container, false)
+    return binding.root
   }
 
   override fun onViewCreated(view: View, inState: Bundle?) {
@@ -149,6 +148,7 @@ class SearchFragment @Inject constructor(
 
   override fun onDestroyView() {
     searchView = null
+    _binding = null
     super.onDestroyView()
   }
 
@@ -166,9 +166,9 @@ class SearchFragment @Inject constructor(
 
   private fun updateErrorView() {
     if (displayErrorView) {
-      errorView!!.show()
+      binding.errorView.show()
     } else {
-      errorView!!.hide()
+      binding.errorView.hide()
     }
   }
 

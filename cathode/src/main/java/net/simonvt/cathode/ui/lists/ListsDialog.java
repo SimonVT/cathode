@@ -21,16 +21,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,6 +34,9 @@ import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
+import net.simonvt.cathode.databinding.DialogListsBinding;
+import net.simonvt.cathode.databinding.DialogListsEmptyBinding;
+import net.simonvt.cathode.databinding.DialogListsLoadingBinding;
 import net.simonvt.cathode.entity.UserList;
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler;
 import net.simonvt.cathode.ui.lists.DialogListItemListMapper.DialogListItem;
@@ -75,12 +74,9 @@ public class ListsDialog extends DialogFragment {
 
   private List<Item> lists = new ArrayList<>();
 
-  private Unbinder unbinder;
-
-  @BindView(R.id.container) LinearLayout container;
-
-  private View loading;
-  private View empty;
+  private DialogListsBinding binding;
+  private DialogListsLoadingBinding loadingBinding;
+  private DialogListsEmptyBinding emptyBinding;
 
   public static Bundle getArgs(ItemType itemType, long itemId) {
     Bundle args = new Bundle();
@@ -122,24 +118,21 @@ public class ListsDialog extends DialogFragment {
   @Nullable @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle inState) {
-    View view = inflater.inflate(R.layout.dialog_lists, container, false);
-    LinearLayout listsContainer = view.findViewById(R.id.container);
-    loading = inflater.inflate(R.layout.dialog_lists_loading, listsContainer, false);
-    empty = inflater.inflate(R.layout.dialog_lists_empty, listsContainer, false);
-    return view;
+    binding = DialogListsBinding.inflate(inflater, container, false);
+    loadingBinding = DialogListsLoadingBinding.inflate(inflater, binding.container, false);
+    emptyBinding = DialogListsEmptyBinding.inflate(inflater, binding.container, false);
+    return binding.getRoot();
   }
 
   @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
-    unbinder = ButterKnife.bind(this, view);
     updateList();
   }
 
   @Override public void onDestroyView() {
-    unbinder.unbind();
-    unbinder = null;
-    loading = null;
-    empty = null;
+    binding = null;
+    loadingBinding = null;
+    emptyBinding = null;
     super.onDestroyView();
   }
 
@@ -160,16 +153,16 @@ public class ListsDialog extends DialogFragment {
       return;
     }
 
-    container.removeAllViews();
+    binding.container.removeAllViews();
 
     if (userLists == null || listItems == null) {
       Timber.d("Something is null");
-      container.addView(loading);
+      binding.container.addView(loadingBinding.getRoot());
       return;
     }
 
     if (userLists.isEmpty()) {
-      container.addView(empty);
+      binding.container.addView(emptyBinding.getRoot());
       return;
     }
 
@@ -195,7 +188,7 @@ public class ListsDialog extends DialogFragment {
 
     for (final Item item : lists) {
       View v = createView(item.listId, item.listName, item.checked);
-      container.addView(v);
+      binding.container.addView(v);
     }
   }
 
@@ -216,8 +209,8 @@ public class ListsDialog extends DialogFragment {
   }
 
   private View createView(final long listId, String listName, boolean checked) {
-    View v =
-        LayoutInflater.from(requireContext()).inflate(R.layout.row_dialog_lists, container, false);
+    View v = LayoutInflater.from(requireContext())
+        .inflate(R.layout.row_dialog_lists, binding.container, false);
 
     final TextView name = v.findViewById(R.id.name);
     final CheckBox checkBox = v.findViewById(R.id.checkBox);

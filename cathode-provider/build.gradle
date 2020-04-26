@@ -43,6 +43,10 @@ android {
     abortOnError false
   }
 
+  viewBinding {
+    enabled = true
+  }
+
   buildTypes {
     debug {
       buildConfigField "String", "PROVIDER_AUTHORITY",

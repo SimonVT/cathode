@@ -22,8 +22,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.RemoteImageView;
@@ -96,13 +94,15 @@ public class DashboardUpcomingShowsAdapter
 
   static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.poster) RemoteImageView poster;
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.nextEpisode) TextView nextEpisode;
+    RemoteImageView poster;
+    TextView title;
+    TextView nextEpisode;
 
     ViewHolder(View itemView) {
       super(itemView);
-      ButterKnife.bind(this, itemView);
+      poster = itemView.findViewById(R.id.poster);
+      title = itemView.findViewById(R.id.title);
+      nextEpisode = itemView.findViewById(R.id.nextEpisode);
     }
   }
 }

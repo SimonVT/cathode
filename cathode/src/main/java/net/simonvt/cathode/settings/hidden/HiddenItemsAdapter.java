@@ -22,8 +22,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.adapter.HeaderAdapter;
 import net.simonvt.cathode.common.widget.OverflowView;
@@ -229,33 +227,39 @@ public class HiddenItemsAdapter extends HeaderAdapter<Object, RecyclerView.ViewH
 
   static class ListViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.overflow) OverflowView overflow;
+    OverflowView overflow;
 
     ListViewHolder(View v) {
       super(v);
-      ButterKnife.bind(this, v);
+      overflow = v.findViewById(R.id.overflow);
     }
   }
 
   static class ShowViewHolder extends ListViewHolder {
 
-    @BindView(R.id.poster) RemoteImageView poster;
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.overview) TextView overview;
+    RemoteImageView poster;
+    TextView title;
+    TextView overview;
 
     ShowViewHolder(View v) {
       super(v);
+      poster = v.findViewById(R.id.poster);
+      title = v.findViewById(R.id.title);
+      overview = v.findViewById(R.id.overview);
     }
   }
 
   static class MovieViewHolder extends ListViewHolder {
 
-    @BindView(R.id.poster) RemoteImageView poster;
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.overview) TextView overview;
+    RemoteImageView poster;
+    TextView title;
+    TextView overview;
 
     MovieViewHolder(View v) {
       super(v);
+      poster = v.findViewById(R.id.poster);
+      title = v.findViewById(R.id.title);
+      overview = v.findViewById(R.id.overview);
     }
   }
 }

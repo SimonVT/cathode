@@ -22,14 +22,11 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
-import butterknife.BindView
-import butterknife.OnClick
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.util.TraktUtils
@@ -41,8 +38,8 @@ import net.simonvt.cathode.common.util.Intents
 import net.simonvt.cathode.common.util.Joiner
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.common.widget.CircleTransformation
-import net.simonvt.cathode.common.widget.CircularProgressIndicator
 import net.simonvt.cathode.common.widget.RemoteImageView
+import net.simonvt.cathode.databinding.FragmentMovieBinding
 import net.simonvt.cathode.entity.CastMember
 import net.simonvt.cathode.entity.Comment
 import net.simonvt.cathode.entity.Movie
@@ -77,87 +74,8 @@ class MovieFragment @Inject constructor(
   private var comments: List<Comment>? = null
   private var related: List<Movie>? = null
 
-  @BindView(R.id.info1)
-  @JvmField
-  var info1: TextView? = null
-  @BindView(R.id.info2)
-  @JvmField
-  var info2: TextView? = null
-  @BindView(R.id.overview)
-  @JvmField
-  var overview: TextView? = null
-
-  @BindView(R.id.genresDivider)
-  @JvmField
-  var genresDivider: View? = null
-  @BindView(R.id.genresTitle)
-  @JvmField
-  var genresTitle: View? = null
-  @BindView(R.id.genres)
-  @JvmField
-  var genresView: TextView? = null
-
-  @BindView(R.id.checkmarks)
-  @JvmField
-  var checkmarks: View? = null
-  @BindView(R.id.isWatched)
-  @JvmField
-  var isWatched: TextView? = null
-  @BindView(R.id.inCollection)
-  @JvmField
-  var collection: TextView? = null
-  @BindView(R.id.inWatchlist)
-  @JvmField
-  var watchlist: TextView? = null
-  @BindView(R.id.rating)
-  @JvmField
-  var rating: CircularProgressIndicator? = null
-
-  @BindView(R.id.castParent)
-  @JvmField
-  var castParent: View? = null
-  @BindView(R.id.castHeader)
-  @JvmField
-  var castHeader: View? = null
-  @BindView(R.id.castContainer)
-  @JvmField
-  var castContainer: LinearLayout? = null
-
-  @BindView(R.id.commentsParent)
-  @JvmField
-  var commentsParent: View? = null
-  @BindView(R.id.commentsHeader)
-  @JvmField
-  var commentsHeader: View? = null
-  @BindView(R.id.commentsContainer)
-  @JvmField
-  var commentsContainer: LinearLayout? = null
-
-  @BindView(R.id.relatedParent)
-  @JvmField
-  var relatedParent: View? = null
-  @BindView(R.id.relatedHeader)
-  @JvmField
-  var relatedHeader: View? = null
-  @BindView(R.id.relatedContainer)
-  @JvmField
-  var relatedContainer: LinearLayout? = null
-
-  @BindView(R.id.trailer)
-  @JvmField
-  var trailer: TextView? = null
-  @BindView(R.id.website)
-  @JvmField
-  var website: TextView? = null
-  @BindView(R.id.viewOnTrakt)
-  @JvmField
-  var viewOnTrakt: TextView? = null
-  @BindView(R.id.viewOnImdb)
-  @JvmField
-  var viewOnImdb: TextView? = null
-  @BindView(R.id.viewOnTmdb)
-  @JvmField
-  var viewOnTmdb: TextView? = null
+  private var _binding: FragmentMovieBinding? = null
+  private val binding get() = _binding!!
 
   var movieId: Long = 0
     private set
@@ -228,31 +146,51 @@ class MovieFragment @Inject constructor(
   }
 
   override fun createView(inflater: LayoutInflater, container: ViewGroup?, inState: Bundle?): View {
-    return inflater.inflate(R.layout.fragment_movie, container, false)
+    _binding = FragmentMovieBinding.inflate(inflater, container, false)
+    return binding.root
   }
 
   override fun onViewCreated(view: View, inState: Bundle?) {
     super.onViewCreated(view, inState)
     val linkDrawable = VectorDrawableCompat.create(resources, R.drawable.ic_link_black_24dp, null)
-    website!!.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
-    viewOnTrakt!!.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
-    viewOnImdb!!.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
-    viewOnTmdb!!.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
+    binding.content.website.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
+    binding.content.viewOnTrakt.setCompoundDrawablesWithIntrinsicBounds(
+      linkDrawable,
+      null,
+      null,
+      null
+    )
+    binding.content.viewOnImdb.setCompoundDrawablesWithIntrinsicBounds(
+      linkDrawable,
+      null,
+      null,
+      null
+    )
+    binding.content.viewOnTmdb.setCompoundDrawablesWithIntrinsicBounds(
+      linkDrawable,
+      null,
+      null,
+      null
+    )
 
     val playDrawable =
       VectorDrawableCompat.create(resources, R.drawable.ic_play_arrow_black_24dp, null)
-    trailer!!.setCompoundDrawablesWithIntrinsicBounds(playDrawable, null, null, null)
+    binding.content.trailer.setCompoundDrawablesWithIntrinsicBounds(playDrawable, null, null, null)
 
-    overview!!.text = movieOverview
+    binding.content.overview.text = movieOverview
 
     if (TraktLinkSettings.isLinked(requireContext())) {
-      rating!!.setOnClickListener {
+      binding.top.rating.setOnClickListener {
         requireFragmentManager().instantiate(
           RatingDialog::class.java,
           RatingDialog.getArgs(RatingDialog.Type.MOVIE, movieId, currentRating)
         ).show(requireFragmentManager(), DIALOG_RATING)
       }
     }
+
+    binding.content.cast.castHeader.setOnClickListener(displayCastClickListener)
+    binding.content.comments.commentsHeader.setOnClickListener(displayCommentsClickListener)
+    binding.content.related.relatedHeader.setOnClickListener(displayRelatedClickListener)
 
     updateView()
     updateGenreViews()
@@ -261,18 +199,20 @@ class MovieFragment @Inject constructor(
     updateComments()
   }
 
-  @OnClick(R.id.castHeader)
-  fun onDisplayCast() {
+  override fun onDestroyView() {
+    _binding = null
+    super.onDestroyView()
+  }
+
+  private val displayCastClickListener = View.OnClickListener {
     navigationListener.onDisplayCredits(ItemType.MOVIE, movieId, movieTitle)
   }
 
-  @OnClick(R.id.commentsHeader)
-  fun onShowComments() {
+  private val displayCommentsClickListener = View.OnClickListener {
     navigationListener.onDisplayComments(ItemType.MOVIE, movieId)
   }
 
-  @OnClick(R.id.relatedHeader)
-  fun onShowRelated() {
+  private val displayRelatedClickListener = View.OnClickListener {
     navigationListener.onDisplayRelatedMovies(movieId, movieTitle)
   }
 
@@ -426,7 +366,7 @@ class MovieFragment @Inject constructor(
     setBackdrop(backdropUri, true)
 
     currentRating = movie!!.userRating
-    rating!!.setValue(movie!!.rating)
+    binding.top.rating.setValue(movie!!.rating)
 
     movieOverview = movie!!.overview
     watched = movie!!.watched
@@ -440,10 +380,10 @@ class MovieFragment @Inject constructor(
     }
 
     val hasCheckmark = watched || collected || inWatchlist
-    checkmarks!!.visibility = if (hasCheckmark) View.VISIBLE else View.GONE
-    isWatched!!.visibility = if (watched) View.VISIBLE else View.GONE
-    collection!!.visibility = if (collected) View.VISIBLE else View.GONE
-    watchlist!!.visibility = if (inWatchlist) View.VISIBLE else View.GONE
+    binding.content.checkmarks.checkmarks.visibility = if (hasCheckmark) View.VISIBLE else View.GONE
+    binding.content.checkmarks.isWatched.visibility = if (watched) View.VISIBLE else View.GONE
+    binding.content.checkmarks.inCollection.visibility = if (collected) View.VISIBLE else View.GONE
+    binding.content.checkmarks.inWatchlist.visibility = if (inWatchlist) View.VISIBLE else View.GONE
 
     var infoOneText = ""
     if (movie?.year ?: 0 > 0) {
@@ -456,36 +396,36 @@ class MovieFragment @Inject constructor(
         infoOneText = movie!!.certification!!
       }
     }
-    info1!!.text = infoOneText
+    binding.top.info1.text = infoOneText
 
     if (movie?.runtime ?: 0 > 0) {
       val runtime = DateStringUtils.getRuntimeString(requireContext(), movie!!.runtime.toLong())
-      info2!!.text = runtime
+      binding.top.info2.text = runtime
     }
 
-    this.overview!!.text = movieOverview
+    binding.content.overview.text = movieOverview
 
     val trailer = movie!!.trailer
     if (!TextUtils.isEmpty(trailer)) {
-      this.trailer!!.visibility = View.VISIBLE
-      this.trailer!!.setOnClickListener { Intents.openUrl(requireContext(), trailer) }
+      binding.content.trailer.visibility = View.VISIBLE
+      binding.content.trailer.setOnClickListener { Intents.openUrl(requireContext(), trailer) }
     } else {
-      this.trailer!!.visibility = View.GONE
+      binding.content.trailer.visibility = View.GONE
     }
 
     val website = movie!!.homepage
     if (!TextUtils.isEmpty(website)) {
-      this.website!!.visibility = View.VISIBLE
-      this.website!!.text = website
-      this.website!!.setOnClickListener { Intents.openUrl(requireContext(), website) }
+      binding.content.website.visibility = View.VISIBLE
+      binding.content.website.text = website
+      binding.content.website.setOnClickListener { Intents.openUrl(requireContext(), website) }
     } else {
-      this.website!!.visibility = View.GONE
+      binding.content.website.visibility = View.GONE
     }
 
     val imdbId = movie!!.imdbId
     val tmdbId = movie!!.tmdbId
 
-    viewOnTrakt!!.setOnClickListener {
+    binding.content.viewOnTrakt.setOnClickListener {
       Intents.openUrl(
         requireContext(),
         TraktUtils.getTraktMovieUrl(traktId)
@@ -493,27 +433,27 @@ class MovieFragment @Inject constructor(
     }
 
     if (!imdbId.isNullOrEmpty()) {
-      viewOnImdb!!.visibility = View.VISIBLE
-      viewOnImdb!!.setOnClickListener {
+      binding.content.viewOnImdb.visibility = View.VISIBLE
+      binding.content.viewOnImdb.setOnClickListener {
         Intents.openUrl(
           requireContext(),
           TraktUtils.getImdbUrl(imdbId)
         )
       }
     } else {
-      viewOnImdb!!.visibility = View.GONE
+      binding.content.viewOnImdb.visibility = View.GONE
     }
 
     if (tmdbId > 0) {
-      viewOnTmdb!!.visibility = View.VISIBLE
-      viewOnTmdb!!.setOnClickListener {
+      binding.content.viewOnTmdb.visibility = View.VISIBLE
+      binding.content.viewOnTmdb.setOnClickListener {
         Intents.openUrl(
           requireContext(),
           TraktUtils.getTmdbMovieUrl(tmdbId)
         )
       }
     } else {
-      viewOnTmdb!!.visibility = View.GONE
+      binding.content.viewOnTmdb.visibility = View.GONE
     }
 
     invalidateMenu()
@@ -525,16 +465,16 @@ class MovieFragment @Inject constructor(
     }
 
     if (genres == null || genres!!.isEmpty()) {
-      genresTitle!!.visibility = View.GONE
-      genresTitle!!.visibility = View.GONE
-      genresView!!.visibility = View.GONE
+      binding.content.genresTitle.visibility = View.GONE
+      binding.content.genresTitle.visibility = View.GONE
+      binding.content.genres.visibility = View.GONE
     } else {
       val joinedGenres = Joiner.on(", ").join(genres)
 
-      genresTitle!!.visibility = View.VISIBLE
-      genresTitle!!.visibility = View.VISIBLE
-      genresView!!.visibility = View.VISIBLE
-      genresView!!.text = joinedGenres
+      binding.content.genresTitle.visibility = View.VISIBLE
+      binding.content.genresTitle.visibility = View.VISIBLE
+      binding.content.genres.visibility = View.VISIBLE
+      binding.content.genres.text = joinedGenres
     }
   }
 
@@ -543,15 +483,18 @@ class MovieFragment @Inject constructor(
       return
     }
 
-    castContainer!!.removeAllViews()
+    binding.content.cast.container.container.removeAllViews()
     if (cast.isNullOrEmpty()) {
-      castParent!!.visibility = View.GONE
+      binding.content.cast.cast.visibility = View.GONE
     } else {
-      castParent!!.visibility = View.VISIBLE
+      binding.content.cast.cast.visibility = View.VISIBLE
 
       for (castMember in cast!!) {
-        val v = LayoutInflater.from(requireContext())
-          .inflate(R.layout.section_people_item, castContainer, false)
+        val v = LayoutInflater.from(requireContext()).inflate(
+          R.layout.section_people_item,
+          binding.content.cast.container.container,
+          false
+        )
 
         val headshotUri =
           ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, castMember.person.id)
@@ -568,7 +511,7 @@ class MovieFragment @Inject constructor(
 
         v.setOnClickListener { navigationListener.onDisplayPerson(castMember.person.id) }
 
-        castContainer!!.addView(v)
+        binding.content.cast.container.container.addView(v)
       }
     }
   }
@@ -578,15 +521,18 @@ class MovieFragment @Inject constructor(
       return
     }
 
-    relatedContainer!!.removeAllViews()
+    binding.content.related.container.container.removeAllViews()
     if (related.isNullOrEmpty()) {
-      relatedParent!!.visibility = View.GONE
+      binding.content.related.related.visibility = View.GONE
     } else {
-      relatedParent!!.visibility = View.VISIBLE
+      binding.content.related.related.visibility = View.VISIBLE
 
       for (movie in related!!) {
-        val v = LayoutInflater.from(requireContext())
-          .inflate(R.layout.section_related_item, relatedContainer, false)
+        val v = LayoutInflater.from(requireContext()).inflate(
+          R.layout.section_related_item,
+          binding.content.related.container.container,
+          false
+        )
 
         val poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, movie.id)
 
@@ -614,7 +560,7 @@ class MovieFragment @Inject constructor(
         v.setOnClickListener {
           navigationListener.onDisplayMovie(movie.id, movie.title, movie.overview)
         }
-        relatedContainer!!.addView(v)
+        binding.content.related.container.container.addView(v)
       }
     }
   }
@@ -626,11 +572,11 @@ class MovieFragment @Inject constructor(
 
     LinearCommentsAdapter.updateComments(
       requireContext(),
-      commentsContainer!!,
+      binding.content.comments.container.container,
       userComments,
       comments
     )
-    commentsParent!!.visibility = View.VISIBLE
+    binding.content.comments.comments.visibility = View.VISIBLE
   }
 
   companion object {

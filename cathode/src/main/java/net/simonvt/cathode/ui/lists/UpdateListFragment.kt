@@ -20,19 +20,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.Spinner
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.Unbinder
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.Privacy
 import net.simonvt.cathode.api.enumeration.SortBy
 import net.simonvt.cathode.api.enumeration.SortOrientation
 import net.simonvt.cathode.common.util.guava.Preconditions
+import net.simonvt.cathode.databinding.DialogListCreateBinding
 import net.simonvt.cathode.sync.scheduler.ListsTaskScheduler
 import javax.inject.Inject
 
@@ -40,39 +35,8 @@ class UpdateListFragment @Inject constructor(
   private val listsTaskScheduler: ListsTaskScheduler
 ) : DialogFragment() {
 
-  private var unbinder: Unbinder? = null
-
-  @BindView(R.id.toolbar)
-  @JvmField
-  var toolbar: Toolbar? = null
-
-  @BindView(R.id.name)
-  @JvmField
-  var name: EditText? = null
-
-  @BindView(R.id.description)
-  @JvmField
-  var description: EditText? = null
-
-  @BindView(R.id.privacy)
-  @JvmField
-  var privacy: Spinner? = null
-
-  @BindView(R.id.displayNumbers)
-  @JvmField
-  var displayNumbers: CheckBox? = null
-
-  @BindView(R.id.allowComments)
-  @JvmField
-  var allowComments: CheckBox? = null
-
-  @BindView(R.id.sortBy)
-  @JvmField
-  var sortBy: Spinner? = null
-
-  @BindView(R.id.sortOrientation)
-  @JvmField
-  var sortOrientation: Spinner? = null
+  private var _binding: DialogListCreateBinding? = null
+  private val binding get() = _binding!!
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
@@ -86,27 +50,26 @@ class UpdateListFragment @Inject constructor(
     container: ViewGroup?,
     inState: Bundle?
   ): View? {
-    return inflater.inflate(R.layout.dialog_list_create, container, false)
+    _binding = DialogListCreateBinding.inflate(inflater, container, false)
+    return binding.root
   }
 
   override fun onViewCreated(view: View, inState: Bundle?) {
     super.onViewCreated(view, inState)
-    unbinder = ButterKnife.bind(this, view)
-
     val args = arguments
     val listId = args!!.getLong(ARG_LIST_ID)
 
-    toolbar!!.setTitle(R.string.action_list_update)
-    toolbar!!.inflateMenu(R.menu.fragment_list_update)
-    toolbar!!.setOnMenuItemClickListener(Toolbar.OnMenuItemClickListener { item ->
+    binding.toolbarInclude.toolbar.setTitle(R.string.action_list_update)
+    binding.toolbarInclude.toolbar.inflateMenu(R.menu.fragment_list_update)
+    binding.toolbarInclude.toolbar.setOnMenuItemClickListener(Toolbar.OnMenuItemClickListener { item ->
       when (item.itemId) {
         R.id.menu_update -> {
-          val privacyValue = when (privacy!!.selectedItemPosition) {
+          val privacyValue = when (binding.privacy.selectedItemPosition) {
             1 -> Privacy.FRIENDS
             2 -> Privacy.PUBLIC
             else -> Privacy.PRIVATE
           }
-          val sortByValue = when (sortBy!!.selectedItemPosition) {
+          val sortByValue = when (binding.sortBy.selectedItemPosition) {
             1 -> SortBy.ADDED
             2 -> SortBy.TITLE
             3 -> SortBy.RELEASED
@@ -118,18 +81,18 @@ class UpdateListFragment @Inject constructor(
             9 -> SortBy.RANDOM
             else -> SortBy.RANK
           }
-          val sortOrientationValue = when (sortOrientation!!.selectedItemPosition) {
+          val sortOrientationValue = when (binding.sortOrientation.selectedItemPosition) {
             1 -> SortOrientation.DESC
             else -> SortOrientation.ASC
           }
 
           listsTaskScheduler.updateList(
             listId,
-            name!!.text.toString(),
-            description!!.text.toString(),
+            binding.name.text.toString(),
+            binding.description.text.toString(),
             privacyValue,
-            displayNumbers!!.isChecked,
-            allowComments!!.isChecked,
+            binding.displayNumbers.isChecked,
+            binding.allowComments.isChecked,
             sortByValue,
             sortOrientationValue
           )
@@ -148,7 +111,7 @@ class UpdateListFragment @Inject constructor(
       android.R.layout.simple_spinner_item
     )
     privacyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-    privacy!!.adapter = privacyAdapter
+    binding.privacy.adapter = privacyAdapter
 
     val sortByAdapter = ArrayAdapter.createFromResource(
       requireContext(),
@@ -156,7 +119,7 @@ class UpdateListFragment @Inject constructor(
       android.R.layout.simple_spinner_item
     )
     sortByAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-    sortBy!!.adapter = sortByAdapter
+    binding.sortBy.adapter = sortByAdapter
 
     val sortOrientationAdapter = ArrayAdapter.createFromResource(
       requireContext(),
@@ -164,48 +127,47 @@ class UpdateListFragment @Inject constructor(
       android.R.layout.simple_spinner_item
     )
     sortOrientationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-    sortOrientation!!.adapter = sortOrientationAdapter
+    binding.sortOrientation.adapter = sortOrientationAdapter
 
     val name = args.getString(ARG_NAME)
-    this.name!!.setText(name)
+    binding.name.setText(name)
 
     val description = args.getString(ARG_DESCRIPTION)
-    this.description!!.setText(description)
+    binding.description.setText(description)
 
     when (Privacy.fromValue(args.getString(ARG_PRIVACY)!!)) {
-      Privacy.FRIENDS -> privacy!!.setSelection(1)
-      Privacy.PUBLIC -> privacy!!.setSelection(2)
-      else -> this.privacy!!.setSelection(0)
+      Privacy.FRIENDS -> binding.privacy.setSelection(1)
+      Privacy.PUBLIC -> binding.privacy.setSelection(2)
+      else -> binding.privacy.setSelection(0)
     }
 
     when (SortBy.fromValue(args.getString(ARG_SORT_BY))) {
-      SortBy.RANK -> sortBy!!.setSelection(0)
-      SortBy.ADDED -> sortBy!!.setSelection(1)
-      SortBy.TITLE -> sortBy!!.setSelection(2)
-      SortBy.RELEASED -> sortBy!!.setSelection(3)
-      SortBy.RUNTIME -> sortBy!!.setSelection(4)
-      SortBy.POPULARITY -> sortBy!!.setSelection(5)
-      SortBy.PERCENTAGE -> sortBy!!.setSelection(6)
-      SortBy.VOTES -> sortBy!!.setSelection(7)
-      SortBy.MY_RATING -> sortBy!!.setSelection(8)
-      SortBy.RANDOM -> sortBy!!.setSelection(9)
+      SortBy.RANK -> binding.sortBy.setSelection(0)
+      SortBy.ADDED -> binding.sortBy.setSelection(1)
+      SortBy.TITLE -> binding.sortBy.setSelection(2)
+      SortBy.RELEASED -> binding.sortBy.setSelection(3)
+      SortBy.RUNTIME -> binding.sortBy.setSelection(4)
+      SortBy.POPULARITY -> binding.sortBy.setSelection(5)
+      SortBy.PERCENTAGE -> binding.sortBy.setSelection(6)
+      SortBy.VOTES -> binding.sortBy.setSelection(7)
+      SortBy.MY_RATING -> binding.sortBy.setSelection(8)
+      SortBy.RANDOM -> binding.sortBy.setSelection(9)
     }
 
     when (SortOrientation.fromValue(args.getString(ARG_SORT_ORIENTATION))) {
-      SortOrientation.ASC -> sortOrientation!!.setSelection(0)
-      SortOrientation.DESC -> sortOrientation!!.setSelection(1)
+      SortOrientation.ASC -> binding.sortOrientation.setSelection(0)
+      SortOrientation.DESC -> binding.sortOrientation.setSelection(1)
     }
 
     val displayNumbers = args.getBoolean(ARG_DISPLAY_NUMBERS)
-    this.displayNumbers!!.isChecked = displayNumbers
+    binding.displayNumbers.isChecked = displayNumbers
 
     val allowComments = args.getBoolean(ARG_ALLOW_COMMENTS)
-    this.allowComments!!.isChecked = allowComments
+    binding.allowComments.isChecked = allowComments
   }
 
   override fun onDestroyView() {
-    unbinder!!.unbind()
-    unbinder = null
+    _binding = null
     super.onDestroyView()
   }
 

@@ -22,8 +22,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.R;
@@ -166,23 +164,25 @@ public class DashboardShowsWatchlistAdapter extends BaseAdapter<Object, Recycler
 
   static class ShowViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.poster) RemoteImageView poster;
-    @BindView(R.id.title) TextView title;
+    RemoteImageView poster;
+    TextView title;
 
     ShowViewHolder(View itemView) {
       super(itemView);
-      ButterKnife.bind(this, itemView);
+      poster = itemView.findViewById(R.id.poster);
+      title = itemView.findViewById(R.id.title);
     }
   }
 
   static class EpisodeViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.screenshot) RemoteImageView screenshot;
-    @BindView(R.id.title) TextView title;
+    RemoteImageView screenshot;
+    TextView title;
 
     EpisodeViewHolder(View itemView) {
       super(itemView);
-      ButterKnife.bind(this, itemView);
+      screenshot = itemView.findViewById(R.id.screenshot);
+      title = itemView.findViewById(R.id.title);
     }
   }
 }

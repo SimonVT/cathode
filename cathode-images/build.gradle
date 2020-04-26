@@ -33,6 +33,10 @@ android {
     versionName = parent.ext.versionName
   }
 
+  viewBinding {
+    enabled = true
+  }
+
   lintOptions {
     abortOnError false
   }

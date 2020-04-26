@@ -21,16 +21,13 @@ import android.view.Gravity
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import butterknife.BindView
-import butterknife.ButterKnife
 import dagger.android.AndroidInjection
+import kotlinx.android.synthetic.main.view_watching.view.watchingView
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.Department
 import net.simonvt.cathode.api.enumeration.ItemType
@@ -46,7 +43,7 @@ import net.simonvt.cathode.common.ui.FragmentContract
 import net.simonvt.cathode.common.util.FragmentStack
 import net.simonvt.cathode.common.util.FragmentStack.StackEntry
 import net.simonvt.cathode.common.util.MainHandler
-import net.simonvt.cathode.common.widget.Crouton
+import net.simonvt.cathode.databinding.ActivityHomeBinding
 import net.simonvt.cathode.entity.Movie
 import net.simonvt.cathode.entity.ShowWithEpisode
 import net.simonvt.cathode.images.ImageType
@@ -101,30 +98,15 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
 
   @Inject
   lateinit var showScheduler: ShowTaskScheduler
+
   @Inject
   lateinit var movieScheduler: MovieTaskScheduler
 
-  @BindView(R.id.progress_top)
-  lateinit var progressTop: ProgressBar
-
-  @BindView(R.id.crouton)
-  lateinit var crouton: Crouton
+  private lateinit var binding: ActivityHomeBinding
 
   private lateinit var stack: FragmentStack
 
-  @BindView(R.id.drawer)
-  lateinit var drawer: DrawerLayout
   private lateinit var navigation: NavigationFragment
-
-  @BindView(R.id.watching_parent)
-  lateinit var watchingParent: ViewGroup
-  @BindView(R.id.watchingView)
-  lateinit var watchingView: WatchingView
-
-  @BindView(R.id.authFailedView)
-  lateinit var authFailedView: View
-  @BindView(R.id.authFailedAction)
-  lateinit var authFailedAction: View
 
   private lateinit var viewModel: HomeViewModel
 
@@ -157,10 +139,10 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
   }
 
   private val watchingTouchListener = View.OnTouchListener { _, event ->
-    if (watchingView.isExpanded) {
+    if (binding.watchingParent.watchingView.isExpanded) {
       val action = event.actionMasked
       if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-        watchingView.collapse()
+        binding.watchingParent.watchingView.collapse()
       }
 
       return@OnTouchListener true
@@ -179,7 +161,7 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
     }
 
     override fun onEpisodeClicked(view: WatchingView, episodeId: Long, showTitle: String?) {
-      watchingView.collapse()
+      binding.watchingParent.watchingView.collapse()
 
       val top = stack.peek()
       if (top is EpisodeFragment) {
@@ -192,7 +174,7 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
     }
 
     override fun onMovieClicked(view: WatchingView, id: Long, title: String?, overview: String?) {
-      watchingView.collapse()
+      binding.watchingParent.watchingView.collapse()
 
       val top = stack.peek()
       if (top is MovieFragment) {
@@ -213,34 +195,34 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
     if (syncing != this@HomeActivity.isSyncing) {
       this@HomeActivity.isSyncing = syncing
 
-      val progressVisibility = progressTop.visibility
-      val progressAnimator = progressTop.animate()
+      val progressVisibility = binding.progressTop.visibility
+      val progressAnimator = binding.progressTop.animate()
       if (syncing) {
         if (progressVisibility == View.GONE) {
-          progressTop.alpha = 0.0f
-          progressTop.visibility = View.VISIBLE
+          binding.progressTop.alpha = 0.0f
+          binding.progressTop.visibility = View.VISIBLE
         }
 
         progressAnimator.alpha(1.0f)
       } else {
-        progressAnimator.alpha(0.0f).withEndAction { progressTop.visibility = View.GONE }
+        progressAnimator.alpha(0.0f).withEndAction { binding.progressTop.visibility = View.GONE }
       }
     }
   }
 
   private val requestFailedListener = OnRequestFailedListener { event ->
-    crouton.show(
+    binding.crouton.show(
       getString(event.errorMessage),
       ContextCompat.getColor(this, android.R.color.holo_red_dark)
     )
   }
 
   private val checkInFailedListener = ErrorListener { error ->
-    crouton.show(error, ContextCompat.getColor(this, android.R.color.holo_red_dark))
+    binding.crouton.show(error, ContextCompat.getColor(this, android.R.color.holo_red_dark))
   }
 
   private val onAuthFailedListener =
-    OnAuthFailedListener { authFailedView.visibility = View.VISIBLE }
+    OnAuthFailedListener { binding.authFailedView.visibility = View.VISIBLE }
 
   private class PendingReplacement(var fragment: Class<*>, var tag: String)
 
@@ -248,14 +230,13 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
     setTheme(R.style.Theme)
     super.onCreate(inState)
     AndroidInjection.inject(this)
+    binding = ActivityHomeBinding.inflate(layoutInflater)
+    setContentView(binding.root)
 
-    setContentView(R.layout.activity_home)
-    ButterKnife.bind(this)
-
-    drawer.addDrawerListener(drawerListener)
-    watchingParent.setOnTouchListener(watchingTouchListener)
-    watchingView.setWatchingViewListener(watchingListener)
-    authFailedAction.setOnClickListener { startLoginActivity() }
+    binding.drawer.addDrawerListener(drawerListener)
+    binding.watchingParent.setOnTouchListener(watchingTouchListener)
+    binding.watchingParent.watchingView.setWatchingViewListener(watchingListener)
+    binding.authFailedAction.setOnClickListener { startLoginActivity() }
 
     navigation =
       supportFragmentManager.findFragmentByTag(NavigationFragment.TAG) as NavigationFragment
@@ -411,9 +392,9 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
   override fun onResume() {
     super.onResume()
     if (TraktLinkSettings.hasAuthFailed(this)) {
-      authFailedView.visibility = View.VISIBLE
+      binding.authFailedView.visibility = View.VISIBLE
     } else {
-      authFailedView.visibility = View.GONE
+      binding.authFailedView.visibility = View.GONE
     }
   }
 
@@ -426,13 +407,13 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
   }
 
   override fun onBackPressed() {
-    if (watchingView.isExpanded) {
-      watchingView.collapse()
+    if (binding.watchingParent.watchingView.isExpanded) {
+      binding.watchingParent.watchingView.collapse()
       return
     }
 
-    if (drawer.isDrawerVisible(Gravity.LEFT)) {
-      drawer.closeDrawer(Gravity.LEFT)
+    if (binding.drawer.isDrawerVisible(Gravity.LEFT)) {
+      binding.drawer.closeDrawer(Gravity.LEFT)
       return
     }
 
@@ -506,7 +487,7 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
       else -> throw IllegalArgumentException("Unknown id $id")
     }
 
-    drawer.closeDrawer(Gravity.LEFT)
+    binding.drawer.closeDrawer(Gravity.LEFT)
     return true
   }
 
@@ -523,7 +504,7 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
 
   override fun onHomeClicked() {
     if (stack.size() == 1) {
-      drawer.openDrawer(Gravity.LEFT)
+      binding.drawer.openDrawer(Gravity.LEFT)
       return
     }
 
@@ -756,7 +737,7 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
 
         val poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, showId)
 
-        watchingView.watchingShow(
+        binding.watchingParent.watchingView.watchingShow(
           showId,
           showTitle,
           episodeId,
@@ -776,10 +757,17 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
 
         val poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, id)
 
-        watchingView.watchingMovie(id, title, overview, poster, startTime, endTime)
+        binding.watchingParent.watchingView.watchingMovie(
+          id,
+          title,
+          overview,
+          poster,
+          startTime,
+          endTime
+        )
       }
     } else {
-      watchingView.clearWatching()
+      binding.watchingParent.watchingView.clearWatching()
     }
   }
 

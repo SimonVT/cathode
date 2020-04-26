@@ -24,26 +24,16 @@ import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import butterknife.BindView
-import butterknife.ButterKnife
 import net.simonvt.cathode.BuildConfig
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.Authorization
+import net.simonvt.cathode.databinding.ActivityOauthBinding
 import timber.log.Timber
 
 class OauthWebViewActivity : AppCompatActivity() {
 
-  @BindView(R.id.toolbar)
-  lateinit var toolbar: Toolbar
-
-  @BindView(R.id.progress_top)
-  lateinit var progressBar: ProgressBar
-
-  @BindView(R.id.webview)
-  lateinit var webView: WebView
+  private lateinit var binding: ActivityOauthBinding
 
   private val webViewClient = object : WebViewClient() {
     override fun onReceivedError(
@@ -74,34 +64,34 @@ class OauthWebViewActivity : AppCompatActivity() {
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    setContentView(R.layout.activity_oauth)
-    ButterKnife.bind(this)
+    binding = ActivityOauthBinding.inflate(layoutInflater)
+    setContentView(binding.root)
 
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp)
-    toolbar.setNavigationOnClickListener { finish() }
-    toolbar.setTitle(R.string.login_title)
+    binding.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp)
+    binding.toolbar.setNavigationOnClickListener { finish() }
+    binding.toolbar.setTitle(R.string.login_title)
 
-    webView.webViewClient = webViewClient
+    binding.webview.webViewClient = webViewClient
     val cookieManager = CookieManager.getInstance()
     cookieManager.removeAllCookie()
-    webView.clearCache(true)
+    binding.webview.clearCache(true)
 
-    webView.webChromeClient = object : WebChromeClient() {
+    binding.webview.webChromeClient = object : WebChromeClient() {
       override fun onProgressChanged(view: WebView, newProgress: Int) {
-        progressBar.progress = newProgress
+        binding.progressTop.progress = newProgress
         if (newProgress == 100) {
-          progressBar.animate().alpha(0.0f).withEndAction { progressBar.visibility = View.GONE }
+          binding.progressTop.animate().alpha(0.0f).withEndAction { binding.progressTop.visibility = View.GONE }
         } else {
-          if (progressBar.visibility == View.GONE) {
-            progressBar.visibility = View.VISIBLE
-            progressBar.alpha = 0.0f
-            progressBar.animate().alpha(1.0f)
+          if (binding.progressTop.visibility == View.GONE) {
+            binding.progressTop.visibility = View.VISIBLE
+            binding.progressTop.alpha = 0.0f
+            binding.progressTop.animate().alpha(1.0f)
           }
         }
       }
     }
 
-    webView.loadUrl(
+    binding.webview.loadUrl(
       Authorization.getOAuthUri(
         BuildConfig.TRAKT_CLIENT_ID,
         BuildConfig.TRAKT_REDIRECT_URL

@@ -19,8 +19,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.widget.OverflowView;
 import net.simonvt.cathode.common.widget.RemoteImageView;
@@ -29,9 +27,9 @@ public class PhoneShowView extends ViewGroup {
 
   private int minHeight;
 
-  @BindView(R.id.infoParent) View infoParent;
-  @BindView(R.id.overflow) OverflowView overflow;
-  @BindView(R.id.poster) RemoteImageView poster;
+  private View infoParent;
+  private OverflowView overflow;
+  private RemoteImageView poster;
 
   public PhoneShowView(Context context) {
     super(context);
@@ -54,7 +52,9 @@ public class PhoneShowView extends ViewGroup {
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    ButterKnife.bind(this);
+    infoParent = findViewById(R.id.infoParent);
+    overflow = findViewById(R.id.overflow);
+    poster = findViewById(R.id.poster);
   }
 
   @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {

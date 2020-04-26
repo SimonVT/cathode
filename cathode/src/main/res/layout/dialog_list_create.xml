@@ -19,7 +19,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-  <include layout="@layout/toolbar"/>
+  <include
+      layout="@layout/toolbar"
+      android:id="@+id/toolbarInclude" />
 
   <TableLayout
       android:layout_width="match_parent"

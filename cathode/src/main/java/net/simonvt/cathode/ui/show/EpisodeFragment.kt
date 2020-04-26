@@ -21,14 +21,10 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
-import butterknife.BindView
-import butterknife.OnClick
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.util.TraktUtils
@@ -38,7 +34,7 @@ import net.simonvt.cathode.common.util.DateStringUtils
 import net.simonvt.cathode.common.util.Ids
 import net.simonvt.cathode.common.util.Intents
 import net.simonvt.cathode.common.util.guava.Preconditions
-import net.simonvt.cathode.common.widget.CircularProgressIndicator
+import net.simonvt.cathode.databinding.FragmentEpisodeBinding
 import net.simonvt.cathode.entity.Comment
 import net.simonvt.cathode.entity.Episode
 import net.simonvt.cathode.images.ImageType
@@ -63,49 +59,8 @@ class EpisodeFragment @Inject constructor(
   private val episodeScheduler: EpisodeTaskScheduler
 ) : RefreshableAppBarFragment() {
 
-  @BindView(R.id.title)
-  @JvmField
-  var title: TextView? = null
-  @BindView(R.id.overview)
-  @JvmField
-  var overview: TextView? = null
-  @BindView(R.id.episodeNumber)
-  @JvmField
-  var episodeNumber: TextView? = null
-  @BindView(R.id.firstAired)
-  @JvmField
-  var firstAired: TextView? = null
-
-  @BindView(R.id.rating)
-  @JvmField
-  var rating: CircularProgressIndicator? = null
-
-  @BindView(R.id.checkmarks)
-  @JvmField
-  var checkmarks: View? = null
-  @BindView(R.id.isWatched)
-  @JvmField
-  var watchedView: View? = null
-  @BindView(R.id.inCollection)
-  @JvmField
-  var inCollectionView: View? = null
-  @BindView(R.id.inWatchlist)
-  @JvmField
-  var inWatchlistView: View? = null
-
-  @BindView(R.id.commentsParent)
-  @JvmField
-  var commentsParent: View? = null
-  @BindView(R.id.commentsHeader)
-  @JvmField
-  var commentsHeader: View? = null
-  @BindView(R.id.commentsContainer)
-  @JvmField
-  var commentsContainer: LinearLayout? = null
-
-  @BindView(R.id.viewOnTrakt)
-  @JvmField
-  var viewOnTrakt: TextView? = null
+  private var _binding: FragmentEpisodeBinding? = null
+  private val binding get() = _binding!!
 
   private lateinit var viewModel: EpisodeViewModel
 
@@ -179,17 +134,27 @@ class EpisodeFragment @Inject constructor(
     inflater: LayoutInflater,
     container: ViewGroup?,
     inState: Bundle?
-  ): View {
-    return inflater.inflate(R.layout.fragment_episode, container, false)
+  ): View? {
+    _binding = FragmentEpisodeBinding.inflate(inflater, container, false)
+    return binding.root
   }
 
   override fun onViewCreated(view: View, inState: Bundle?) {
     super.onViewCreated(view, inState)
     val linkDrawable = VectorDrawableCompat.create(resources, R.drawable.ic_link_black_24dp, null)
-    viewOnTrakt!!.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
+    binding.content.viewOnTrakt.setCompoundDrawablesWithIntrinsicBounds(
+      linkDrawable,
+      null,
+      null,
+      null
+    )
+
+    binding.content.comments.commentsHeader.setOnClickListener {
+      navigationListener.onDisplayComments(ItemType.EPISODE, episodeId)
+    }
 
     if (TraktLinkSettings.isLinked(requireContext())) {
-      rating!!.setOnClickListener {
+      binding.top.rating.setOnClickListener {
         requireFragmentManager().instantiate(
           RatingDialog::class.java,
           RatingDialog.getArgs(RatingDialog.Type.EPISODE, episodeId, currentRating)
@@ -198,13 +163,13 @@ class EpisodeFragment @Inject constructor(
     }
   }
 
-  override fun onRefresh() {
-    viewModel.refresh()
+  override fun onDestroyView() {
+    _binding = null
+    super.onDestroyView()
   }
 
-  @OnClick(R.id.commentsHeader)
-  fun onShowComments() {
-    navigationListener.onDisplayComments(ItemType.EPISODE, episodeId)
+  override fun onRefresh() {
+    viewModel.refresh()
   }
 
   override fun createMenu(toolbar: Toolbar) {
@@ -368,19 +333,19 @@ class EpisodeFragment @Inject constructor(
       episode.episode, episode.watched
     )
 
-    title!!.text = episodeTitle
-    episodeNumber!!.text = getString(
+    binding.top.title.text = episodeTitle
+    binding.top.episodeNumber.text = getString(
       R.string.season_x_episode, season,
       episode.episode
     )
 
-    overview!!.text = episode.overview
+    binding.content.overview.text = episode.overview
 
     val screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, episodeId)
 
     setBackdrop(screenshotUri, true)
 
-    firstAired!!.text =
+    binding.top.firstAired.text =
       DateStringUtils.getAirdateInterval(requireContext(), episode.firstAired, true)
 
     if (checkInDrawable != null) {
@@ -388,16 +353,16 @@ class EpisodeFragment @Inject constructor(
     }
 
     val hasCheckmark = watched || collected || inWatchlist
-    checkmarks!!.visibility = if (hasCheckmark) View.VISIBLE else View.GONE
-    watchedView!!.visibility = if (watched) View.VISIBLE else View.GONE
-    inCollectionView!!.visibility = if (collected) View.VISIBLE else View.GONE
-    inWatchlistView!!.visibility = if (inWatchlist) View.VISIBLE else View.GONE
+    binding.content.checkmarks.checkmarks.visibility = if (hasCheckmark) View.VISIBLE else View.GONE
+    binding.content.checkmarks.isWatched.visibility = if (watched) View.VISIBLE else View.GONE
+    binding.content.checkmarks.inCollection.visibility = if (collected) View.VISIBLE else View.GONE
+    binding.content.checkmarks.inWatchlist.visibility = if (inWatchlist) View.VISIBLE else View.GONE
 
     currentRating = episode.userRating
     val ratingAll = episode.rating
-    rating!!.setValue(ratingAll)
+    binding.top.rating.setValue(ratingAll)
 
-    viewOnTrakt!!.setOnClickListener {
+    binding.content.viewOnTrakt.setOnClickListener {
       Intents.openUrl(
         requireContext(),
         TraktUtils.getTraktEpisodeUrl(episode.traktId)
@@ -410,11 +375,11 @@ class EpisodeFragment @Inject constructor(
   private fun updateComments() {
     LinearCommentsAdapter.updateComments(
       requireContext(),
-      commentsContainer!!,
+      binding.content.comments.container.container,
       userComments,
       comments
     )
-    commentsParent!!.visibility = View.VISIBLE
+    binding.content.comments.comments.visibility = View.VISIBLE
   }
 
   companion object {

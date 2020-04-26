@@ -58,8 +58,6 @@ dependencies {
   implementation deps.okhttp
   debugImplementation deps.okhttpLogger
 
-  implementation deps.butterknife
-  kapt deps.butterknifeCompiler
   implementation deps.timber
 
   implementation deps.tmdb
@@ -103,6 +101,10 @@ android {
         "net.simonvt.cathode.sync.BuildConfig.TRAKT_REDIRECT_URL"
     buildConfigField "String", "TMDB_API_KEY",
         "net.simonvt.cathode.sync.BuildConfig.TMDB_API_KEY"
+  }
+
+  viewBinding {
+    enabled = true
   }
 
   signingConfigs {

@@ -32,73 +32,13 @@
       android:layout_marginBottom="8dp"
       android:orientation="horizontal">
 
-    <FrameLayout
-        android:id="@+id/toWatch"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_weight="1"
-        android:background="@drawable/card_rounded"
-        android:foreground="?android:attr/selectableItemBackground">
+    <include
+        layout="@layout/show_info_episode"
+        android:id="@+id/toWatch"/>
 
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/to_watch"
-            style="@style/Card.Title"/>
-
-        <include
-            layout="@layout/show_info_episode"/>
-      </LinearLayout>
-
-      <net.simonvt.cathode.common.widget.OverflowView
-          android:id="@+id/episodeOverflow"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="end"
-          android:layout_marginEnd="8dp"
-          tools:ignore="DuplicateIds,InconsistentLayout"/>
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/lastWatched"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@drawable/card_rounded"
-        android:foreground="?android:attr/selectableItemBackground"
-        tools:ignore="InconsistentLayout">
-
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/last_watched"
-            style="@style/Card.Title"/>
-
-        <include
-            layout="@layout/show_info_episode"/>
-      </LinearLayout>
-
-      <net.simonvt.cathode.common.widget.OverflowView
-          android:id="@+id/episodeOverflow"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="end"
-          android:layout_marginEnd="8dp"
-          tools:ignore="DuplicateIds,InconsistentLayout"/>
-    </FrameLayout>
+    <include
+        layout="@layout/show_info_episode"
+        android:id="@+id/lastWatched"/>
   </LinearLayout>
 
   <LinearLayout
@@ -107,72 +47,12 @@
       android:baselineAligned="false"
       android:orientation="horizontal">
 
-    <FrameLayout
-        android:id="@+id/toCollect"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_weight="1"
-        android:background="@drawable/card_rounded"
-        android:foreground="?android:attr/selectableItemBackground">
+    <include
+        layout="@layout/show_info_episode"
+        android:id="@+id/toCollect"/>
 
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/to_collect"
-            style="@style/Card.Title"/>
-
-        <include
-            layout="@layout/show_info_episode"/>
-      </LinearLayout>
-
-      <net.simonvt.cathode.common.widget.OverflowView
-          android:id="@+id/episodeOverflow"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="end"
-          android:layout_marginEnd="8dp"
-          tools:ignore="DuplicateIds,InconsistentLayout"/>
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/lastCollected"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@drawable/card_rounded"
-        android:foreground="?android:attr/selectableItemBackground"
-        tools:ignore="InconsistentLayout">
-
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/last_collected"
-            style="@style/Card.Title"/>
-
-        <include
-            layout="@layout/show_info_episode"/>
-      </LinearLayout>
-
-      <net.simonvt.cathode.common.widget.OverflowView
-          android:id="@+id/episodeOverflow"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="end"
-          android:layout_marginEnd="8dp"
-          tools:ignore="DuplicateIds,InconsistentLayout"/>
-    </FrameLayout>
+    <include
+        layout="@layout/show_info_episode"
+        android:id="@+id/lastCollected"/>
   </LinearLayout>
 </LinearLayout>

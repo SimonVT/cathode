@@ -21,13 +21,10 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
-import butterknife.BindView
-import butterknife.OnClick
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.Department
 import net.simonvt.cathode.api.enumeration.ItemType
@@ -37,6 +34,7 @@ import net.simonvt.cathode.common.util.Ids
 import net.simonvt.cathode.common.util.Intents
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.common.widget.RemoteImageView
+import net.simonvt.cathode.databinding.FragmentPersonBinding
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.LibraryType
 import net.simonvt.cathode.ui.NavigationListener
@@ -54,94 +52,8 @@ class PersonFragment @Inject constructor(
 
   private var itemCount: Int = 0
 
-  @BindView(R.id.headshot)
-  @JvmField
-  var headshot: RemoteImageView? = null
-  @BindView(R.id.bornTitle)
-  @JvmField
-  var bornTitle: View? = null
-  @BindView(R.id.birthday)
-  @JvmField
-  var birthday: TextView? = null
-  @BindView(R.id.birthplace)
-  @JvmField
-  var birthplace: TextView? = null
-  @BindView(R.id.deathTitle)
-  @JvmField
-  var deathTitle: View? = null
-  @BindView(R.id.death)
-  @JvmField
-  var death: TextView? = null
-  @BindView(R.id.biography)
-  @JvmField
-  var biography: TextView? = null
-
-  @BindView(R.id.cast_header)
-  @JvmField
-  var castHeader: LinearLayout? = null
-  @BindView(R.id.cast_items)
-  @JvmField
-  var castItems: LinearLayout? = null
-
-  @BindView(R.id.production_header)
-  @JvmField
-  var productionHeader: LinearLayout? = null
-  @BindView(R.id.production_items)
-  @JvmField
-  var productionItems: LinearLayout? = null
-
-  @BindView(R.id.art_header)
-  @JvmField
-  var artHeader: LinearLayout? = null
-  @BindView(R.id.art_items)
-  @JvmField
-  var artItems: LinearLayout? = null
-
-  @BindView(R.id.crew_header)
-  @JvmField
-  var crewHeader: LinearLayout? = null
-  @BindView(R.id.crew_items)
-  @JvmField
-  var crewItems: LinearLayout? = null
-
-  @BindView(R.id.costume_makeup_header)
-  @JvmField
-  var costumeMakeupHeader: LinearLayout? = null
-  @BindView(R.id.costume_makeup_items)
-  @JvmField
-  var costumeMakeupItems: LinearLayout? = null
-
-  @BindView(R.id.directing_header)
-  @JvmField
-  var directingHeader: LinearLayout? = null
-  @BindView(R.id.directing_items)
-  @JvmField
-  var directingItems: LinearLayout? = null
-
-  @BindView(R.id.writing_header)
-  @JvmField
-  var writingHeader: LinearLayout? = null
-  @BindView(R.id.writing_items)
-  @JvmField
-  var writingItems: LinearLayout? = null
-
-  @BindView(R.id.sound_header)
-  @JvmField
-  var soundHeader: LinearLayout? = null
-  @BindView(R.id.sound_items)
-  @JvmField
-  var soundItems: LinearLayout? = null
-
-  @BindView(R.id.camera_header)
-  @JvmField
-  var cameraHeader: LinearLayout? = null
-  @BindView(R.id.camera_items)
-  @JvmField
-  var cameraItems: LinearLayout? = null
-
-  @BindView(R.id.viewOnTrakt)
-  @JvmField
-  var viewOnTrakt: TextView? = null
+  private var _binding: FragmentPersonBinding? = null
+  private val binding get() = _binding!!
 
   lateinit var navigationListener: NavigationListener
 
@@ -167,58 +79,65 @@ class PersonFragment @Inject constructor(
   }
 
   override fun createView(inflater: LayoutInflater, container: ViewGroup?, inState: Bundle?): View {
-    return inflater.inflate(R.layout.fragment_person, container, false)
+    _binding = FragmentPersonBinding.inflate(inflater, container, false)
+    return binding.root
   }
 
   override fun onViewCreated(view: View, inState: Bundle?) {
     super.onViewCreated(view, inState)
     val linkDrawable = VectorDrawableCompat.create(resources, R.drawable.ic_link_black_24dp, null)
-    viewOnTrakt!!.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
+    binding.viewOnTrakt.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
+    binding.castHeader.setOnClickListener(castHeaderClickListener)
+    binding.productionHeader.setOnClickListener(productionHeaderClickListener)
+    binding.artHeader.setOnClickListener(artHeaderClickListener)
+    binding.crewHeader.setOnClickListener(crewHeaderClickListener)
+    binding.costumeMakeupHeader.setOnClickListener(costumeMakeupHeaderClickListener)
+    binding.directingHeader.setOnClickListener(directingHeaderClickListener)
+    binding.writingHeader.setOnClickListener(writingHeaderClickListener)
+    binding.soundHeader.setOnClickListener(soundHeaderClickListener)
+    binding.cameraHeader.setOnClickListener(cameraHeaderClickListener)
+
     updateView(person)
   }
 
-  @OnClick(R.id.cast_header)
-  fun onDisplayCastCredits() {
+  override fun onDestroyView() {
+    _binding = null
+    super.onDestroyView()
+  }
+
+  private val castHeaderClickListener = View.OnClickListener {
     navigationListener.onDisplayPersonCredit(personId, Department.CAST)
   }
 
-  @OnClick(R.id.production_header)
-  fun onDisplayProductionCredits() {
+  private val productionHeaderClickListener = View.OnClickListener {
     navigationListener.onDisplayPersonCredit(personId, Department.PRODUCTION)
   }
 
-  @OnClick(R.id.art_header)
-  fun onDisplayArtCredits() {
+  private val artHeaderClickListener = View.OnClickListener {
     navigationListener.onDisplayPersonCredit(personId, Department.ART)
   }
 
-  @OnClick(R.id.crew_header)
-  fun onDisplayCrewCredits() {
+  private val crewHeaderClickListener = View.OnClickListener {
     navigationListener.onDisplayPersonCredit(personId, Department.CREW)
   }
 
-  @OnClick(R.id.costume_makeup_header)
-  fun onDisplayCostumeMakeUpCredits() {
+  private val costumeMakeupHeaderClickListener = View.OnClickListener {
     navigationListener.onDisplayPersonCredit(personId, Department.COSTUME_AND_MAKEUP)
   }
 
-  @OnClick(R.id.directing_header)
-  fun onDisplayDirectingCredits() {
+  private val directingHeaderClickListener = View.OnClickListener {
     navigationListener.onDisplayPersonCredit(personId, Department.DIRECTING)
   }
 
-  @OnClick(R.id.writing_header)
-  fun onDisplayWritingCredits() {
+  private val writingHeaderClickListener = View.OnClickListener {
     navigationListener.onDisplayPersonCredit(personId, Department.WRITING)
   }
 
-  @OnClick(R.id.sound_header)
-  fun onDisplaySoundCredits() {
+  private val soundHeaderClickListener = View.OnClickListener {
     navigationListener.onDisplayPersonCredit(personId, Department.SOUND)
   }
 
-  @OnClick(R.id.camera_header)
-  fun onDisplayCameraCredits() {
+  private val cameraHeaderClickListener = View.OnClickListener {
     navigationListener.onDisplayPersonCredit(personId, Department.CAMERA)
   }
 
@@ -227,46 +146,47 @@ class PersonFragment @Inject constructor(
     if (person != null && view != null) {
       setTitle(person.name)
       setBackdrop(person.screenshot)
-      headshot!!.setImage(person.headshot)
+      binding.headshot.setImage(person.headshot)
 
       if (!TextUtils.isEmpty(person.birthday)) {
-        bornTitle!!.visibility = View.VISIBLE
-        birthday!!.visibility = View.VISIBLE
-        birthplace!!.visibility = View.VISIBLE
+        binding.bornTitle.visibility = View.VISIBLE
+        binding.birthday.visibility = View.VISIBLE
+        binding.birthplace.visibility = View.VISIBLE
 
-        birthday!!.text = person.birthday
-        birthplace!!.text = person.birthplace
+        binding.birthday.text = person.birthday
+        binding.birthplace.text = person.birthplace
       } else {
-        bornTitle!!.visibility = View.GONE
-        birthday!!.visibility = View.GONE
-        birthplace!!.visibility = View.GONE
+        binding.bornTitle.visibility = View.GONE
+        binding.birthday.visibility = View.GONE
+        binding.birthplace.visibility = View.GONE
       }
 
       if (!TextUtils.isEmpty(person.death)) {
-        deathTitle!!.visibility = View.VISIBLE
-        death!!.visibility = View.VISIBLE
-        death!!.text = person.death
+        binding.deathTitle.visibility = View.VISIBLE
+        binding.death.visibility = View.VISIBLE
+        binding.death.text = person.death
       } else {
-        deathTitle!!.visibility = View.GONE
-        death!!.visibility = View.GONE
+        binding.deathTitle.visibility = View.GONE
+        binding.death.visibility = View.GONE
       }
 
-      biography!!.text = person.biography
+      binding.biography.text = person.biography
 
-      updateItems(castHeader, castItems!!, person.credits.cast)
-      updateItems(productionHeader, productionItems!!, person.credits.production)
-      updateItems(artHeader, artItems!!, person.credits.art)
-      updateItems(crewHeader, crewItems!!, person.credits.crew)
+      updateItems(binding.castHeader, binding.castItems, person.credits.cast)
+      updateItems(binding.productionHeader, binding.productionItems, person.credits.production)
+      updateItems(binding.artHeader, binding.artItems, person.credits.art)
+      updateItems(binding.crewHeader, binding.crewItems, person.credits.crew)
       updateItems(
-        costumeMakeupHeader, costumeMakeupItems!!,
+        binding.costumeMakeupHeader,
+        binding.costumeMakeupItems,
         person.credits.costumeAndMakeUp
       )
-      updateItems(directingHeader, directingItems!!, person.credits.directing)
-      updateItems(writingHeader, writingItems!!, person.credits.writing)
-      updateItems(soundHeader, soundItems!!, person.credits.sound)
-      updateItems(cameraHeader, cameraItems!!, person.credits.camera)
+      updateItems(binding.directingHeader, binding.directingItems, person.credits.directing)
+      updateItems(binding.writingHeader, binding.writingItems, person.credits.writing)
+      updateItems(binding.soundHeader, binding.soundItems, person.credits.sound)
+      updateItems(binding.cameraHeader, binding.cameraItems, person.credits.camera)
 
-      viewOnTrakt!!.setOnClickListener {
+      binding.viewOnTrakt.setOnClickListener {
         Intents.openUrl(
           requireContext(),
           TraktUtils.getTraktPersonUrl(person.traktId)

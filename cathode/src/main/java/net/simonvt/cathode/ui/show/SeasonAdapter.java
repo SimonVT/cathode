@@ -24,8 +24,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
@@ -149,18 +147,20 @@ public class SeasonAdapter extends BaseAdapter<Episode, SeasonAdapter.ViewHolder
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.screen) RemoteImageView screen;
-
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.firstAired) TimeStamp firstAired;
-    @BindView(R.id.number) TextView number;
+    RemoteImageView screen;
+    TextView title;
+    TimeStamp firstAired;
+    TextView number;
 
     String episodeTitle;
     String showTitle;
 
     ViewHolder(View v) {
       super(v);
-      ButterKnife.bind(this, v);
+      screen = v.findViewById(R.id.screen);
+      title = v.findViewById(R.id.title);
+      firstAired = v.findViewById(R.id.firstAired);
+      number = v.findViewById(R.id.number);
     }
   }
 }

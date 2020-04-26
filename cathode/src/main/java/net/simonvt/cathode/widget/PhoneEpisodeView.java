@@ -19,8 +19,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.widget.RemoteImageView;
 
@@ -28,13 +26,13 @@ public class PhoneEpisodeView extends ViewGroup {
 
   private static final float SCREEN_RATIO = 680.f / 1000.f;
 
-  @BindView(R.id.screen) RemoteImageView poster;
+  private RemoteImageView poster;
 
-  @BindView(R.id.number) TextView number;
+  private TextView number;
 
-  @BindView(R.id.title) TextView title;
+  private TextView title;
 
-  @BindView(R.id.firstAired) TextView firstAired;
+  private TextView firstAired;
 
   private int minHeight;
 
@@ -59,7 +57,10 @@ public class PhoneEpisodeView extends ViewGroup {
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    ButterKnife.bind(this);
+    poster = findViewById(R.id.screen);
+    number = findViewById(R.id.number);
+    title = findViewById(R.id.title);
+    firstAired = findViewById(R.id.firstAired);
   }
 
   @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {

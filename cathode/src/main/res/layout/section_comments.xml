@@ -18,7 +18,7 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/commentsParent"
+    android:id="@+id/comments"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="4dp"
@@ -53,5 +53,7 @@
         style="@style/Card.Title"/>
   </FrameLayout>
 
-  <include layout="@layout/section_comments_container"/>
+  <include
+      layout="@layout/section_comments_container"
+      android:id="@+id/container" />
 </LinearLayout>

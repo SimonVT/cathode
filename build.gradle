@@ -16,7 +16,6 @@ buildscript {
     classpath deps.kotlin.ktlint
     classpath deps.google.services
     classpath deps.firebase.fabric
-    classpath deps.butterknifeGradle
   }
 }
 

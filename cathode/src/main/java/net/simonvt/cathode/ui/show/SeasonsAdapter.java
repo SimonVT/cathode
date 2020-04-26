@@ -27,8 +27,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.common.widget.RemoteImageView;
@@ -180,14 +178,17 @@ public class SeasonsAdapter extends BaseAdapter<Season, SeasonsAdapter.ViewHolde
 
   static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.progress) ProgressBar progress;
-    @BindView(R.id.summary) TextView summary;
-    @BindView(R.id.poster) RemoteImageView poster;
+    TextView title;
+    ProgressBar progress;
+    TextView summary;
+    RemoteImageView poster;
 
     ViewHolder(View v) {
       super(v);
-      ButterKnife.bind(this, v);
+      title = v.findViewById(R.id.title);
+      progress = v.findViewById(R.id.progress);
+      summary = v.findViewById(R.id.summary);
+      poster = v.findViewById(R.id.poster);
     }
   }
 }

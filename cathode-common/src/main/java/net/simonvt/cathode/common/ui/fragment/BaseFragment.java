@@ -24,16 +24,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import net.simonvt.cathode.common.R;
 import net.simonvt.cathode.common.ui.FragmentCallbacks;
 import net.simonvt.cathode.common.ui.FragmentContract;
 
 public abstract class BaseFragment extends Fragment
     implements FragmentContract, Toolbar.OnMenuItemClickListener {
-
-  private Unbinder unbinder;
 
   @Nullable private Toolbar toolbar;
 
@@ -90,7 +86,6 @@ public abstract class BaseFragment extends Fragment
 
   @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
-    unbinder = ButterKnife.bind(this, view);
     toolbar = view.findViewById(R.id.toolbar);
     if (toolbar != null) {
       toolbar.setOnMenuItemClickListener(this);
@@ -118,8 +113,7 @@ public abstract class BaseFragment extends Fragment
       toolbar.setNavigationOnClickListener(null);
       toolbar = null;
     }
-    unbinder.unbind();
-    unbinder = null;
+
     super.onDestroyView();
   }
 

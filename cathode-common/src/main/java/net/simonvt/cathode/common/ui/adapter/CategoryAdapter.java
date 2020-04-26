@@ -23,12 +23,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import java.util.ArrayList;
 import java.util.List;
 import net.simonvt.cathode.common.R;
-import net.simonvt.cathode.common.R2;
 
 public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -247,11 +244,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
   static final class CategoryViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R2.id.category) TextView category;
+    TextView category;
 
     CategoryViewHolder(View itemView) {
       super(itemView);
-      ButterKnife.bind(this, itemView);
+      category = itemView.findViewById(R.id.category);
     }
   }
 

@@ -23,8 +23,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
@@ -262,13 +260,13 @@ public class ShowsWithNextAdapter
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.watched) TextView watched;
-    @BindView(R.id.progress) ProgressBar progressBar;
-    @BindView(R.id.nextEpisode) TextView nextEpisode;
-    @BindView(R.id.firstAired) TimeStamp firstAired;
-    @BindView(R.id.overflow) OverflowView overflow;
-    @BindView(R.id.poster) RemoteImageView poster;
+    TextView title;
+    TextView watched;
+    ProgressBar progressBar;
+    TextView nextEpisode;
+    TimeStamp firstAired;
+    OverflowView overflow;
+    RemoteImageView poster;
 
     public int showTypeCount;
     public int showAiredCount;
@@ -277,7 +275,13 @@ public class ShowsWithNextAdapter
 
     ViewHolder(View v) {
       super(v);
-      ButterKnife.bind(this, v);
+      title = itemView.findViewById(R.id.title);
+      watched = itemView.findViewById(R.id.watched);
+      progressBar = itemView.findViewById(R.id.progress);
+      nextEpisode = itemView.findViewById(R.id.nextEpisode);
+      firstAired = itemView.findViewById(R.id.firstAired);
+      overflow = itemView.findViewById(R.id.overflow);
+      poster = itemView.findViewById(R.id.poster);
     }
   }
 }

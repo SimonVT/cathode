@@ -21,7 +21,7 @@
 
   <include
       layout="@layout/fragment_movie_top"
-      android:id="@+id/topBarContainer"
+      android:id="@+id/top"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"/>
 
@@ -29,6 +29,8 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
 
-    <include layout="@layout/fragment_movie_content"/>
+    <include
+        android:id="@+id/content"
+        layout="@layout/fragment_movie_content"/>
   </FrameLayout>
 </LinearLayout>

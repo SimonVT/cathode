@@ -21,8 +21,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.FragmentsUtils;
 import net.simonvt.cathode.common.ui.adapter.HeaderAdapter;
@@ -201,18 +199,22 @@ public class UpcomingAdapter extends HeaderAdapter<ShowWithEpisode, RecyclerView
 
   public static class ItemViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.nextEpisode) TextView nextEpisode;
-    @BindView(R.id.firstAired) TimeStamp firstAired;
-    @BindView(R.id.check_in) CheckInView checkIn;
-    @BindView(R.id.poster) RemoteImageView poster;
+    TextView title;
+    TextView nextEpisode;
+    TimeStamp firstAired;
+    CheckInView checkIn;
+    RemoteImageView poster;
 
     boolean watching;
     Long watchingId;
 
     ItemViewHolder(View v) {
       super(v);
-      ButterKnife.bind(this, v);
+      title = itemView.findViewById(R.id.title);
+      nextEpisode = itemView.findViewById(R.id.nextEpisode);
+      firstAired = itemView.findViewById(R.id.firstAired);
+      checkIn = itemView.findViewById(R.id.check_in);
+      poster = itemView.findViewById(R.id.poster);
     }
   }
 }

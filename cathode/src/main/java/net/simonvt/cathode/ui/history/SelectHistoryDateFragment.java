@@ -21,12 +21,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import butterknife.BindView;
-import butterknife.OnClick;
 import com.android.datetimepicker.date.DatePickerDialog;
 import com.android.datetimepicker.time.RadialPickerLayout;
 import com.android.datetimepicker.time.TimePickerDialog;
@@ -35,6 +32,7 @@ import java.util.Calendar;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.fragment.AppBarFragment;
+import net.simonvt.cathode.databinding.HistorySelectDateBinding;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
 import net.simonvt.cathode.sync.scheduler.EpisodeTaskScheduler;
@@ -85,11 +83,7 @@ public class SelectHistoryDateFragment extends AppBarFragment
   private long id;
   private String title;
 
-  @BindView(R.id.date) View date;
-  @BindView(R.id.dateText) TextView dateText;
-
-  @BindView(R.id.time) View time;
-  @BindView(R.id.timeText) TextView timeText;
+  private HistorySelectDateBinding binding;
 
   private int year;
   private int month;
@@ -178,13 +172,29 @@ public class SelectHistoryDateFragment extends AppBarFragment
   @Override
   protected View createView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle inState) {
-    return inflater.inflate(R.layout.history_select_date, container, false);
+    binding = HistorySelectDateBinding.inflate(inflater, container, false);
+    return binding.getRoot();
   }
 
   @Override public void onViewCreated(View view, Bundle inState) {
     super.onViewCreated(view, inState);
+    binding.date.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        selectDate();
+      }
+    });
+    binding.time.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        selectTime();
+      }
+    });
     updateDateText();
     updateTimeText();
+  }
+
+  @Override public void onDestroyView() {
+    binding = null;
+    super.onDestroyView();
   }
 
   @Override public void createMenu(Toolbar toolbar) {
@@ -230,7 +240,7 @@ public class SelectHistoryDateFragment extends AppBarFragment
     Calendar cal = Calendar.getInstance();
     cal.set(year, month, day);
     DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
-    dateText.setText(df.format(cal.getTime()));
+    binding.dateText.setText(df.format(cal.getTime()));
   }
 
   private void updateTimeText() {
@@ -238,7 +248,7 @@ public class SelectHistoryDateFragment extends AppBarFragment
     cal.set(Calendar.HOUR_OF_DAY, hour);
     cal.set(Calendar.MINUTE, minute);
     DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT);
-    timeText.setText(df.format(cal.getTime()));
+    binding.timeText.setText(df.format(cal.getTime()));
   }
 
   @Override
@@ -255,13 +265,13 @@ public class SelectHistoryDateFragment extends AppBarFragment
     updateTimeText();
   }
 
-  @OnClick(R.id.date) void selectDate() {
+  void selectDate() {
     DatePickerDialog dialog = DatePickerDialog.newInstance(year, month, day);
     dialog.setTargetFragment(this, 0);
     dialog.show(requireFragmentManager(), DIALOG_DATE);
   }
 
-  @OnClick(R.id.time) void selectTime() {
+  void selectTime() {
     TimePickerDialog dialog = TimePickerDialog.newInstance(hour, minute);
     dialog.setTargetFragment(this, 0);
     dialog.show(requireFragmentManager(), DIALOG_TIME);

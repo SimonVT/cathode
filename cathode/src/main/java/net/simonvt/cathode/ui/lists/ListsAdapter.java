@@ -22,8 +22,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.adapter.BaseAdapter;
 import net.simonvt.cathode.entity.UserList;
@@ -74,13 +72,13 @@ public class ListsAdapter extends BaseAdapter<UserList, ListsAdapter.ViewHolder>
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.name) TextView name;
-
-    @BindView(R.id.description) TextView description;
+    TextView name;
+    TextView description;
 
     public ViewHolder(View itemView) {
       super(itemView);
-      ButterKnife.bind(this, itemView);
+      name = itemView.findViewById(R.id.name);
+      description = itemView.findViewById(R.id.description);
     }
   }
 }

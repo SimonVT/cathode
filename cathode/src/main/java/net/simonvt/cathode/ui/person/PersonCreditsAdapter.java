@@ -21,8 +21,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import java.util.List;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.api.enumeration.ItemType;
@@ -123,13 +121,15 @@ public class PersonCreditsAdapter extends RecyclerView.Adapter<PersonCreditsAdap
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.poster) RemoteImageView poster;
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.job) TextView job;
+    RemoteImageView poster;
+    TextView title;
+    TextView job;
 
     public ViewHolder(View itemView) {
       super(itemView);
-      ButterKnife.bind(this, itemView);
+      poster = itemView.findViewById(R.id.poster);
+      title = itemView.findViewById(R.id.title);
+      job = itemView.findViewById(R.id.job);
     }
   }
 }

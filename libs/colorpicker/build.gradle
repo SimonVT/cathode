@@ -16,6 +16,10 @@ android {
     versionName = rootProject.ext.versionName
   }
 
+  viewBinding {
+    enabled = true
+  }
+
   lintOptions {
     abortOnError false
   }

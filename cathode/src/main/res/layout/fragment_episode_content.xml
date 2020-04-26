@@ -23,7 +23,9 @@
     android:paddingBottom="@dimen/detailContentPaddingBottom"
     android:paddingTop="4dp">
 
-  <include layout="@layout/checkmarks"/>
+  <include
+      layout="@layout/checkmarks"
+      android:id="@+id/checkmarks"/>
 
   <TextView
       android:id="@+id/overview"
@@ -35,6 +37,7 @@
 
   <include
       layout="@layout/section_comments"
+      android:id="@+id/comments"
       android:visibility="gone"/>
 
   <View

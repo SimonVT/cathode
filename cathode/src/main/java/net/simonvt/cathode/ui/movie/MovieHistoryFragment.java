@@ -19,13 +19,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import butterknife.BindView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +32,7 @@ import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment;
 import net.simonvt.cathode.common.util.Ids;
 import net.simonvt.cathode.common.util.guava.Preconditions;
+import net.simonvt.cathode.databinding.HistoryFragmentBinding;
 import net.simonvt.cathode.entity.Movie;
 import net.simonvt.cathode.images.ImageType;
 import net.simonvt.cathode.images.ImageUri;
@@ -63,10 +62,7 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
   private CathodeViewModelFactory viewModelFactory;
   private MovieHistoryViewModel viewModel;
 
-  @BindView(R.id.topTitle) TextView released;
-  @BindView(R.id.topSubtitle) TextView rating;
-
-  @BindView(R.id.watchedAtContainer) LinearLayout watchedAtContainer;
+  private HistoryFragmentBinding binding;
 
   @Inject public MovieHistoryFragment(MovieTaskScheduler movieScheduler,
       CathodeViewModelFactory viewModelFactory) {
@@ -112,12 +108,18 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
   @Override
   protected View createView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle inState) {
-    return inflater.inflate(R.layout.history_fragment, container, false);
+    binding = HistoryFragmentBinding.inflate(inflater, container, false);
+    return binding.getRoot();
   }
 
   @Override public void onViewCreated(@NonNull View view, @Nullable Bundle inState) {
     super.onViewCreated(view, inState);
     setResult(result);
+  }
+
+  @Override public void onDestroyView() {
+    binding = null;
+    super.onDestroyView();
   }
 
   public void onRemoveHistoryItem(long historyId, int position) {
@@ -138,8 +140,8 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
     final String backdropUri = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.BACKDROP, movieId);
     setTitle(movieTitle);
     setBackdrop(backdropUri);
-    this.released.setText(movie.getReleased());
-    this.rating.setText(String.format(Locale.getDefault(), "%.1f", movie.getRating()));
+    binding.top.topTitle.setText(movie.getReleased());
+    binding.top.topSubtitle.setText(String.format(Locale.getDefault(), "%.1f", movie.getRating()));
   }
 
   private boolean typeOrClear(ViewGroup parent, Type type) {
@@ -164,33 +166,33 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
     }
 
     if (result == null) {
-      if (typeOrClear(watchedAtContainer, Type.LOADING)) {
+      if (typeOrClear(binding.content.content, Type.LOADING)) {
         return;
       }
 
-      View v = LayoutInflater.from(watchedAtContainer.getContext())
-          .inflate(R.layout.history_progress, watchedAtContainer, false);
+      View v = LayoutInflater.from(binding.content.content.getContext())
+          .inflate(R.layout.history_progress, binding.content.content, false);
       v.setTag(Type.LOADING);
-      watchedAtContainer.addView(v);
+      binding.content.content.addView(v);
     } else if (!result.isSuccessful()) {
-      if (typeOrClear(watchedAtContainer, Type.ERROR)) {
+      if (typeOrClear(binding.content.content, Type.ERROR)) {
         return;
       }
 
-      View v = LayoutInflater.from(watchedAtContainer.getContext())
-          .inflate(R.layout.history_error, watchedAtContainer, false);
+      View v = LayoutInflater.from(binding.content.content.getContext())
+          .inflate(R.layout.history_error, binding.content.content, false);
       v.setTag(Type.ERROR);
-      watchedAtContainer.addView(v);
+      binding.content.content.addView(v);
     } else if (result.getItems().size() == 0) {
 
-      if (typeOrClear(watchedAtContainer, Type.EMPTY)) {
+      if (typeOrClear(binding.content.content, Type.EMPTY)) {
         return;
       }
 
-      View v = LayoutInflater.from(watchedAtContainer.getContext())
-          .inflate(R.layout.history_empty, watchedAtContainer, false);
+      View v = LayoutInflater.from(binding.content.content.getContext())
+          .inflate(R.layout.history_empty, binding.content.content, false);
       v.setTag(Type.ERROR);
-      watchedAtContainer.addView(v);
+      binding.content.content.addView(v);
     } else {
       List<HistoryItem> items = result.getItems();
       List<Long> ids = new ArrayList<>();
@@ -198,16 +200,16 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
         ids.add(item.historyId);
       }
 
-      for (int i = watchedAtContainer.getChildCount() - 1; i >= 0; i--) {
-        View v = watchedAtContainer.getChildAt(i);
+      for (int i = binding.content.content.getChildCount() - 1; i >= 0; i--) {
+        View v = binding.content.content.getChildAt(i);
         if (v.getTag() != Type.ITEM) {
-          watchedAtContainer.removeViewAt(i);
+          binding.content.content.removeViewAt(i);
           continue;
         }
 
         final long id = (long) v.getTag(R.id.historyId);
         if (!ids.contains(id)) {
-          watchedAtContainer.removeViewAt(i);
+          binding.content.content.removeViewAt(i);
         }
       }
 
@@ -217,8 +219,8 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
 
         View v = null;
 
-        if (i < watchedAtContainer.getChildCount()) {
-          v = watchedAtContainer.getChildAt(i);
+        if (i < binding.content.content.getChildCount()) {
+          v = binding.content.content.getChildAt(i);
         }
 
         if (v != null) {
@@ -239,8 +241,8 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
           }
         }
 
-        v = LayoutInflater.from(watchedAtContainer.getContext())
-            .inflate(R.layout.history_row, watchedAtContainer, false);
+        v = LayoutInflater.from(binding.content.content.getContext())
+            .inflate(R.layout.history_row, binding.content.content, false);
         TextView watchedAt = v.findViewById(R.id.watchedAt);
         View remove = v.findViewById(R.id.remove);
 
@@ -253,7 +255,7 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
           }
         });
 
-        watchedAtContainer.addView(v, i);
+        binding.content.content.addView(v, i);
       }
     }
   }

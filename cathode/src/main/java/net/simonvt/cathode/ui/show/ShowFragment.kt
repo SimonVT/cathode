@@ -22,7 +22,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -31,9 +30,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
-import butterknife.BindView
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.api.enumeration.ShowStatus
@@ -46,9 +43,10 @@ import net.simonvt.cathode.common.util.Intents
 import net.simonvt.cathode.common.util.Joiner
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.common.widget.CircleTransformation
-import net.simonvt.cathode.common.widget.CircularProgressIndicator
 import net.simonvt.cathode.common.widget.OverflowView
 import net.simonvt.cathode.common.widget.RemoteImageView
+import net.simonvt.cathode.databinding.FragmentShowBinding
+import net.simonvt.cathode.databinding.ShowInfoEpisodeBinding
 import net.simonvt.cathode.entity.CastMember
 import net.simonvt.cathode.entity.Comment
 import net.simonvt.cathode.entity.Episode
@@ -79,6 +77,9 @@ class ShowFragment @Inject constructor(
   private val episodeScheduler: EpisodeTaskScheduler
 ) : RefreshableAppBarFragment() {
 
+  private var _binding: FragmentShowBinding? = null
+  private val binding get() = _binding!!
+
   lateinit var navigationListener: NavigationListener
 
   var showId: Long = 0
@@ -97,129 +98,19 @@ class ShowFragment @Inject constructor(
   private var toCollect: Episode? = null
   private var lastCollected: Episode? = null
 
-  @BindView(R.id.seasonsDivider)
-  @JvmField
-  var seasonsDivider: View? = null
-  @BindView(R.id.seasonsTitle)
-  @JvmField
-  var seasonsTitle: View? = null
-  @BindView(R.id.seasons)
-  @JvmField
-  var seasonsView: RecyclerView? = null
   lateinit var seasonsAdapter: SeasonsAdapter
 
-  @BindView(R.id.rating)
-  @JvmField
-  var rating: CircularProgressIndicator? = null
-  @BindView(R.id.airtime)
-  @JvmField
-  var airTime: TextView? = null
-  @BindView(R.id.status)
-  @JvmField
-  var status: TextView? = null
-  @BindView(R.id.overview)
-  @JvmField
-  var overview: TextView? = null
-
-  @BindView(R.id.genresDivider)
-  @JvmField
-  var genresDivider: View? = null
-  @BindView(R.id.genresTitle)
-  @JvmField
-  var genresTitle: View? = null
-  @BindView(R.id.genres)
-  @JvmField
-  var genresView: TextView? = null
-
-  @BindView(R.id.checkmarks)
-  @JvmField
-  var checkmarks: View? = null
-  @BindView(R.id.isWatched)
-  @JvmField
-  var watched: TextView? = null
-  @BindView(R.id.inCollection)
-  @JvmField
-  var collection: TextView? = null
-  @BindView(R.id.inWatchlist)
-  @JvmField
-  var watchlist: TextView? = null
-
-  @BindView(R.id.castParent)
-  @JvmField
-  var castParent: View? = null
-  @BindView(R.id.castHeader)
-  @JvmField
-  var castHeader: View? = null
-  @BindView(R.id.castContainer)
-  @JvmField
-  var castContainer: LinearLayout? = null
-
-  @BindView(R.id.commentsParent)
-  @JvmField
-  var commentsParent: View? = null
-  @BindView(R.id.commentsHeader)
-  @JvmField
-  var commentsHeader: View? = null
-  @BindView(R.id.commentsContainer)
-  @JvmField
-  var commentsContainer: LinearLayout? = null
-
-  @BindView(R.id.relatedParent)
-  @JvmField
-  var relatedParent: View? = null
-  @BindView(R.id.relatedHeader)
-  @JvmField
-  var relatedHeader: View? = null
-  @BindView(R.id.relatedContainer)
-  @JvmField
-  var relatedContainer: LinearLayout? = null
-
-  @BindView(R.id.trailer)
-  @JvmField
-  var trailer: TextView? = null
-  @BindView(R.id.website)
-  @JvmField
-  var website: TextView? = null
-  @BindView(R.id.viewOnTrakt)
-  @JvmField
-  var viewOnTrakt: TextView? = null
-  @BindView(R.id.viewOnImdb)
-  @JvmField
-  var viewOnImdb: TextView? = null
-  @BindView(R.id.viewOnTvdb)
-  @JvmField
-  var viewOnTvdb: TextView? = null
-  @BindView(R.id.viewOnTmdb)
-  @JvmField
-  var viewOnTmdb: TextView? = null
-
-  @BindView(R.id.episodes)
-  @JvmField
-  var episodes: LinearLayout? = null
-
-  @BindView(R.id.toWatch)
-  @JvmField
-  var toWatchView: View? = null
-  private var toWatchHolder: EpisodeHolder? = null
+  private var toWatchBinding: ShowInfoEpisodeBinding? = null
   private var toWatchId: Long = -1
   private var toWatchTitle: String? = null
 
-  @BindView(R.id.lastWatched)
-  @JvmField
-  var lastWatchedView: View? = null
-  private var lastWatchedHolder: EpisodeHolder? = null
+  private var lastWatchedBinding: ShowInfoEpisodeBinding? = null
   private var lastWatchedId: Long = -1
 
-  @BindView(R.id.toCollect)
-  @JvmField
-  var toCollectView: View? = null
-  private var toCollectHolder: EpisodeHolder? = null
+  private var toCollectBinding: ShowInfoEpisodeBinding? = null
   private var toCollectId: Long = -1
 
-  @BindView(R.id.lastCollected)
-  @JvmField
-  var lastCollectedView: View? = null
-  private var lastCollectedHolder: EpisodeHolder? = null
+  private var lastCollectedBinding: ShowInfoEpisodeBinding? = null
   private var lastCollectedId: Long = -1
 
   private var showTitle: String? = null
@@ -233,15 +124,6 @@ class ShowFragment @Inject constructor(
   private var calendarHidden: Boolean = false
 
   private lateinit var type: LibraryType
-
-  private class EpisodeHolder(v: View) {
-
-    val episodeScreenshot: RemoteImageView = v.findViewById(R.id.episodeScreenshot)
-    val episodeTitle: TextView = v.findViewById(R.id.episodeTitle)
-    val episodeAirTime: TextView = v.findViewById(R.id.episodeAirTime)
-    val episodeEpisode: TextView = v.findViewById(R.id.episodeEpisode)
-    val episodeOverflow: OverflowView = v.findViewById(R.id.episodeOverflow)
-  }
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
@@ -319,58 +201,83 @@ class ShowFragment @Inject constructor(
   }
 
   override fun createView(inflater: LayoutInflater, container: ViewGroup?, inState: Bundle?): View {
-    return inflater.inflate(R.layout.fragment_show, container, false)
+    _binding = FragmentShowBinding.inflate(inflater, container, false)
+    toWatchBinding = binding.content.episodes.toWatch
+    lastWatchedBinding = binding.content.episodes.lastWatched
+    toCollectBinding = binding.content.episodes.toCollect
+    lastCollectedBinding = binding.content.episodes.lastCollected
+    return binding.root
   }
 
   override fun onViewCreated(view: View, inState: Bundle?) {
     super.onViewCreated(view, inState)
     val linkDrawable = VectorDrawableCompat.create(resources, R.drawable.ic_link_black_24dp, null)
-    website!!.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
-    viewOnTrakt!!.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
-    viewOnImdb!!.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
-    viewOnTmdb!!.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
-    viewOnTvdb!!.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
+    binding.content.website.setCompoundDrawablesWithIntrinsicBounds(linkDrawable, null, null, null)
+    binding.content.viewOnTrakt.setCompoundDrawablesWithIntrinsicBounds(
+      linkDrawable,
+      null,
+      null,
+      null
+    )
+    binding.content.viewOnImdb.setCompoundDrawablesWithIntrinsicBounds(
+      linkDrawable,
+      null,
+      null,
+      null
+    )
+    binding.content.viewOnTmdb.setCompoundDrawablesWithIntrinsicBounds(
+      linkDrawable,
+      null,
+      null,
+      null
+    )
+    binding.content.viewOnTvdb.setCompoundDrawablesWithIntrinsicBounds(
+      linkDrawable,
+      null,
+      null,
+      null
+    )
 
     val playDrawable =
       VectorDrawableCompat.create(resources, R.drawable.ic_play_arrow_black_24dp, null)
-    trailer!!.setCompoundDrawablesWithIntrinsicBounds(playDrawable, null, null, null)
+    binding.content.trailer.setCompoundDrawablesWithIntrinsicBounds(playDrawable, null, null, null)
 
-    overview!!.text = showOverview
+    binding.content.overview.text = showOverview
 
     val decoration = DividerItemDecoration(requireContext(), LinearLayoutManager.HORIZONTAL)
     decoration.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.divider_4dp)!!)
-    seasonsView!!.addItemDecoration(decoration)
-    seasonsView!!.layoutManager =
+    binding.content.seasons.addItemDecoration(decoration)
+    binding.content.seasons.layoutManager =
       LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-    seasonsView!!.adapter = seasonsAdapter
-    (seasonsView!!.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
+    binding.content.seasons.adapter = seasonsAdapter
+    (binding.content.seasons.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
     seasonsAdapter.registerAdapterDataObserver(object : AdapterCountDataObserver(seasonsAdapter) {
       override fun onCountChanged(itemCount: Int) {
-        if (seasonsTitle != null) {
+        if (_binding != null) {
           if (itemCount == 0) {
-            seasonsDivider!!.visibility = View.GONE
-            seasonsTitle!!.visibility = View.GONE
-            seasonsView!!.visibility = View.GONE
+            binding.content.seasonsDivider.visibility = View.GONE
+            binding.content.seasonsTitle.visibility = View.GONE
+            binding.content.seasons.visibility = View.GONE
           } else {
-            seasonsDivider!!.visibility = View.VISIBLE
-            seasonsTitle!!.visibility = View.VISIBLE
-            seasonsView!!.visibility = View.VISIBLE
+            binding.content.seasonsDivider.visibility = View.VISIBLE
+            binding.content.seasonsTitle.visibility = View.VISIBLE
+            binding.content.seasons.visibility = View.VISIBLE
           }
         }
       }
     })
     if (seasonsAdapter.itemCount > 0) {
-      seasonsDivider!!.visibility = View.VISIBLE
-      seasonsTitle!!.visibility = View.VISIBLE
-      seasonsView!!.visibility = View.VISIBLE
+      binding.content.seasonsDivider.visibility = View.VISIBLE
+      binding.content.seasonsTitle.visibility = View.VISIBLE
+      binding.content.seasons.visibility = View.VISIBLE
     } else {
-      seasonsDivider!!.visibility = View.GONE
-      seasonsTitle!!.visibility = View.GONE
-      seasonsView!!.visibility = View.GONE
+      binding.content.seasonsDivider.visibility = View.GONE
+      binding.content.seasonsTitle.visibility = View.GONE
+      binding.content.seasons.visibility = View.GONE
     }
 
     if (TraktLinkSettings.isLinked(requireContext())) {
-      rating!!.setOnClickListener {
+      binding.top.rating.setOnClickListener {
         requireFragmentManager().instantiate(
           RatingDialog::class.java,
           RatingDialog.getArgs(RatingDialog.Type.SHOW, showId, currentRating)
@@ -378,7 +285,7 @@ class ShowFragment @Inject constructor(
       }
     }
 
-    castHeader!!.setOnClickListener {
+    binding.content.cast.castHeader.setOnClickListener {
       navigationListener.onDisplayCredits(
         ItemType.SHOW,
         showId,
@@ -386,29 +293,28 @@ class ShowFragment @Inject constructor(
       )
     }
 
-    commentsHeader!!.setOnClickListener {
+    binding.content.comments.commentsHeader.setOnClickListener {
       navigationListener.onDisplayComments(
         ItemType.SHOW,
         showId
       )
     }
 
-    relatedHeader!!.setOnClickListener {
+    binding.content.related.relatedHeader.setOnClickListener {
       navigationListener.onDisplayRelatedShows(
         showId,
         showTitle
       )
     }
 
-    toWatchHolder = EpisodeHolder(toWatchView!!)
-    toWatchView!!.setOnClickListener {
+    toWatchBinding?.root?.setOnClickListener {
       if (toWatchId != -1L) navigationListener.onDisplayEpisode(
         toWatchId,
         showTitle
       )
     }
 
-    toWatchHolder!!.episodeOverflow.setListener(object : OverflowView.OverflowActionListener {
+    toWatchBinding?.episodeOverflow?.setListener(object : OverflowView.OverflowActionListener {
       override fun onPopupShown() {}
 
       override fun onPopupDismissed() {}
@@ -434,28 +340,26 @@ class ShowFragment @Inject constructor(
       }
     })
 
-    if (lastWatchedView != null) {
-      lastWatchedHolder = EpisodeHolder(lastWatchedView!!)
-      lastWatchedView!!.setOnClickListener {
+    if (lastWatchedBinding != null) {
+      lastWatchedBinding?.root?.setOnClickListener {
         if (lastWatchedId != -1L) {
           navigationListener.onDisplayEpisode(lastWatchedId, showTitle)
         }
       }
     }
 
-    toCollectHolder = EpisodeHolder(toCollectView!!)
-    toCollectView!!.setOnClickListener {
+    toCollectBinding?.root?.setOnClickListener {
       if (toCollectId != -1L) navigationListener.onDisplayEpisode(
         toCollectId,
         showTitle
       )
     }
 
-    toCollectHolder!!.episodeOverflow.addItem(
+    toCollectBinding?.episodeOverflow?.addItem(
       R.id.action_collection_add,
       R.string.action_collection_add
     )
-    toCollectHolder!!.episodeOverflow.setListener(object : OverflowView.OverflowActionListener {
+    toCollectBinding?.episodeOverflow?.setListener(object : OverflowView.OverflowActionListener {
       override fun onPopupShown() {}
 
       override fun onPopupDismissed() {}
@@ -469,19 +373,18 @@ class ShowFragment @Inject constructor(
       }
     })
 
-    if (lastCollectedView != null) {
-      lastCollectedHolder = EpisodeHolder(lastCollectedView!!)
-      lastCollectedView!!.setOnClickListener {
+    if (lastCollectedBinding != null) {
+      lastCollectedBinding?.root?.setOnClickListener {
         if (lastCollectedId != -1L) {
           navigationListener.onDisplayEpisode(lastCollectedId, showTitle)
         }
       }
 
-      lastCollectedHolder!!.episodeOverflow.addItem(
+      lastCollectedBinding?.episodeOverflow?.addItem(
         R.id.action_collection_remove,
         R.string.action_collection_remove
       )
-      lastCollectedHolder!!.episodeOverflow.setListener(object :
+      lastCollectedBinding?.episodeOverflow?.setListener(object :
         OverflowView.OverflowActionListener {
         override fun onPopupShown() {}
 
@@ -506,6 +409,11 @@ class ShowFragment @Inject constructor(
     updateToCollect()
     updateLastCollected()
     updateComments()
+  }
+
+  override fun onDestroyView() {
+    _binding = null
+    super.onDestroyView()
   }
 
   override fun onRefresh() {
@@ -577,7 +485,7 @@ class ShowFragment @Inject constructor(
     showOverview = show!!.overview
 
     currentRating = show!!.userRating
-    rating!!.setValue(show!!.rating)
+    binding.top.rating.setValue(show!!.rating)
 
     calendarHidden = show!!.hiddenCalendar
 
@@ -585,10 +493,11 @@ class ShowFragment @Inject constructor(
     val isCollected = show!!.inCollectionCount > 0
     inWatchlist = show!!.inWatchlist
     val hasCheckmark = isWatched || isCollected || inWatchlist
-    checkmarks!!.visibility = if (hasCheckmark) View.VISIBLE else View.GONE
-    watched!!.visibility = if (isWatched) View.VISIBLE else View.GONE
-    collection!!.visibility = if (isCollected) View.VISIBLE else View.GONE
-    watchlist!!.visibility = if (inWatchlist) View.VISIBLE else View.GONE
+    binding.content.checkmarks.checkmarks.visibility = if (hasCheckmark) View.VISIBLE else View.GONE
+    binding.content.checkmarks.isWatched.visibility = if (isWatched) View.VISIBLE else View.GONE
+    binding.content.checkmarks.inCollection.visibility =
+      if (isCollected) View.VISIBLE else View.GONE
+    binding.content.checkmarks.inWatchlist.visibility = if (inWatchlist) View.VISIBLE else View.GONE
 
     val airDay = show!!.airDay
     val airTime = show!!.airTime
@@ -614,7 +523,7 @@ class ShowFragment @Inject constructor(
       }
     }
 
-    this.airTime!!.text = airTimeString
+    binding.top.airtime.text = airTimeString
 
     val status = show!!.status
     var statusString: String? = null
@@ -632,25 +541,25 @@ class ShowFragment @Inject constructor(
       }
     }
 
-    this.status!!.text = statusString
+    binding.top.status.text = statusString
 
-    this.overview!!.text = showOverview
+    binding.content.overview.text = showOverview
 
     val trailer = show!!.trailer
     if (!TextUtils.isEmpty(trailer)) {
-      this.trailer!!.visibility = View.VISIBLE
-      this.trailer!!.setOnClickListener { Intents.openUrl(requireContext(), trailer) }
+      binding.content.trailer.visibility = View.VISIBLE
+      binding.content.trailer.setOnClickListener { Intents.openUrl(requireContext(), trailer) }
     } else {
-      this.trailer!!.visibility = View.GONE
+      binding.content.trailer.visibility = View.GONE
     }
 
     val website = show!!.homepage
     if (!TextUtils.isEmpty(website)) {
-      this.website!!.visibility = View.VISIBLE
-      this.website!!.text = website
-      this.website!!.setOnClickListener { Intents.openUrl(requireContext(), website) }
+      binding.content.website.visibility = View.VISIBLE
+      binding.content.website.text = website
+      binding.content.website.setOnClickListener { Intents.openUrl(requireContext(), website) }
     } else {
-      this.website!!.visibility = View.GONE
+      binding.content.website.visibility = View.GONE
     }
 
     val traktId = show!!.traktId
@@ -658,8 +567,8 @@ class ShowFragment @Inject constructor(
     val tvdbId = show!!.tvdbId
     val tmdbId = show!!.tmdbId
 
-    viewOnTrakt!!.visibility = View.VISIBLE
-    viewOnTrakt!!.setOnClickListener {
+    binding.content.viewOnTrakt.visibility = View.VISIBLE
+    binding.content.viewOnTrakt.setOnClickListener {
       Intents.openUrl(
         requireContext(),
         TraktUtils.getTraktShowUrl(traktId)
@@ -667,39 +576,39 @@ class ShowFragment @Inject constructor(
     }
 
     if (!imdbId.isNullOrEmpty()) {
-      viewOnImdb!!.visibility = View.VISIBLE
-      viewOnImdb!!.setOnClickListener {
+      binding.content.viewOnImdb.visibility = View.VISIBLE
+      binding.content.viewOnImdb.setOnClickListener {
         Intents.openUrl(
           requireContext(),
           TraktUtils.getImdbUrl(imdbId)
         )
       }
     } else {
-      viewOnImdb!!.visibility = View.GONE
+      binding.content.viewOnImdb.visibility = View.GONE
     }
 
     if (tvdbId > 0) {
-      viewOnTvdb!!.visibility = View.VISIBLE
-      viewOnTvdb!!.setOnClickListener {
+      binding.content.viewOnTvdb.visibility = View.VISIBLE
+      binding.content.viewOnTvdb.setOnClickListener {
         Intents.openUrl(
           requireContext(),
           TraktUtils.getTvdbUrl(tvdbId)
         )
       }
     } else {
-      viewOnTvdb!!.visibility = View.GONE
+      binding.content.viewOnTvdb.visibility = View.GONE
     }
 
     if (tmdbId > 0) {
-      viewOnTmdb!!.visibility = View.VISIBLE
-      viewOnTmdb!!.setOnClickListener {
+      binding.content.viewOnTmdb.visibility = View.VISIBLE
+      binding.content.viewOnTmdb.setOnClickListener {
         Intents.openUrl(
           requireContext(),
           TraktUtils.getTmdbTvUrl(tmdbId)
         )
       }
     } else {
-      viewOnTmdb!!.visibility = View.GONE
+      binding.content.viewOnTmdb.visibility = View.GONE
     }
 
     invalidateMenu()
@@ -711,14 +620,14 @@ class ShowFragment @Inject constructor(
     }
 
     if (genres == null || genres!!.isEmpty()) {
-      genresDivider!!.visibility = View.GONE
-      genresTitle!!.visibility = View.GONE
-      genresView!!.visibility = View.GONE
+      binding.content.genresDivider.visibility = View.GONE
+      binding.content.genresTitle.visibility = View.GONE
+      binding.content.genres.visibility = View.GONE
     } else {
-      genresDivider!!.visibility = View.VISIBLE
-      genresTitle!!.visibility = View.VISIBLE
-      genresView!!.visibility = View.VISIBLE
-      genresView!!.text = Joiner.on(", ").join(genres)
+      binding.content.genresDivider.visibility = View.VISIBLE
+      binding.content.genresTitle.visibility = View.VISIBLE
+      binding.content.genres.visibility = View.VISIBLE
+      binding.content.genres.text = Joiner.on(", ").join(genres)
     }
   }
 
@@ -727,16 +636,18 @@ class ShowFragment @Inject constructor(
       return
     }
 
-    castContainer!!.removeAllViews()
+    binding.content.cast.container.container.removeAllViews()
     if (cast.isNullOrEmpty()) {
-      castParent!!.visibility = View.GONE
+      binding.content.cast.cast.visibility = View.GONE
     } else {
-      castParent!!.visibility = View.VISIBLE
+      binding.content.cast.cast.visibility = View.VISIBLE
 
       for (castMember in cast!!) {
-        val v =
-          LayoutInflater.from(requireContext())
-            .inflate(R.layout.section_people_item, castContainer, false)
+        val v = LayoutInflater.from(requireContext()).inflate(
+          R.layout.section_people_item,
+          binding.content.cast.container.container,
+          false
+        )
 
         val personId = castMember.person.id
         val headshotUrl = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId)
@@ -753,7 +664,7 @@ class ShowFragment @Inject constructor(
 
         v.setOnClickListener { navigationListener.onDisplayPerson(personId) }
 
-        castContainer!!.addView(v)
+        binding.content.cast.container.container.addView(v)
       }
     }
   }
@@ -763,15 +674,18 @@ class ShowFragment @Inject constructor(
       return
     }
 
-    relatedContainer!!.removeAllViews()
+    binding.content.related.container.container.removeAllViews()
     if (related.isNullOrEmpty()) {
-      relatedParent!!.visibility = View.GONE
+      binding.content.related.related.visibility = View.GONE
     } else {
-      relatedParent!!.visibility = View.VISIBLE
+      binding.content.related.related.visibility = View.VISIBLE
 
       for (show in related!!) {
-        val v = LayoutInflater.from(requireContext())
-          .inflate(R.layout.section_related_item, this.relatedContainer, false)
+        val v = LayoutInflater.from(requireContext()).inflate(
+          R.layout.section_related_item,
+          binding.content.related.container.container,
+          false
+        )
 
         val poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, show.id)
 
@@ -799,7 +713,7 @@ class ShowFragment @Inject constructor(
         v.setOnClickListener {
           navigationListener.onDisplayShow(show.id, show.title, show.overview, LibraryType.WATCHED)
         }
-        relatedContainer!!.addView(v)
+        binding.content.related.container.container.addView(v)
       }
     }
   }
@@ -810,9 +724,9 @@ class ShowFragment @Inject constructor(
     }
 
     if (toWatchId == -1L && lastWatchedId == -1L && toCollectId == -1L && lastCollectedId == -1L) {
-      episodes!!.visibility = View.GONE
+      binding.content.episodes.episodes.visibility = View.GONE
     } else {
-      episodes!!.visibility = View.VISIBLE
+      binding.content.episodes.episodes.visibility = View.VISIBLE
     }
   }
 
@@ -822,10 +736,10 @@ class ShowFragment @Inject constructor(
     }
 
     if (toWatch == null) {
-      toWatchView!!.visibility = View.GONE
+      toWatchBinding?.root?.visibility = View.GONE
       toWatchId = -1
     } else {
-      toWatchView!!.visibility = View.VISIBLE
+      toWatchBinding?.root?.visibility = View.VISIBLE
       toWatchId = toWatch!!.id
 
       toWatchTitle = DataHelper.getEpisodeTitle(
@@ -838,43 +752,43 @@ class ShowFragment @Inject constructor(
       val toWatchEpisodeText =
         getString(R.string.season_x_episode_y, toWatch!!.season, toWatch!!.episode)
 
-      toWatchHolder!!.episodeTitle.text = toWatchTitle
-      toWatchHolder!!.episodeEpisode.text = toWatchEpisodeText
+      toWatchBinding?.episodeTitle?.text = toWatchTitle
+      toWatchBinding?.episodeEpisode?.text = toWatchEpisodeText
 
       val screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, toWatchId)
-      toWatchHolder!!.episodeScreenshot.setImage(screenshotUri)
+      toWatchBinding?.episodeScreenshot?.setImage(screenshotUri)
 
       var firstAiredString =
         DateStringUtils.getAirdateInterval(requireContext(), toWatch!!.firstAired, false)
 
-      toWatchHolder!!.episodeOverflow.removeItems()
+      toWatchBinding?.episodeOverflow?.removeItems()
       if (toWatch!!.checkedIn) {
-        toWatchHolder!!.episodeOverflow.addItem(
+        toWatchBinding?.episodeOverflow?.addItem(
           R.id.action_checkin_cancel,
           R.string.action_checkin_cancel
         )
         firstAiredString = resources.getString(R.string.show_watching)
       } else if (!toWatch!!.watching) {
-        toWatchHolder!!.episodeOverflow.addItem(R.id.action_checkin, R.string.action_checkin)
-        toWatchHolder!!.episodeOverflow.addItem(
+        toWatchBinding?.episodeOverflow?.addItem(R.id.action_checkin, R.string.action_checkin)
+        toWatchBinding?.episodeOverflow?.addItem(
           R.id.action_history_add,
           R.string.action_history_add
         )
       }
 
-      toWatchHolder!!.episodeAirTime.text = firstAiredString
+      toWatchBinding?.episodeAirTime?.text = firstAiredString
     }
 
     updateEpisodesContainer()
   }
 
   private fun updateLastWatched() {
-    if (lastWatchedView == null) {
+    if (lastWatchedBinding == null) {
       return
     }
 
     if (lastWatched != null) {
-      lastWatchedView!!.visibility = View.VISIBLE
+      lastWatchedBinding?.root?.visibility = View.VISIBLE
       lastWatchedId = lastWatched!!.id
 
       val title = DataHelper.getEpisodeTitle(
@@ -884,20 +798,20 @@ class ShowFragment @Inject constructor(
         lastWatched!!.episode,
         lastWatched!!.watched
       )
-      lastWatchedHolder!!.episodeTitle.text = title
+      lastWatchedBinding?.episodeTitle?.text = title
 
       val firstAiredString =
         DateStringUtils.getAirdateInterval(requireContext(), lastWatched!!.firstAired, false)
-      lastWatchedHolder!!.episodeAirTime.text = firstAiredString
+      lastWatchedBinding?.episodeAirTime?.text = firstAiredString
 
       val lastWatchedEpisodeText =
         getString(R.string.season_x_episode_y, lastWatched!!.season, lastWatched!!.episode)
-      lastWatchedHolder!!.episodeEpisode.text = lastWatchedEpisodeText
+      lastWatchedBinding?.episodeEpisode?.text = lastWatchedEpisodeText
 
       val screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, lastWatchedId)
-      lastWatchedHolder!!.episodeScreenshot.setImage(screenshotUri)
+      lastWatchedBinding?.episodeScreenshot?.setImage(screenshotUri)
     } else {
-      lastWatchedView!!.visibility = if (toWatchId == -1L) View.GONE else View.INVISIBLE
+      lastWatchedBinding?.root?.visibility = if (toWatchId == -1L) View.GONE else View.INVISIBLE
       lastWatchedId = -1
     }
 
@@ -905,15 +819,15 @@ class ShowFragment @Inject constructor(
   }
 
   private fun updateToCollect() {
-    if (view == null) {
+    if (toCollectBinding == null) {
       return
     }
 
     if (toCollect == null) {
-      toCollectView!!.visibility = View.GONE
+      toCollectBinding?.root?.visibility = View.GONE
       toCollectId = -1
     } else {
-      toCollectView!!.visibility = View.VISIBLE
+      toCollectBinding?.root?.visibility = View.VISIBLE
       toCollectId = toCollect!!.id
 
       val title = DataHelper.getEpisodeTitle(
@@ -923,33 +837,33 @@ class ShowFragment @Inject constructor(
         toCollect!!.episode,
         toCollect!!.watched
       )
-      toCollectHolder!!.episodeTitle.text = title
+      toCollectBinding?.episodeTitle?.text = title
 
       val firstAiredString =
         DateStringUtils.getAirdateInterval(requireContext(), toCollect!!.firstAired, false)
-      toCollectHolder!!.episodeAirTime.text = firstAiredString
+      toCollectBinding?.episodeAirTime?.text = firstAiredString
 
       val toCollectEpisodeText =
         getString(R.string.season_x_episode_y, toCollect!!.season, toCollect!!.episode)
-      toCollectHolder!!.episodeEpisode.text = toCollectEpisodeText
+      toCollectBinding?.episodeEpisode?.text = toCollectEpisodeText
 
       val screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, toCollectId)
-      toCollectHolder!!.episodeScreenshot.setImage(screenshotUri)
+      toCollectBinding?.episodeScreenshot?.setImage(screenshotUri)
     }
 
     updateEpisodesContainer()
   }
 
   private fun updateLastCollected() {
-    if (lastCollectedView == null) {
+    if (lastCollectedBinding == null) {
       return
     }
 
     if (lastCollected == null) {
       lastCollectedId = -1
-      lastCollectedView!!.visibility = View.INVISIBLE
+      lastCollectedBinding?.root?.visibility = View.INVISIBLE
     } else {
-      lastCollectedView!!.visibility = View.VISIBLE
+      lastCollectedBinding?.root?.visibility = View.VISIBLE
       lastCollectedId = lastCollected!!.id
 
       val title = DataHelper.getEpisodeTitle(
@@ -959,20 +873,20 @@ class ShowFragment @Inject constructor(
         lastCollected!!.episode,
         lastCollected!!.watched
       )
-      lastCollectedHolder!!.episodeTitle.text = title
+      lastCollectedBinding?.episodeTitle?.text = title
 
       val firstAiredString =
         DateStringUtils.getAirdateInterval(requireContext(), lastCollected!!.firstAired, false)
-      lastCollectedHolder!!.episodeAirTime.text = firstAiredString
+      lastCollectedBinding?.episodeAirTime?.text = firstAiredString
 
       val lastCollectedEpisodeText = getString(
         R.string.season_x_episode_y, lastCollected!!.season,
         lastCollected!!.episode
       )
-      lastCollectedHolder!!.episodeEpisode.text = lastCollectedEpisodeText
+      lastCollectedBinding?.episodeEpisode?.text = lastCollectedEpisodeText
 
       val screenshotUri = ImageUri.create(ImageUri.ITEM_EPISODE, ImageType.STILL, lastCollectedId)
-      lastCollectedHolder!!.episodeScreenshot.setImage(screenshotUri)
+      lastCollectedBinding?.episodeScreenshot?.setImage(screenshotUri)
     }
 
     updateEpisodesContainer()
@@ -985,11 +899,11 @@ class ShowFragment @Inject constructor(
 
     LinearCommentsAdapter.updateComments(
       requireContext(),
-      commentsContainer!!,
+      binding.content.comments.container.container,
       userComments,
       comments
     )
-    commentsParent!!.visibility = View.VISIBLE
+    binding.content.comments.comments.visibility = View.VISIBLE
   }
 
   companion object {

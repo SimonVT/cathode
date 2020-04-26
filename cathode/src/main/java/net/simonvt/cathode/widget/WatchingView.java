@@ -31,8 +31,6 @@ import android.view.ViewOutlineProvider;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.core.content.ContextCompat;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import net.simonvt.cathode.R;
 import net.simonvt.cathode.common.util.ViewUtils;
 import net.simonvt.cathode.common.widget.RemoteImageView;
@@ -87,15 +85,11 @@ public class WatchingView extends ViewGroup {
 
   private Paint backgroundPaint = new Paint();
 
-  @BindView(R.id.poster) RemoteImageView posterView;
-
-  @BindView(R.id.infoParent) View infoParent;
-
-  @BindView(R.id.title) TextView titleView;
-
-  @BindView(R.id.progress) ProgressBar progress;
-
-  @BindView(R.id.subtitle) TextView subtitleView;
+  RemoteImageView posterView;
+  View infoParent;
+  TextView titleView;
+  ProgressBar progress;
+  TextView subtitleView;
 
   private WatchingViewListener watchingViewListener;
 
@@ -367,7 +361,11 @@ public class WatchingView extends ViewGroup {
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    ButterKnife.bind(this);
+    posterView = findViewById(R.id.poster);
+    infoParent = findViewById(R.id.infoParent);
+    titleView = findViewById(R.id.title);
+    progress = findViewById(R.id.progress);
+    subtitleView = findViewById(R.id.subtitle);
 
     setIsExpanded(isExpanded);
   }

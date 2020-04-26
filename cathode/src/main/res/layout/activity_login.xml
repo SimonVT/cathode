@@ -22,7 +22,9 @@
     android:orientation="vertical"
     tools:context=".settings.login.LoginActivity">
 
-  <include layout="@layout/toolbar"/>
+  <include
+      layout="@layout/toolbar"
+      android:id="@+id/toolbarInclude" />
 
   <FrameLayout
       android:layout_width="match_parent"
