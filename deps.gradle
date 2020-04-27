@@ -71,21 +71,22 @@ ext {
       annotations: "androidx.annotation:annotation:1.1.0",
       appcompat: "androidx.appcompat:appcompat:1.1.0",
       cardView: "androidx.cardview:cardview:1.0.0",
-      design: "com.google.android.material:material:1.1.0-alpha10",
-      fragment: "androidx.fragment:fragment:1.1.0",
+      design: "com.google.android.material:material:1.1.0",
+      fragment: "androidx.fragment:fragment:1.2.4",
       loader: "androidx.loader:loader:1.0.0",
       palette: "androidx.palette:palette:1.0.0",
-      preference: "androidx.preference:preference:1.1.0",
-      recyclerView: "androidx.recyclerview:recyclerview:1.1.0-beta04",
-      swiperefreshlayout: "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02",
+      preference: "androidx.preference:preference:1.1.1",
+      preferenceKtx: "androidx.preference:preference-ktx:1.1.1",
+      recyclerView: "androidx.recyclerview:recyclerview:1.1.0",
+      swiperefreshlayout: "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-rc01",
       work: "androidx.work:work-runtime:2.2.0",
       workKtx: "androidx.work:work-runtime-ktx:2.2.0"
   ]
 
   deps.androidx.lifecycle = [
-      extensions: "androidx.lifecycle:lifecycle-extensions:2.1.0",
-      compiler: "androidx.lifecycle:lifecycle-compiler:2.1.0",
-      viewModelKtx: "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0"
+      extensions: "androidx.lifecycle:lifecycle-extensions:2.2.0",
+      compiler: "androidx.lifecycle:lifecycle-compiler:2.2.0",
+      viewModelKtx: "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
   ]
 
   deps.androidx.test = [
