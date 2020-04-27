@@ -16,11 +16,12 @@
 
 package net.simonvt.cathode.api.util
 
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 object Requests {
 
   @JvmField
-  val EMPTY_BODY: RequestBody = RequestBody.create(MediaType.parse("application/json"), "")
+  val EMPTY_BODY: RequestBody = "".toRequestBody("application/json".toMediaTypeOrNull())
 }

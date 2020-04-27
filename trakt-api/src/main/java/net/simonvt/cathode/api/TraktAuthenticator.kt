@@ -54,7 +54,7 @@ class TraktAuthenticator(
       }
 
       val credential = "Bearer " + settings.accessToken!!
-      if (credential == response.request().header("Authorization")) {
+      if (credential == response.request.header("Authorization")) {
         val refreshToken = settings.refreshToken
         if (refreshToken == null) {
           Timber.d("Refresh token is null, giving up")
@@ -63,7 +63,7 @@ class TraktAuthenticator(
 
         val newToken = refreshToken() ?: return null
 
-        return response.request()
+        return response.request
           .newBuilder()
           .header("Authorization", "Bearer $newToken")
           .build()
@@ -120,10 +120,10 @@ class TraktAuthenticator(
 
   private fun responseCount(response: Response): Int {
     var result = 1
-    var priorResponse = response.priorResponse()
+    var priorResponse = response.priorResponse
     while (priorResponse != null) {
       result++
-      priorResponse = priorResponse.priorResponse()
+      priorResponse = priorResponse.priorResponse
     }
     return result
   }
