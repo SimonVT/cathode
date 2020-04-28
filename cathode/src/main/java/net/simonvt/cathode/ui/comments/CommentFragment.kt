@@ -57,10 +57,10 @@ class CommentFragment @Inject constructor(
       isUserComment: Boolean
     ) {
       if (isUserComment) {
-        requireFragmentManager().instantiate(
+        parentFragmentManager.instantiate(
           UpdateCommentDialog::class.java,
           UpdateCommentDialog.getArgs(commentId, comment, spoiler)
-        ).show(requireFragmentManager(), DIALOG_COMMENT_UPDATE)
+        ).show(parentFragmentManager, DIALOG_COMMENT_UPDATE)
       }
     }
 
@@ -127,10 +127,10 @@ class CommentFragment @Inject constructor(
   override fun onMenuItemClick(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.menu_reply -> {
-        requireFragmentManager().instantiate(
+        parentFragmentManager.instantiate(
           AddCommentDialog::class.java,
           AddCommentDialog.getArgs(ItemType.COMMENT, commentId)
-        ).show(requireFragmentManager(), DIALOG_COMMENT_ADD)
+        ).show(parentFragmentManager, DIALOG_COMMENT_ADD)
         return true
       }
 

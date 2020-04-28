@@ -73,7 +73,7 @@ class SettingsFragment @Inject constructor(private val upcomingTimePreference: U
           size
         )
         dialog.setTargetFragment(this@SettingsFragment, 0)
-        dialog.show(requireFragmentManager(), DIALOG_COLOR_PICKER)
+        dialog.show(parentFragmentManager, DIALOG_COLOR_PICKER)
 
         if (Settings.get(activity).getBoolean(Settings.CALENDAR_SYNC, false)) {
           Accounts.requestCalendarSync(activity)
@@ -108,12 +108,12 @@ class SettingsFragment @Inject constructor(private val upcomingTimePreference: U
           )
         )
         val dialog = FragmentsUtils.instantiate(
-          requireFragmentManager(),
+          parentFragmentManager,
           UpcomingTimeDialog::class.java,
           UpcomingTimeDialog.getArgs(upcomingTime)
         )
         dialog.setTargetFragment(this@SettingsFragment, 0)
-        dialog.show(requireFragmentManager(), DIALOG_UPCOMING_TIME)
+        dialog.show(parentFragmentManager, DIALOG_UPCOMING_TIME)
         true
       }
 
@@ -131,12 +131,12 @@ class SettingsFragment @Inject constructor(private val upcomingTimePreference: U
       Preference.OnPreferenceClickListener {
         val offset = FirstAiredOffsetPreference.getInstance().offsetHours
         val dialog = FragmentsUtils.instantiate(
-          requireFragmentManager(),
+          parentFragmentManager,
           ShowOffsetDialog::class.java,
           ShowOffsetDialog.getArgs(offset)
         )
         dialog.setTargetFragment(this@SettingsFragment, 0)
-        dialog.show(requireFragmentManager(), DIALOG_SHOW_OFFSET)
+        dialog.show(parentFragmentManager, DIALOG_SHOW_OFFSET)
         true
       }
 
@@ -151,8 +151,8 @@ class SettingsFragment @Inject constructor(private val upcomingTimePreference: U
     }
 
     traktUnlink!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-      FragmentsUtils.instantiate(requireFragmentManager(), LogoutDialog::class.java)
-        .show(requireFragmentManager(), DIALOG_LOGOUT)
+      FragmentsUtils.instantiate(parentFragmentManager, LogoutDialog::class.java)
+        .show(parentFragmentManager, DIALOG_LOGOUT)
       true
     }
 
@@ -164,7 +164,7 @@ class SettingsFragment @Inject constructor(private val upcomingTimePreference: U
 
     findPreference<Preference>("about")!!.onPreferenceClickListener =
       Preference.OnPreferenceClickListener {
-        AboutDialog().show(requireFragmentManager(), DIALOG_ABOUT)
+        AboutDialog().show(parentFragmentManager, DIALOG_ABOUT)
         true
       }
 

@@ -278,10 +278,10 @@ class ShowFragment @Inject constructor(
 
     if (TraktLinkSettings.isLinked(requireContext())) {
       binding.top.rating.setOnClickListener {
-        requireFragmentManager().instantiate(
+        parentFragmentManager.instantiate(
           RatingDialog::class.java,
           RatingDialog.getArgs(RatingDialog.Type.SHOW, showId, currentRating)
-        ).show(requireFragmentManager(), DIALOG_RATING)
+        ).show(parentFragmentManager, DIALOG_RATING)
       }
     }
 
@@ -331,10 +331,10 @@ class ShowFragment @Inject constructor(
             episodeScheduler.cancelCheckin()
           }
           R.id.action_history_add -> if (toWatchId != -1L) {
-            requireFragmentManager().instantiate(
+            parentFragmentManager.instantiate(
               AddToHistoryDialog::class.java,
               AddToHistoryDialog.getArgs(AddToHistoryDialog.Type.EPISODE, toWatchId, null)
-            ).show(requireFragmentManager(), AddToHistoryDialog.TAG)
+            ).show(parentFragmentManager, AddToHistoryDialog.TAG)
           }
         }
       }
@@ -452,10 +452,10 @@ class ShowFragment @Inject constructor(
       }
 
       R.id.action_list_add -> {
-        requireFragmentManager().instantiate(
+        parentFragmentManager.instantiate(
           ListsDialog::class.java,
           ListsDialog.getArgs(ItemType.SHOW, showId)
-        ).show(requireFragmentManager(), DIALOG_LISTS_ADD)
+        ).show(parentFragmentManager, DIALOG_LISTS_ADD)
         return true
       }
 

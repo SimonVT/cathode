@@ -124,9 +124,9 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
   @Override public boolean onMenuItemClick(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_comment_add:
-        FragmentsUtils.instantiate(requireFragmentManager(), AddCommentDialog.class,
+        FragmentsUtils.instantiate(getParentFragmentManager(), AddCommentDialog.class,
             AddCommentDialog.getArgs(itemType, itemId))
-            .show(requireFragmentManager(), DIALOG_COMMENT_ADD);
+            .show(getParentFragmentManager(), DIALOG_COMMENT_ADD);
         return true;
 
       default:
@@ -139,9 +139,9 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
         @Override public void onCommentClick(long commentId, String comment, boolean spoiler,
             boolean isUserComment) {
           if (isUserComment) {
-            FragmentsUtils.instantiate(requireFragmentManager(), UpdateCommentDialog.class,
+            FragmentsUtils.instantiate(getParentFragmentManager(), UpdateCommentDialog.class,
                 UpdateCommentDialog.getArgs(commentId, comment, spoiler))
-                .show(requireFragmentManager(), DIALOG_COMMENT_UPDATE);
+                .show(getParentFragmentManager(), DIALOG_COMMENT_UPDATE);
           } else {
             navigationListener.onDisplayComment(commentId);
           }

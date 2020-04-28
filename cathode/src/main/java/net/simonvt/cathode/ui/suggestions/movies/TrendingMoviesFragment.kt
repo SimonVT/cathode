@@ -94,8 +94,8 @@ class TrendingMoviesFragment @Inject constructor(
         val items = arrayListOf<ListDialog.Item>()
         items.add(ListDialog.Item(R.id.sort_viewers, R.string.sort_viewers))
         items.add(ListDialog.Item(R.id.sort_rating, R.string.sort_rating))
-        ListDialog.newInstance(requireFragmentManager(), R.string.action_sort_by, items, this)
-          .show(requireFragmentManager(), DIALOG_SORT)
+        ListDialog.newInstance(parentFragmentManager, R.string.action_sort_by, items, this)
+          .show(parentFragmentManager, DIALOG_SORT)
         return true
       }
 

@@ -92,8 +92,8 @@ class WatchedMoviesFragment @Inject constructor(
       val items = arrayListOf<ListDialog.Item>()
       items.add(ListDialog.Item(R.id.sort_title, R.string.sort_title))
       items.add(ListDialog.Item(R.id.sort_watched, R.string.sort_watched))
-      ListDialog.newInstance(requireFragmentManager(), R.string.action_sort_by, items, this)
-        .show(requireFragmentManager(), DIALOG_SORT)
+      ListDialog.newInstance(parentFragmentManager, R.string.action_sort_by, items, this)
+        .show(parentFragmentManager, DIALOG_SORT)
       return true
     }
 

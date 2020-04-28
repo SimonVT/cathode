@@ -50,13 +50,13 @@ class AboutDialog : AppCompatDialogFragment() {
     binding.version.text = BuildConfig.VERSION_NAME
     binding.credits.setOnClickListener {
       CreditsDialog().show(
-        requireFragmentManager(),
+        parentFragmentManager,
         DIALOG_CREDITS
       )
     }
     binding.licenses.setOnClickListener {
       LicensesDialog().show(
-        requireFragmentManager(),
+        parentFragmentManager,
         DIALOG_LICENSES
       )
     }

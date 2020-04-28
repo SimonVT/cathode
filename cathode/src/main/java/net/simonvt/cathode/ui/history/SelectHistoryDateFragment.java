@@ -268,12 +268,12 @@ public class SelectHistoryDateFragment extends AppBarFragment
   void selectDate() {
     DatePickerDialog dialog = DatePickerDialog.newInstance(year, month, day);
     dialog.setTargetFragment(this, 0);
-    dialog.show(requireFragmentManager(), DIALOG_DATE);
+    dialog.show(getParentFragmentManager(), DIALOG_DATE);
   }
 
   void selectTime() {
     TimePickerDialog dialog = TimePickerDialog.newInstance(hour, minute);
     dialog.setTargetFragment(this, 0);
-    dialog.show(requireFragmentManager(), DIALOG_TIME);
+    dialog.show(getParentFragmentManager(), DIALOG_TIME);
   }
 }

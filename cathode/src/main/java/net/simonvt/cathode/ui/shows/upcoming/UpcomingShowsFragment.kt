@@ -109,11 +109,11 @@ class UpcomingShowsFragment @Inject constructor(
         items.add(ListDialog.Item(R.id.sort_next_episode, R.string.sort_next_episode))
         items.add(ListDialog.Item(R.id.sort_last_watched, R.string.sort_last_watched))
         ListDialog.newInstance(
-          requireFragmentManager(),
+          parentFragmentManager,
           R.string.action_sort_by,
           items,
           this@UpcomingShowsFragment
-        ).show(requireFragmentManager(), DIALOG_SORT)
+        ).show(parentFragmentManager, DIALOG_SORT)
         return true
       }
 

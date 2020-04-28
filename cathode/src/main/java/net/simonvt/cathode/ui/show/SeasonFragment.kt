@@ -142,28 +142,28 @@ class SeasonFragment @Inject constructor(
   override fun onMenuItemClick(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.action_list_add -> {
-        requireFragmentManager().instantiate(
+        parentFragmentManager.instantiate(
           ListsDialog::class.java,
           ListsDialog.getArgs(ItemType.SEASON, seasonId)
-        ).show(requireFragmentManager(), DIALOG_LISTS_ADD)
+        ).show(parentFragmentManager, DIALOG_LISTS_ADD)
         return true
       }
 
       R.id.action_history_add -> {
-        requireFragmentManager().instantiate(
+        parentFragmentManager.instantiate(
           AddToHistoryDialog::class.java,
           AddToHistoryDialog.getArgs(
             AddToHistoryDialog.Type.SEASON,
             seasonId,
             getString(R.string.season_x, seasonNumber)
           )
-        ).show(requireFragmentManager(), AddToHistoryDialog.TAG)
+        ).show(parentFragmentManager, AddToHistoryDialog.TAG)
         return true
       }
 
       R.id.action_history_remove -> {
         if (TraktLinkSettings.isLinked(requireContext())) {
-          requireFragmentManager().instantiate(
+          parentFragmentManager.instantiate(
             RemoveFromHistoryDialog::class.java,
             RemoveFromHistoryDialog.getArgs(
               RemoveFromHistoryDialog.Type.SEASON,
@@ -171,7 +171,7 @@ class SeasonFragment @Inject constructor(
               requireContext().getString(R.string.season_x, seasonNumber),
               null
             )
-          ).show(requireFragmentManager(), RemoveFromHistoryDialog.TAG)
+          ).show(parentFragmentManager, RemoveFromHistoryDialog.TAG)
         } else {
           seasonScheduler.removeFromHistory(seasonId)
         }

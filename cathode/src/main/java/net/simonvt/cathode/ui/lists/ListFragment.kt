@@ -112,13 +112,13 @@ class ListFragment @Inject constructor(
         items.add(ListDialog.Item(R.id.sort_votes, R.string.sort_votes))
         items.add(ListDialog.Item(R.id.sort_user_rating, R.string.sort_user_rating))
         items.add(ListDialog.Item(R.id.sort_random, R.string.sort_random))
-        ListDialog.newInstance(requireFragmentManager(), R.string.action_sort_by, items, this)
-          .show(requireFragmentManager(), DIALOG_SORT)
+        ListDialog.newInstance(parentFragmentManager, R.string.action_sort_by, items, this)
+          .show(parentFragmentManager, DIALOG_SORT)
         return true
       }
       R.id.menu_list_edit -> {
         if (listInfo != null) {
-          requireFragmentManager().instantiate(
+          parentFragmentManager.instantiate(
             UpdateListFragment::class.java,
             UpdateListFragment.getArgs(
               listId,
@@ -130,16 +130,16 @@ class ListFragment @Inject constructor(
               listInfo!!.sortBy,
               listInfo!!.sortOrientation
             )
-          ).show(requireFragmentManager(), DIALOG_UPDATE)
+          ).show(parentFragmentManager, DIALOG_UPDATE)
         }
         return true
       }
 
       R.id.menu_list_delete -> {
-        requireFragmentManager().instantiate(
+        parentFragmentManager.instantiate(
           DeleteListDialog::class.java,
           DeleteListDialog.getArgs(listId)
-        ).show(requireFragmentManager(), DIALOG_DELETE)
+        ).show(parentFragmentManager, DIALOG_DELETE)
         return true
       }
     }

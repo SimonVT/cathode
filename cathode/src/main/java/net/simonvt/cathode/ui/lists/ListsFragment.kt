@@ -86,8 +86,8 @@ class ListsFragment @Inject constructor(
   override fun onMenuItemClick(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.menu_list_create -> {
-        requireFragmentManager().instantiate(CreateListFragment::class.java)
-          .show(requireFragmentManager(), DIALOG_LIST_CREATE)
+        parentFragmentManager.instantiate(CreateListFragment::class.java)
+          .show(parentFragmentManager, DIALOG_LIST_CREATE)
         return true
       }
     }

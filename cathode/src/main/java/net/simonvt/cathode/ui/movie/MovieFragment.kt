@@ -181,10 +181,10 @@ class MovieFragment @Inject constructor(
 
     if (TraktLinkSettings.isLinked(requireContext())) {
       binding.top.rating.setOnClickListener {
-        requireFragmentManager().instantiate(
+        parentFragmentManager.instantiate(
           RatingDialog::class.java,
           RatingDialog.getArgs(RatingDialog.Type.MOVIE, movieId, currentRating)
-        ).show(requireFragmentManager(), DIALOG_RATING)
+        ).show(parentFragmentManager, DIALOG_RATING)
       }
     }
 
@@ -266,16 +266,16 @@ class MovieFragment @Inject constructor(
   override fun onMenuItemClick(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.action_history_add -> {
-        requireFragmentManager().instantiate(
+        parentFragmentManager.instantiate(
           AddToHistoryDialog::class.java,
           AddToHistoryDialog.getArgs(AddToHistoryDialog.Type.MOVIE, movieId, movieTitle)
-        ).show(requireFragmentManager(), AddToHistoryDialog.TAG)
+        ).show(parentFragmentManager, AddToHistoryDialog.TAG)
         return true
       }
 
       R.id.action_history_remove -> {
         if (TraktLinkSettings.isLinked(requireContext())) {
-          requireFragmentManager().instantiate(
+          parentFragmentManager.instantiate(
             RemoveFromHistoryDialog::class.java,
             RemoveFromHistoryDialog.getArgs(
               RemoveFromHistoryDialog.Type.MOVIE,
@@ -283,7 +283,7 @@ class MovieFragment @Inject constructor(
               movieTitle,
               null
             )
-          ).show(requireFragmentManager(), RemoveFromHistoryDialog.TAG)
+          ).show(parentFragmentManager, RemoveFromHistoryDialog.TAG)
         } else {
           movieScheduler.removeFromHistory(movieId)
         }
@@ -337,10 +337,10 @@ class MovieFragment @Inject constructor(
       }
 
       R.id.action_list_add -> {
-        requireFragmentManager().instantiate(
+        parentFragmentManager.instantiate(
           ListsDialog::class.java,
           ListsDialog.getArgs(ItemType.MOVIE, movieId)
-        ).show(requireFragmentManager(), DIALOG_LISTS_ADD)
+        ).show(parentFragmentManager, DIALOG_LISTS_ADD)
         return true
       }
     }

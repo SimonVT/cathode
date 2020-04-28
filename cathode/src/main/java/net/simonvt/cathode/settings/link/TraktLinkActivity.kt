@@ -19,8 +19,8 @@ package net.simonvt.cathode.settings.link
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.View
+import androidx.preference.PreferenceManager
 import androidx.work.WorkManager
 import dagger.android.AndroidInjection
 import net.simonvt.cathode.databinding.ActivityTraktLinkBinding

@@ -30,12 +30,12 @@ class NotificationSettingsFragment : PreferenceFragmentCompat(),
           )
         )
         val dialog = FragmentsUtils.instantiate(
-          requireFragmentManager(),
+          parentFragmentManager,
           NotificationTimeDialog::class.java,
           NotificationTimeDialog.getArgs(notificationTime)
         )
         dialog.setTargetFragment(this@NotificationSettingsFragment, 0)
-        dialog.show(requireFragmentManager(), DIALOG_NOTIFICATION_TIME)
+        dialog.show(parentFragmentManager, DIALOG_NOTIFICATION_TIME)
         true
       }
   }
