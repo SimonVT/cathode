@@ -16,7 +16,7 @@ dependencies {
   implementation deps.daggerAndroidSupport
   kapt deps.daggerCompiler
   kapt deps.daggerAndroidApt
-  implementation deps.androidx.design
+  api deps.androidx.design
   implementation deps.androidx.palette
   implementation deps.picasso
   implementation deps.androidx.recyclerView
@@ -26,7 +26,7 @@ dependencies {
   implementation deps.retrofit
   implementation deps.timber
   implementation deps.androidx.lifecycle.extensions
-  implementation deps.androidx.swiperefreshlayout
+  api deps.androidx.swiperefreshlayout
   kapt deps.androidx.lifecycle.compiler
 
   testImplementation deps.junit

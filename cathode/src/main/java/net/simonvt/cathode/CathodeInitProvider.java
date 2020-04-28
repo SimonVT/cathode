@@ -17,9 +17,7 @@
 package net.simonvt.cathode;
 
 import android.os.StrictMode;
-import com.crashlytics.android.Crashlytics;
 import dagger.android.AndroidInjection;
-import io.fabric.sdk.android.Fabric;
 import net.simonvt.cathode.common.InitProvider;
 import net.simonvt.cathode.settings.Accounts;
 import net.simonvt.cathode.settings.FirstAiredOffsetPreference;
@@ -37,7 +35,6 @@ public class CathodeInitProvider extends InitProvider {
       StrictMode.setThreadPolicy(
           new StrictMode.ThreadPolicy.Builder().detectAll().permitDiskReads().penaltyLog().build());
     } else {
-      Fabric.with(getContext(), new Crashlytics());
       Timber.plant(new CrashlyticsTree());
     }
 

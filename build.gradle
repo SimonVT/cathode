@@ -5,7 +5,6 @@ buildscript {
     google()
     mavenCentral()
     jcenter()
-    maven { url 'https://maven.fabric.io/public' }
     maven { url "https://plugins.gradle.org/m2/" }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
   }
@@ -15,7 +14,7 @@ buildscript {
     classpath deps.kotlin.plugin
     classpath deps.kotlin.ktlint
     classpath deps.google.services
-    classpath deps.firebase.fabric
+    classpath deps.firebase.crashlyticsGradle
   }
 }
 

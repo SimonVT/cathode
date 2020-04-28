@@ -31,8 +31,6 @@ dependencies {
   implementation deps.androidx.workKtx
   implementation deps.timber
   implementation deps.tmdb
-
-  implementation deps.firebase.crashlytics
 }
 
 android {

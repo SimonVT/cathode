@@ -58,13 +58,12 @@ ext {
   ]
 
   deps.google = [
-      services: 'com.google.gms:google-services:4.2.0'
+      services: 'com.google.gms:google-services:4.3.3'
   ]
 
   deps.firebase = [
-      core: 'com.google.firebase:firebase-core:16.0.8',
-      fabric: 'io.fabric.tools:gradle:1.28.1',
-      crashlytics: 'com.crashlytics.sdk.android:crashlytics:2.9.9'
+      crashlyticsGradle: 'com.google.firebase:firebase-crashlytics-gradle:2.0.0',
+      crashlytics: 'com.google.firebase:firebase-crashlytics:17.0.0'
   ]
 
   deps.androidx = [

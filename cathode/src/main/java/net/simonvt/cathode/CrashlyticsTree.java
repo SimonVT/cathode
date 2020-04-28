@@ -16,7 +16,7 @@
 package net.simonvt.cathode;
 
 import android.util.Log;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import timber.log.Timber;
 
 public class CrashlyticsTree extends Timber.Tree {
@@ -57,9 +57,9 @@ public class CrashlyticsTree extends Timber.Tree {
 
     msg += message;
 
-    Crashlytics.log(msg);
+    FirebaseCrashlytics.getInstance().log(msg);
     if (t != null) {
-      Crashlytics.logException(t);
+      FirebaseCrashlytics.getInstance().recordException(t);
     }
   }
 }

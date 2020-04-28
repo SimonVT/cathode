@@ -5,7 +5,7 @@ plugins {
   id 'kotlin-kapt'
   id 'org.jlleitschuh.gradle.ktlint'
   id 'checkstyle'
-  id 'io.fabric'
+  id 'com.google.firebase.crashlytics'
 }
 
 if (file("google-services.json").exists()) {
@@ -62,7 +62,6 @@ dependencies {
 
   implementation deps.tmdb
 
-  implementation deps.firebase.core
   implementation deps.firebase.crashlytics
 
   lintChecks project(':cathode-lint')
@@ -121,7 +120,6 @@ android {
       applicationIdSuffix ".debug"
 
       manifestPlaceholders = [enableCrashlytics: false]
-      ext.enableCrashlytics = false
     }
     release {
       buildConfigField "String", "AUTHORITY_DUMMY_CALENDAR",
@@ -132,7 +130,6 @@ android {
       signingConfig signingConfigs.release
 
       manifestPlaceholders = [enableCrashlytics: !isOnCI()]
-      ext.enableCrashlytics = !isOnCI()
     }
   }
 
