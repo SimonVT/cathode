@@ -17,8 +17,8 @@ package net.simonvt.cathode.ui.movies.watchlist
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.settings.TraktLinkSettings
@@ -28,21 +28,18 @@ import net.simonvt.cathode.ui.movies.MoviesFragment
 import javax.inject.Inject
 
 class MovieWatchlistFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
   jobManager: JobManager,
   movieScheduler: MovieTaskScheduler
 ) : MoviesFragment(jobManager, movieScheduler) {
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
-  private lateinit var viewModel: MovieWatchlistViewModel
+  private val viewModel: MovieWatchlistViewModel by viewModels { viewModelFactory }
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
     setEmptyText(R.string.empty_movie_watchlist)
     setTitle(R.string.title_movies_watchlist)
 
-    viewModel =
-      ViewModelProviders.of(this, viewModelFactory).get(MovieWatchlistViewModel::class.java)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.movies.observe(this, observer)
   }

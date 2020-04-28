@@ -19,8 +19,8 @@ package net.simonvt.cathode.settings.link
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.work.WorkManager
 import dagger.android.AndroidInjection
 import net.simonvt.cathode.R
@@ -40,7 +40,7 @@ class TraktLinkSyncActivity : BaseActivity() {
 
   @Inject
   lateinit var viewModelFactory: CathodeViewModelFactory
-  private lateinit var viewModel: TraktLinkSyncViewModel
+  private val viewModel: TraktLinkSyncViewModel by viewModels { viewModelFactory }
 
   private var syncJobs: List<Job>? = null
 
@@ -49,8 +49,6 @@ class TraktLinkSyncActivity : BaseActivity() {
     AndroidInjection.inject(this)
     setContentView(R.layout.link_sync_progressbar)
 
-    viewModel =
-      ViewModelProviders.of(this, viewModelFactory).get(TraktLinkSyncViewModel::class.java)
     viewModel.localState.observe(this, Observer { jobs ->
       syncJobs = jobs
       updateView()

@@ -17,8 +17,8 @@ package net.simonvt.cathode.ui.show
 
 import android.content.Context
 import android.os.Bundle
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.util.Ids
@@ -42,7 +42,7 @@ class RelatedShowsFragment @Inject constructor(
 
   private var showId: Long = -1L
 
-  lateinit var viewModel: RelatedShowsViewModel
+  private val viewModel: RelatedShowsViewModel by viewModels { viewModelFactory }
 
   private var showsAdapter: ShowDescriptionAdapter? = null
 
@@ -58,7 +58,6 @@ class RelatedShowsFragment @Inject constructor(
     setEmptyText(R.string.empty_show_related)
     setTitle(R.string.title_related)
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(RelatedShowsViewModel::class.java)
     viewModel.setShowId(showId)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.shows.observe(this, Observer { shows -> setShows(shows) })

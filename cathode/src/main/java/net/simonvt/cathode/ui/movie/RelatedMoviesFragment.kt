@@ -18,8 +18,8 @@ package net.simonvt.cathode.ui.movie
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.util.Ids
@@ -43,7 +43,7 @@ class RelatedMoviesFragment @Inject constructor(
 
   private var movieId: Long = -1L
 
-  lateinit var viewModel: RelatedMoviesViewModel
+  private val viewModel: RelatedMoviesViewModel by viewModels { viewModelFactory }
 
   private var movieAdapter: MoviesAdapter? = null
 
@@ -63,8 +63,6 @@ class RelatedMoviesFragment @Inject constructor(
     setTitle(R.string.title_related)
     setEmptyText(R.string.empty_movie_related)
 
-    viewModel =
-      ViewModelProviders.of(this, viewModelFactory).get(RelatedMoviesViewModel::class.java)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.setMovieId(movieId)
   }

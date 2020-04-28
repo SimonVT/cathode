@@ -22,8 +22,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.Department
@@ -46,7 +46,7 @@ class PersonFragment @Inject constructor(
 
   private var personId: Long = -1L
 
-  private lateinit var viewModel: PersonViewModel
+  private val viewModel: PersonViewModel by viewModels { viewModelFactory }
 
   private var person: Person? = null
 
@@ -68,7 +68,6 @@ class PersonFragment @Inject constructor(
 
     itemCount = resources.getInteger(R.integer.personCreditColumns)
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(PersonViewModel::class.java)
     viewModel.setPersonId(personId)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.person.observe(this, Observer { person -> updateView(person) })

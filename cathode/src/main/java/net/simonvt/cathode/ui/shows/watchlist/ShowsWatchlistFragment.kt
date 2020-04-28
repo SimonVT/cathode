@@ -20,8 +20,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.simonvt.cathode.R
@@ -47,7 +47,7 @@ class ShowsWatchlistFragment @Inject constructor(
 
   lateinit var navigationListener: ShowsNavigationListener
 
-  lateinit var viewModel: ShowsWatchlistViewModel
+  private val viewModel: ShowsWatchlistViewModel by viewModels { viewModelFactory }
 
   private var columnCount: Int = 0
 
@@ -67,8 +67,6 @@ class ShowsWatchlistFragment @Inject constructor(
     setEmptyText(R.string.empty_show_watchlist)
     setTitle(R.string.title_shows_watchlist)
 
-    viewModel =
-      ViewModelProviders.of(this, viewModelFactory).get(ShowsWatchlistViewModel::class.java)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.shows.observe(this, Observer { shows -> setShows(shows) })
     viewModel.episodes.observe(this, Observer { episodes -> setEpisodes(episodes) })

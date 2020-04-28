@@ -23,7 +23,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -98,7 +98,7 @@ public class EpisodeHistoryFragment extends RefreshableAppBarFragment {
     showTitle = args.getString(ARG_SHOW_TITLE);
     setTitle(showTitle);
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(EpisodeHistoryViewModel.class);
+    viewModel = new ViewModelProvider(this, viewModelFactory).get(EpisodeHistoryViewModel.class);
     viewModel.setEpisodeId(episodeId);
     viewModel.getEpisode().observe(this, new Observer<Episode>() {
       @Override public void onChanged(Episode episode) {

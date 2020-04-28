@@ -25,7 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import javax.inject.Inject;
@@ -97,7 +97,7 @@ public class DashboardFragment extends ToolbarRecyclerFragment<RecyclerView.View
     adapter.initCategory(R.string.category_movies_watchlist);
     adapter.initCategory(R.string.category_movies_suggestions);
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(DashboardViewModel.class);
+    viewModel = new ViewModelProvider(this, viewModelFactory).get(DashboardViewModel.class);
     viewModel.getUpcomingShows().observe(this, new Observer<List<ShowWithEpisode>>() {
       @Override public void onChanged(List<ShowWithEpisode> shows) {
         updateShowsUpcomingCursor(shows);

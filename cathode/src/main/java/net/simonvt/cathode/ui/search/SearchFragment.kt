@@ -20,8 +20,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.ToolbarGridFragment
@@ -43,7 +43,7 @@ class SearchFragment @Inject constructor(
   private var _binding: SearchFragmentBinding? = null
   private val binding get() = _binding!!
 
-  private lateinit var viewModel: SearchViewModel
+  private val viewModel: SearchViewModel by viewModels { viewModelFactory }
 
   private var searchView: SearchView? = null
   private var requestFocus: Boolean = false
@@ -88,7 +88,6 @@ class SearchFragment @Inject constructor(
       requestFocus = true
     }
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchViewModel::class.java)
     viewModel.recents.observe(
       this,
       Observer { recentQueries -> adapter.setRecentQueries(recentQueries) })

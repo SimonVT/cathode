@@ -19,8 +19,8 @@ import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment
 import net.simonvt.cathode.entity.Show
@@ -42,7 +42,7 @@ class ShowRecommendationsFragment @Inject constructor(
   ShowRecommendationsAdapter.DismissListener, ListDialog.Callback,
   ShowDescriptionAdapter.ShowCallbacks {
 
-  private lateinit var viewModel: ShowRecommendationsViewModel
+  private val viewModel: ShowRecommendationsViewModel by viewModels { viewModelFactory }
 
   private var showsAdapter: ShowRecommendationsAdapter? = null
 
@@ -86,8 +86,6 @@ class ShowRecommendationsFragment @Inject constructor(
     setTitle(R.string.title_shows_recommended)
     setEmptyText(R.string.recommendations_empty)
 
-    viewModel =
-      ViewModelProviders.of(this, viewModelFactory).get(ShowRecommendationsViewModel::class.java)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.recommendations.observe(this, Observer { shows -> setShows(shows) })
   }

@@ -23,7 +23,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.Department
 import net.simonvt.cathode.api.enumeration.ItemType
@@ -48,7 +47,7 @@ class CreditsFragment @Inject constructor(
 
   private var title: String? = null
 
-  lateinit var viewModel: CreditsViewModel
+  private val viewModel: CreditsViewModel by viewModels { viewModelFactory }
 
   private var credits: Credits? = null
 
@@ -73,7 +72,6 @@ class CreditsFragment @Inject constructor(
 
     itemCount = resources.getInteger(R.integer.creditColumns)
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(CreditsViewModel::class.java)
     viewModel.setItemTypeAndId(itemType, itemId)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.credits.observe(this, Observer { credits -> updateView(credits) })

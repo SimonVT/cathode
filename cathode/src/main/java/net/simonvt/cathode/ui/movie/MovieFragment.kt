@@ -24,8 +24,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
@@ -65,7 +65,7 @@ class MovieFragment @Inject constructor(
   private val movieScheduler: MovieTaskScheduler
 ) : RefreshableAppBarFragment() {
 
-  lateinit var viewModel: MovieViewModel
+  private val viewModel: MovieViewModel by viewModels { viewModelFactory }
 
   private var movie: Movie? = null
   private var genres: List<String>? = null
@@ -116,7 +116,6 @@ class MovieFragment @Inject constructor(
 
     setTitle(movieTitle)
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(MovieViewModel::class.java)
     viewModel.setMovieId(movieId)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.movie.observe(this, Observer { movie ->

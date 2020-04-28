@@ -17,8 +17,8 @@ package net.simonvt.cathode.ui.credits
 
 import android.content.Context
 import android.os.Bundle
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.Department
 import net.simonvt.cathode.api.enumeration.ItemType
@@ -37,7 +37,7 @@ class CreditFragment @Inject constructor(private val viewModelFactory: CathodeVi
   private lateinit var department: Department
   private var itemId: Long = 0
 
-  private lateinit var viewModel: CreditsViewModel
+  private val viewModel: CreditsViewModel by viewModels { viewModelFactory }
 
   private var adapter: CreditAdapter? = null
 
@@ -70,7 +70,6 @@ class CreditFragment @Inject constructor(private val viewModelFactory: CathodeVi
       Department.CAMERA -> setTitle(R.string.person_department_camera)
     }
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(CreditsViewModel::class.java)
     viewModel.setItemTypeAndId(itemType, itemId)
     viewModel.credits.observe(this, Observer { credits ->
       when (department) {

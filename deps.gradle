@@ -67,11 +67,13 @@ ext {
   ]
 
   deps.androidx = [
+      activityKtx: "androidx.activity:activity-ktx:1.1.0",
       annotations: "androidx.annotation:annotation:1.1.0",
       appcompat: "androidx.appcompat:appcompat:1.1.0",
       cardView: "androidx.cardview:cardview:1.0.0",
       design: "com.google.android.material:material:1.1.0",
       fragment: "androidx.fragment:fragment:1.2.4",
+      fragmentKtx: "androidx.fragment:fragment-ktx:1.2.4",
       loader: "androidx.loader:loader:1.0.0",
       palette: "androidx.palette:palette:1.0.0",
       preference: "androidx.preference:preference:1.1.1",

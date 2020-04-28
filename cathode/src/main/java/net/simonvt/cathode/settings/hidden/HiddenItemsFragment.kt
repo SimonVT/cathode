@@ -3,8 +3,8 @@ package net.simonvt.cathode.settings.hidden
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
@@ -26,7 +26,7 @@ class HiddenItemsFragment @Inject constructor(
 ) : ToolbarSwipeRefreshRecyclerFragment<RecyclerView.ViewHolder>(),
   HiddenItemsAdapter.ItemCallbacks {
 
-  private lateinit var viewModel: HiddenViewModel
+  private val viewModel: HiddenViewModel by viewModels { viewModelFactory }
 
   private var adapter: HiddenItemsAdapter? = null
 
@@ -47,7 +47,6 @@ class HiddenItemsFragment @Inject constructor(
     setTitle(R.string.preference_hidden_items)
     setEmptyText(R.string.preference_hidden_empty)
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(HiddenViewModel::class.java)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.showsCalendar.observe(this, Observer { shows ->
       hiddenShowsCalendar = shows

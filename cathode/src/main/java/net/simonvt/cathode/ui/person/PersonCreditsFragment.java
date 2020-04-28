@@ -20,7 +20,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
@@ -120,7 +120,7 @@ public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdap
         break;
     }
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(PersonViewModel.class);
+    viewModel = new ViewModelProvider(this).get(PersonViewModel.class);
     viewModel.setPersonId(personId);
     viewModel.getPerson().observe(this, new Observer<Person>() {
       @Override public void onChanged(Person person) {

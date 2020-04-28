@@ -26,7 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -95,7 +95,7 @@ public class ListsDialog extends DialogFragment {
     itemType = (ItemType) args.getSerializable(ARG_TYPE);
     itemId = args.getLong(ARG_ID);
 
-    viewModel = ViewModelProviders.of(this).get(ListsDialogViewModel.class);
+    viewModel = new ViewModelProvider(this).get(ListsDialogViewModel.class);
     viewModel.setItemTypeAndId(itemType, itemId);
     viewModel.getLists().observe(this, new Observer<List<UserList>>() {
       @Override public void onChanged(List<UserList> userLists) {

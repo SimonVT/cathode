@@ -19,8 +19,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.provider.ProviderSchematic.Movies
@@ -33,13 +33,12 @@ import net.simonvt.cathode.ui.movies.MoviesFragment
 import javax.inject.Inject
 
 class WatchedMoviesFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
   jobManager: JobManager,
   movieScheduler: MovieTaskScheduler
 ) : MoviesFragment(jobManager, movieScheduler), ListDialog.Callback {
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
-  private lateinit var viewModel: WatchedMoviesViewModel
+  private val viewModel: WatchedMoviesViewModel by viewModels { viewModelFactory }
 
   private lateinit var sortBy: SortBy
 
@@ -67,8 +66,6 @@ class WatchedMoviesFragment @Inject constructor(
     setEmptyText(R.string.empty_movie_watched)
     setTitle(R.string.title_movies_watched)
 
-    viewModel =
-      ViewModelProviders.of(this, viewModelFactory).get(WatchedMoviesViewModel::class.java)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.movies.observe(this, observer)
   }

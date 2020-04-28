@@ -20,8 +20,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
 import net.simonvt.cathode.common.ui.instantiate
@@ -38,7 +38,7 @@ class ListsFragment @Inject constructor(
 
   private lateinit var listener: ListNavigationListener
 
-  private lateinit var viewModel: ListsViewModel
+  private val viewModel: ListsViewModel by viewModels { viewModelFactory }
 
   private var adapter: ListsAdapter? = null
 
@@ -52,7 +52,6 @@ class ListsFragment @Inject constructor(
     setTitle(R.string.navigation_lists)
     setEmptyText(R.string.empty_lists)
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(ListsViewModel::class.java)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.lists.observe(this, Observer { userLists -> setLists(userLists) })
   }

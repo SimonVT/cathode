@@ -18,8 +18,8 @@ package net.simonvt.cathode.ui.suggestions.shows
 import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment
 import net.simonvt.cathode.entity.Show
@@ -40,7 +40,7 @@ class TrendingShowsFragment @Inject constructor(
 ) : SwipeRefreshRecyclerFragment<ShowDescriptionAdapter.ViewHolder>(), ListDialog.Callback,
   ShowDescriptionAdapter.ShowCallbacks {
 
-  private lateinit var viewModel: TrendingShowsViewModel
+  private val viewModel: TrendingShowsViewModel by viewModels { viewModelFactory }
 
   private var showsAdapter: ShowDescriptionAdapter? = null
 
@@ -80,8 +80,6 @@ class TrendingShowsFragment @Inject constructor(
     setTitle(R.string.title_shows_trending)
     setEmptyText(R.string.shows_loading_trending)
 
-    viewModel =
-      ViewModelProviders.of(this, viewModelFactory).get(TrendingShowsViewModel::class.java)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.trending.observe(this, Observer { shows -> setShows(shows) })
   }

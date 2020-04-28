@@ -22,8 +22,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
@@ -62,7 +62,7 @@ class EpisodeFragment @Inject constructor(
   private var _binding: FragmentEpisodeBinding? = null
   private val binding get() = _binding!!
 
-  private lateinit var viewModel: EpisodeViewModel
+  private val viewModel: EpisodeViewModel by viewModels { viewModelFactory }
 
   private var userComments: List<Comment>? = null
   private var comments: List<Comment>? = null
@@ -108,7 +108,6 @@ class EpisodeFragment @Inject constructor(
     showTitle = args.getString(ARG_SHOW_TITLE)
     setTitle(showTitle)
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(EpisodeViewModel::class.java)
     viewModel.setEpisodeId(episodeId)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.episode.observe(this, Observer { episode -> updateEpisodeViews(episode) })

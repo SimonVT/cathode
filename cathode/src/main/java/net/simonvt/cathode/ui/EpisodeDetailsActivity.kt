@@ -19,8 +19,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import dagger.android.AndroidInjection
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
@@ -43,7 +43,7 @@ class EpisodeDetailsActivity : NavigationListenerActivity() {
 
   @Inject
   lateinit var viewModelFactory: CathodeViewModelFactory
-  private lateinit var viewModel: EpisodeViewModel
+  private val viewModel: EpisodeViewModel by viewModels { viewModelFactory }
 
   override fun onCreate(inState: Bundle?) {
     setTheme(R.style.Theme)
@@ -67,7 +67,6 @@ class EpisodeDetailsActivity : NavigationListenerActivity() {
           .commit()
       }
 
-      viewModel = ViewModelProviders.of(this, viewModelFactory).get(EpisodeViewModel::class.java)
       viewModel.setEpisodeId(id)
       viewModel.episode.observe(this, Observer { showId = it.showId })
     }

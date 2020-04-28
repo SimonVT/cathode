@@ -22,7 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import java.util.List;
 import javax.inject.Inject;
 import net.simonvt.cathode.R;
@@ -101,7 +101,7 @@ public class CommentsFragment extends ToolbarGridFragment<CommentsAdapter.ViewHo
 
     setTitle(R.string.title_comments);
 
-    viewModel = ViewModelProviders.of(this).get(CommentsViewModel.class);
+    viewModel = new ViewModelProvider(this).get(CommentsViewModel.class);
     viewModel.setItemTypeAndId(itemType, itemId);
     viewModel.getComments().observe(this, new Observer<List<Comment>>() {
       @Override public void onChanged(List<Comment> comments) {

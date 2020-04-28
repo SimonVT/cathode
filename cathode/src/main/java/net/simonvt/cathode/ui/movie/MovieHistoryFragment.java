@@ -23,7 +23,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -90,7 +90,7 @@ public class MovieHistoryFragment extends RefreshableAppBarFragment {
     movieTitle = args.getString(ARG_MOVIETITLE);
     setTitle(movieTitle);
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(MovieHistoryViewModel.class);
+    viewModel = new ViewModelProvider(this, viewModelFactory).get(MovieHistoryViewModel.class);
     viewModel.setMovieId(movieId);
     viewModel.getMovie().observe(this, new Observer<Movie>() {
       @Override public void onChanged(Movie movie) {

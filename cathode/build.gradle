@@ -32,8 +32,10 @@ dependencies {
   implementation deps.schematic
   kapt deps.schematicCompiler
 
+  implementation deps.androidx.activityKtx
   implementation deps.androidx.appcompat
   implementation deps.androidx.cardView
+  implementation deps.androidx.fragmentKtx
   implementation deps.androidx.preference
   implementation deps.androidx.recyclerView
   implementation deps.androidx.design
@@ -78,6 +80,10 @@ android {
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
+  }
+
+  kotlinOptions {
+    jvmTarget = JavaVersion.VERSION_1_8.toString()
   }
 
   defaultConfig {

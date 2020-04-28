@@ -20,8 +20,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.SortBy
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
@@ -47,7 +47,7 @@ class ListFragment @Inject constructor(
   var listId: Long = 0
     private set
 
-  private lateinit var viewModel: ListViewModel
+  private val viewModel: ListViewModel by viewModels { viewModelFactory }
 
   private var adapter: ListAdapter? = null
 
@@ -69,7 +69,6 @@ class ListFragment @Inject constructor(
 
     columnCount = resources.getInteger(R.integer.listColumns)
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(ListViewModel::class.java)
     viewModel.setListId(listId)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.list.observe(this, Observer { userList ->

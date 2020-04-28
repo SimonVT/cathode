@@ -19,8 +19,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
 import net.simonvt.cathode.settings.Settings
@@ -34,13 +34,12 @@ import net.simonvt.cathode.ui.shows.ShowsFragment
 import javax.inject.Inject
 
 class CollectedShowsFragment @Inject constructor(
+  private val viewModelFactory: CathodeViewModelFactory,
   showScheduler: ShowTaskScheduler,
   episodeScheduler: EpisodeTaskScheduler
 ) : ShowsFragment(showScheduler, episodeScheduler), ListDialog.Callback {
 
-  @Inject
-  lateinit var viewModelFactory: CathodeViewModelFactory
-  lateinit var viewModel: CollectedShowsViewModel
+  private val viewModel: CollectedShowsViewModel by viewModels { viewModelFactory }
 
   private var sortBy: SortBy? = null
 
@@ -68,8 +67,6 @@ class CollectedShowsFragment @Inject constructor(
     setEmptyText(R.string.empty_show_collection)
     setTitle(R.string.title_shows_collection)
 
-    viewModel =
-      ViewModelProviders.of(this, viewModelFactory).get(CollectedShowsViewModel::class.java)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.shows.observe(this, observer)
   }

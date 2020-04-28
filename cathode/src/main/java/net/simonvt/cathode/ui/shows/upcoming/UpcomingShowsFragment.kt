@@ -20,8 +20,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.adapter.HeaderSpanLookup
@@ -47,7 +47,7 @@ class UpcomingShowsFragment @Inject constructor(
 
   private lateinit var navigationListener: ShowsNavigationListener
 
-  private lateinit var viewModel: UpcomingViewModel
+  private val viewModel: UpcomingViewModel by viewModels { viewModelFactory }
 
   private var columnCount: Int = 0
 
@@ -75,7 +75,6 @@ class UpcomingShowsFragment @Inject constructor(
 
     columnCount = resources.getInteger(R.integer.showsColumns)
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(UpcomingViewModel::class.java)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.shows.observe(this, Observer { shows -> setShows(shows) })
   }

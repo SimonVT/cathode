@@ -20,8 +20,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
@@ -57,7 +57,7 @@ class SeasonFragment @Inject constructor(
 
   private var seasonNumber = -1
 
-  private lateinit var viewModel: SeasonViewModel
+  private val viewModel: SeasonViewModel by viewModels { viewModelFactory }
 
   private var seasonAdapter: SeasonAdapter? = null
 
@@ -89,7 +89,6 @@ class SeasonFragment @Inject constructor(
 
     columnCount = resources.getInteger(R.integer.episodesColumns)
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(SeasonViewModel::class.java)
     viewModel.setSeasonId(seasonId)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.season.observe(this, Observer { season ->

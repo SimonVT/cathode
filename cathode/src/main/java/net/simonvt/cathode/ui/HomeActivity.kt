@@ -21,11 +21,11 @@ import android.view.Gravity
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.view_watching.view.watchingView
 import net.simonvt.cathode.R
@@ -108,7 +108,7 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
 
   private lateinit var navigation: NavigationFragment
 
-  private lateinit var viewModel: HomeViewModel
+  private val viewModel: HomeViewModel by viewModels()
 
   private var watchingShow: ShowWithEpisode? = null
   private var watchingMovie: Movie? = null
@@ -299,7 +299,6 @@ class HomeActivity : BaseActivity(), NavigationFragment.OnMenuClickListener, Nav
     ErrorEvent.registerListener(checkInFailedListener)
     AuthFailedEvent.registerListener(onAuthFailedListener)
 
-    viewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
     viewModel.watchingShow.observe(this, Observer { showWithEpisode ->
       watchingShow = showWithEpisode
       updateWatching()

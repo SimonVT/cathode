@@ -19,8 +19,8 @@ import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.fragment.SwipeRefreshRecyclerFragment
 import net.simonvt.cathode.entity.Movie
@@ -42,7 +42,7 @@ class MovieRecommendationsFragment @Inject constructor(
 
   private lateinit var navigationListener: MoviesNavigationListener
 
-  private lateinit var viewModel: MovieRecommendationsViewModel
+  private val viewModel: MovieRecommendationsViewModel by viewModels { viewModelFactory }
 
   private var movieAdapter: MovieRecommendationsAdapter? = null
 
@@ -84,8 +84,6 @@ class MovieRecommendationsFragment @Inject constructor(
     setTitle(R.string.title_movies_recommended)
     setEmptyText(R.string.recommendations_empty)
 
-    viewModel =
-      ViewModelProviders.of(this, viewModelFactory).get(MovieRecommendationsViewModel::class.java)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.recommendations.observe(this, Observer { movies -> setMovies(movies) })
   }

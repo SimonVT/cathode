@@ -18,8 +18,8 @@ package net.simonvt.cathode.ui.comments
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.common.ui.fragment.ToolbarSwipeRefreshRecyclerFragment
@@ -40,7 +40,7 @@ class CommentFragment @Inject constructor(
 
   private var columnCount: Int = 0
 
-  private lateinit var viewModel: CommentViewModel
+  private val viewModel: CommentViewModel by viewModels { viewModelFactory }
 
   private var adapter: CommentsAdapter? = null
 
@@ -87,7 +87,6 @@ class CommentFragment @Inject constructor(
 
     setTitle(R.string.title_comments)
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(CommentViewModel::class.java)
     viewModel.setCommentId(commentId)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.comment.observe(this, Observer {

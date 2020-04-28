@@ -19,8 +19,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R.layout
 import net.simonvt.cathode.R.plurals
 import net.simonvt.cathode.R.string
@@ -33,13 +33,13 @@ class StatsFragment : BaseFragment() {
   private var _binding: FragmentStatsBinding? = null
   private val binding get() = _binding!!
 
-  private lateinit var viewModel: StatsViewModel
+  private val viewModel: StatsViewModel by viewModels()
   private var stats: Stats? = null
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
     setTitle(string.navigation_stats)
-    viewModel = ViewModelProviders.of(this).get(StatsViewModel::class.java)
+
     viewModel.stats.observe(this, Observer { stats ->
       this@StatsFragment.stats = stats
       updateViews()

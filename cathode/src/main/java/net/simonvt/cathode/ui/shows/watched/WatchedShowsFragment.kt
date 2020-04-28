@@ -19,8 +19,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import net.simonvt.cathode.R
 import net.simonvt.cathode.provider.ProviderSchematic.Shows
 import net.simonvt.cathode.settings.Settings
@@ -39,7 +39,7 @@ class WatchedShowsFragment @Inject constructor(
   episodeScheduler: EpisodeTaskScheduler
 ) : ShowsFragment(showScheduler, episodeScheduler), ListDialog.Callback {
 
-  lateinit var viewModel: WatchedShowsViewModel
+  private val viewModel: WatchedShowsViewModel by viewModels { viewModelFactory }
 
   lateinit var sortBy: SortBy
 
@@ -67,7 +67,6 @@ class WatchedShowsFragment @Inject constructor(
     setEmptyText(R.string.empty_show_watched)
     setTitle(R.string.title_shows_watched)
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(WatchedShowsViewModel::class.java)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.shows.observe(this, observer)
   }

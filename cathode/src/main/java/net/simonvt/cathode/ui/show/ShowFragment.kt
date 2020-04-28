@@ -25,8 +25,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -85,7 +85,7 @@ class ShowFragment @Inject constructor(
   var showId: Long = 0
     private set
 
-  lateinit var viewModel: ShowViewModel
+  private val viewModel: ShowViewModel by viewModels { viewModelFactory }
 
   private var show: Show? = null
   private var genres: List<String>? = null
@@ -153,7 +153,6 @@ class ShowFragment @Inject constructor(
       type
     )
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowViewModel::class.java)
     viewModel.setShowId(showId)
     viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.show.observe(this, Observer { show ->
