@@ -20,8 +20,6 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Service
-import android.content.ContentProvider
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -31,9 +29,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
-import dagger.android.HasContentProviderInjector
-import dagger.android.HasServiceInjector
+import dagger.android.HasAndroidInjector
 import kotlinx.coroutines.runBlocking
 import net.simonvt.cathode.actions.PeriodicSync
 import net.simonvt.cathode.actions.invokeAsync
@@ -58,8 +54,7 @@ import net.simonvt.cathode.work.PeriodicWorkInitializer
 import timber.log.Timber
 import javax.inject.Inject
 
-class CathodeApp : Application(), HasActivityInjector, HasServiceInjector, HasViewInjector,
-  HasContentProviderInjector {
+class CathodeApp : Application(), HasAndroidInjector, HasViewInjector {
 
   private var resumedActivityCount: Int = 0
   private var lastSync: Long = 0
@@ -86,13 +81,7 @@ class CathodeApp : Application(), HasActivityInjector, HasServiceInjector, HasVi
   @Volatile
   private var injected = false
   @Inject
-  lateinit var activityInjector: DispatchingAndroidInjector<Activity>
-  @Inject
-  lateinit var serviceInjector: DispatchingAndroidInjector<Service>
-  @Inject
-  lateinit var contentProviderInjector: DispatchingAndroidInjector<ContentProvider>
-  @Inject
-  lateinit var jobInjector: DispatchingAndroidInjector<Job>
+  lateinit var androidInjector: DispatchingAndroidInjector<Any>
   @Inject
   lateinit var viewInjector: DispatchingAndroidInjector<View>
 
@@ -247,21 +236,12 @@ class CathodeApp : Application(), HasActivityInjector, HasServiceInjector, HasVi
     }
   }
 
-  override fun activityInjector(): AndroidInjector<Activity>? {
-    return activityInjector
-  }
-
-  override fun serviceInjector(): AndroidInjector<Service>? {
-    return serviceInjector
+  override fun androidInjector(): AndroidInjector<Any> {
+    return androidInjector
   }
 
   override fun viewInjector(): AndroidInjector<View>? {
     return viewInjector
-  }
-
-  override fun contentProviderInjector(): AndroidInjector<ContentProvider>? {
-    ensureInjection()
-    return contentProviderInjector
   }
 
   companion object {

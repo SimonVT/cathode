@@ -2,7 +2,7 @@ ext {
   kotlinVersion = '1.3.72'
   kotlinCoroutinesVersion = '1.3.5'
 
-  daggerVersion = '2.21'
+  daggerVersion = '2.27'
   moshiVersion = '1.9.2'
   okhttpVersion = '4.5.0'
   retrofitVersion = '2.8.1'
@@ -95,8 +95,8 @@ ext {
   ]
 
   deps.assistedInject = [
-      annotations: 'com.squareup.inject:assisted-inject-annotations-dagger2:0.5.0',
-      processor: 'com.squareup.inject:assisted-inject-processor-dagger2:0.5.0'
+      annotations: 'com.squareup.inject:assisted-inject-annotations-dagger2:0.5.2',
+      processor: 'com.squareup.inject:assisted-inject-processor-dagger2:0.5.2'
   ]
 
   deps.moshi = [
