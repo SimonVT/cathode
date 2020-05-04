@@ -40,6 +40,7 @@ dependencies {
   implementation deps.androidx.recyclerView
   implementation deps.androidx.design
   implementation deps.androidx.lifecycle.extensions
+  implementation deps.androidx.lifecycle.liveDataKtx
   implementation deps.androidx.lifecycle.viewModelKtx
   implementation deps.androidx.work
   implementation deps.androidx.workKtx

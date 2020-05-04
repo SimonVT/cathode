@@ -18,17 +18,13 @@ package net.simonvt.cathode.ui.search
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
+import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.Channel.Factory.RENDEZVOUS
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.mapLatest
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.data.StringMapper
 import net.simonvt.cathode.provider.DatabaseContract.RecentQueriesColumns
@@ -42,14 +38,20 @@ class SearchViewModel @Inject constructor(
   private val searchHandler: SearchHandler
 ) : ViewModel() {
 
-  private val job = GlobalScope.launch(Dispatchers.Main) {
-    start()
-  }
-
-  val query = Channel<String>(RENDEZVOUS)
   val recents: LiveData<List<String>>
-  private val _liveResults = MutableLiveData<SearchResult>()
-  val liveResults: LiveData<SearchResult> get() = _liveResults
+
+  private val queryChannel = BroadcastChannel<String>(Channel.CONFLATED)
+  val liveResults = queryChannel
+    .asFlow()
+    .debounce(DEBOUNCE_DELAY)
+    .mapLatest { query ->
+      if (query.isNotEmpty()) {
+        searchHandler.search(query)
+      } else {
+        SearchResult(true, emptyList())
+      }
+    }
+    .asLiveData()
 
   init {
     recents = MappedCursorLiveData(
@@ -62,36 +64,11 @@ class SearchViewModel @Inject constructor(
     )
   }
 
-  private suspend fun start() = coroutineScope {
-    launch {
-      var query: String
-      var searchJob: Job? = null
-      this@SearchViewModel.query.consumeEach {
-        query = it
-        searchJob?.cancel()
-        searchJob = launch(Dispatchers.IO) {
-          delay(DEBOUNCE_DELAY)
-          if (query.isNotEmpty()) {
-            val result = searchHandler.search(query)
-            _liveResults.postValue(result)
-          } else {
-            _liveResults.postValue(SearchResult(true, emptyList()))
-          }
-        }
-      }
-    }
-  }
-
   fun search(searchQuery: String) {
-    query.offer(searchQuery.trim())
-  }
-
-  override fun onCleared() {
-    super.onCleared()
-    job.cancel()
+    queryChannel.offer(searchQuery)
   }
 
   companion object {
-    const val DEBOUNCE_DELAY = 300L
+    const val DEBOUNCE_DELAY = 500L
   }
 }
