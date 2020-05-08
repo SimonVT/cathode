@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SwitchCompat
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import net.simonvt.cathode.R
 import net.simonvt.cathode.databinding.PromptSetupBinding
 import timber.log.Timber
 
@@ -55,21 +53,18 @@ class SetupPromptBottomSheet : BottomSheetDialogFragment() {
       Settings.get(requireContext()).edit()
         .putBoolean(Settings.CALENDAR_SYNC, isChecked).apply()
     }
-    (view.findViewById<View>(
-      R.id.prompt_setup_notification_switch
-    ) as SwitchCompat).setOnCheckedChangeListener { buttonView, isChecked ->
+    binding.promptSetupNotificationSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
       Timber.d("Toggling notifications: %b", isChecked)
       Settings.get(requireContext())
         .edit()
         .putBoolean(Settings.NOTIFICACTIONS_ENABLED, isChecked)
         .apply()
     }
-    view.findViewById<View>(R.id.prompt_setup_done)
-      .setOnClickListener {
-        Settings.get(requireContext()).edit()
-          .putBoolean(Settings.SETUP_PROMPTED, true).apply()
-        dismiss()
-      }
+    binding.promptSetupDone.setOnClickListener {
+      Settings.get(requireContext()).edit()
+        .putBoolean(Settings.SETUP_PROMPTED, true).apply()
+      dismiss()
+    }
   }
 
   override fun onDestroyView() {

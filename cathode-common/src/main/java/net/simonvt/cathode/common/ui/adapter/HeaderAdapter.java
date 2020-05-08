@@ -314,5 +314,5 @@ public abstract class HeaderAdapter<Type, T extends RecyclerView.ViewHolder>
 
   protected abstract void onBindHeader(T holder, int headerRes);
 
-  protected abstract void onBindViewHolder(T holder, Type type, int position);
+  protected abstract void onBindViewHolder(T holder, Type item, int position);
 }

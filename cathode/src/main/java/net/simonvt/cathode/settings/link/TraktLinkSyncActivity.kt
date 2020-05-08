@@ -18,12 +18,12 @@ package net.simonvt.cathode.settings.link
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.work.WorkManager
 import dagger.android.AndroidInjection
 import net.simonvt.cathode.R
+import net.simonvt.cathode.databinding.ActivityTraktLinkSyncBinding
 import net.simonvt.cathode.jobqueue.Job
 import net.simonvt.cathode.jobqueue.JobManager
 import net.simonvt.cathode.ui.BaseActivity
@@ -35,6 +35,7 @@ class TraktLinkSyncActivity : BaseActivity() {
 
   @Inject
   lateinit var workManager: WorkManager
+
   @Inject
   lateinit var jobManager: JobManager
 
@@ -59,9 +60,10 @@ class TraktLinkSyncActivity : BaseActivity() {
     if (syncJobs == null) {
       setContentView(R.layout.link_sync_progressbar)
     } else {
-      setContentView(R.layout.activity_trakt_link_sync)
+      val binding = ActivityTraktLinkSyncBinding.inflate(layoutInflater)
+      setContentView(binding.root)
 
-      findViewById<View>(R.id.sync).setOnClickListener {
+      binding.sync.setOnClickListener {
         SyncThread(this@TraktLinkSyncActivity, workManager, jobManager, syncJobs).start()
 
         val home = Intent(this@TraktLinkSyncActivity, HomeActivity::class.java)
@@ -69,7 +71,7 @@ class TraktLinkSyncActivity : BaseActivity() {
         finish()
       }
 
-      findViewById<View>(R.id.forget).setOnClickListener { finish() }
+      binding.forget.setOnClickListener { finish() }
     }
   }
 }

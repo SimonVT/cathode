@@ -16,16 +16,17 @@
 package net.simonvt.cathode.settings
 
 import android.os.Bundle
-import androidx.appcompat.widget.Toolbar
 import net.simonvt.cathode.R
 import net.simonvt.cathode.common.ui.FragmentsUtils
+import net.simonvt.cathode.databinding.ActivityToolbarBinding
 import net.simonvt.cathode.ui.BaseActivity
 
 class SettingsActivity : BaseActivity() {
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    setContentView(R.layout.activity_toolbar)
+    val binding = ActivityToolbarBinding.inflate(layoutInflater)
+    setContentView(binding.root)
     if (supportFragmentManager.findFragmentByTag(FRAGMENT_SETTINGS) == null) {
       val settings =
         FragmentsUtils.instantiate(supportFragmentManager, SettingsFragment::class.java)
@@ -34,10 +35,9 @@ class SettingsActivity : BaseActivity() {
         .commit()
     }
 
-    val toolbar = findViewById<Toolbar>(R.id.toolbar)
-    toolbar.setTitle(R.string.title_settings)
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp)
-    toolbar.setNavigationOnClickListener { finish() }
+    binding.toolbarInclude.toolbar.setTitle(R.string.title_settings)
+    binding.toolbarInclude.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp)
+    binding.toolbarInclude.toolbar.setNavigationOnClickListener { finish() }
   }
 
   companion object {

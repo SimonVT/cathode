@@ -51,7 +51,7 @@ class SeasonFragment @Inject constructor(
   var seasonId: Long = 0
     private set
 
-  private var type: LibraryType? = null
+  private lateinit var type: LibraryType
 
   private var title: String? = null
 

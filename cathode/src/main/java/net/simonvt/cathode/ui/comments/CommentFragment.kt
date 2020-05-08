@@ -52,7 +52,7 @@ class CommentFragment @Inject constructor(
   private val commentClickListener = object : CommentsAdapter.CommentCallbacks {
     override fun onCommentClick(
       commentId: Long,
-      comment: String,
+      comment: String?,
       spoiler: Boolean,
       isUserComment: Boolean
     ) {
@@ -149,8 +149,8 @@ class CommentFragment @Inject constructor(
 
     if (adapter == null) {
       adapter = CommentsAdapter(requireContext(), true, commentClickListener)
-      if (adapterState != null) {
-        adapter!!.restoreState(adapterState)
+      adapterState?.let {
+        adapter!!.restoreState(it)
         adapterState = null
       }
       setAdapter(adapter)

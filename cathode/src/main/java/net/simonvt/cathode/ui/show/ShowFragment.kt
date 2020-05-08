@@ -22,7 +22,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -44,8 +43,9 @@ import net.simonvt.cathode.common.util.Joiner
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.common.widget.CircleTransformation
 import net.simonvt.cathode.common.widget.OverflowView
-import net.simonvt.cathode.common.widget.RemoteImageView
 import net.simonvt.cathode.databinding.FragmentShowBinding
+import net.simonvt.cathode.databinding.SectionPeopleItemBinding
+import net.simonvt.cathode.databinding.SectionRelatedItemBinding
 import net.simonvt.cathode.databinding.ShowInfoEpisodeBinding
 import net.simonvt.cathode.entity.CastMember
 import net.simonvt.cathode.entity.Comment
@@ -66,6 +66,7 @@ import net.simonvt.cathode.ui.dialog.CheckInDialog.Type
 import net.simonvt.cathode.ui.dialog.RatingDialog
 import net.simonvt.cathode.ui.history.AddToHistoryDialog
 import net.simonvt.cathode.ui.lists.ListsDialog
+import net.simonvt.cathode.ui.show.SeasonsAdapter.SeasonClickListener
 import net.simonvt.cathode.widget.AdapterCountDataObserver
 import timber.log.Timber
 import java.util.Locale
@@ -141,14 +142,21 @@ class ShowFragment @Inject constructor(
 
     seasonsAdapter = SeasonsAdapter(
       requireActivity(),
-      SeasonsAdapter.SeasonClickListener { showId, seasonId, showTitle, seasonNumber ->
-        navigationListener.onDisplaySeason(
-          showId,
-          seasonId,
-          showTitle,
-          seasonNumber,
-          type
-        )
+      object : SeasonClickListener {
+        override fun onSeasonClick(
+          showId: Long,
+          seasonId: Long,
+          showTitle: String?,
+          seasonNumber: Int
+        ) {
+          navigationListener.onDisplaySeason(
+            showId,
+            seasonId,
+            showTitle,
+            seasonNumber,
+            type
+          )
+        }
       },
       type
     )
@@ -642,8 +650,8 @@ class ShowFragment @Inject constructor(
       binding.content.cast.cast.visibility = View.VISIBLE
 
       for (castMember in cast!!) {
-        val v = LayoutInflater.from(requireContext()).inflate(
-          R.layout.section_people_item,
+        val itemBinding = SectionPeopleItemBinding.inflate(
+          LayoutInflater.from(requireContext()),
           binding.content.cast.container.container,
           false
         )
@@ -651,19 +659,14 @@ class ShowFragment @Inject constructor(
         val personId = castMember.person.id
         val headshotUrl = ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, personId)
 
-        val headshot = v.findViewById<RemoteImageView>(R.id.headshot)
-        headshot.addTransformation(CircleTransformation())
-        headshot.setImage(headshotUrl)
+        itemBinding.headshot.addTransformation(CircleTransformation())
+        itemBinding.headshot.setImage(headshotUrl)
+        itemBinding.personName.text = castMember.person.name
+        itemBinding.personJob.text = castMember.character
 
-        val name = v.findViewById<TextView>(R.id.person_name)
-        name.text = castMember.person.name
+        itemBinding.root.setOnClickListener { navigationListener.onDisplayPerson(personId) }
 
-        val character = v.findViewById<TextView>(R.id.person_job)
-        character.text = castMember.character
-
-        v.setOnClickListener { navigationListener.onDisplayPerson(personId) }
-
-        binding.content.cast.container.container.addView(v)
+        binding.content.cast.container.container.addView(itemBinding.root)
       }
     }
   }
@@ -680,20 +683,17 @@ class ShowFragment @Inject constructor(
       binding.content.related.related.visibility = View.VISIBLE
 
       for (show in related!!) {
-        val v = LayoutInflater.from(requireContext()).inflate(
-          R.layout.section_related_item,
+        val itemBinding = SectionRelatedItemBinding.inflate(
+          LayoutInflater.from(requireContext()),
           binding.content.related.container.container,
           false
         )
 
         val poster = ImageUri.create(ImageUri.ITEM_SHOW, ImageType.POSTER, show.id)
+        itemBinding.relatedPoster.addTransformation(CircleTransformation())
+        itemBinding.relatedPoster.setImage(poster)
 
-        val posterView = v.findViewById<RemoteImageView>(R.id.related_poster)
-        posterView.addTransformation(CircleTransformation())
-        posterView.setImage(poster)
-
-        val titleView = v.findViewById<TextView>(R.id.related_title)
-        titleView.text = show.title
+        itemBinding.relatedTitle.text = show.title
 
         val formattedRating = String.format(Locale.getDefault(), "%.1f", show.rating)
 
@@ -705,14 +705,12 @@ class ShowFragment @Inject constructor(
         } else {
           ratingText = getString(R.string.related_rating, formattedRating, show.votes)
         }
+        itemBinding.relatedRating.text = ratingText
 
-        val ratingView = v.findViewById<TextView>(R.id.related_rating)
-        ratingView.text = ratingText
-
-        v.setOnClickListener {
+        binding.root.setOnClickListener {
           navigationListener.onDisplayShow(show.id, show.title, show.overview, LibraryType.WATCHED)
         }
-        binding.content.related.container.container.addView(v)
+        binding.content.related.container.container.addView(itemBinding.root)
       }
     }
   }

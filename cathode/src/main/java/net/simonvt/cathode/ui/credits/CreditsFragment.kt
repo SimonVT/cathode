@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import net.simonvt.cathode.R
@@ -29,7 +28,7 @@ import net.simonvt.cathode.api.enumeration.ItemType
 import net.simonvt.cathode.common.ui.fragment.RefreshableToolbarFragment
 import net.simonvt.cathode.common.util.Ids
 import net.simonvt.cathode.common.util.guava.Preconditions
-import net.simonvt.cathode.common.widget.RemoteImageView
+import net.simonvt.cathode.databinding.CreditItemCreditBinding
 import net.simonvt.cathode.databinding.FragmentCreditsBinding
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.NavigationListener
@@ -172,24 +171,20 @@ class CreditsFragment @Inject constructor(
       while (i < size && i < itemCount) {
         val credit = credits!![i]
 
-        val view =
-          LayoutInflater.from(requireContext()).inflate(R.layout.credit_item_credit, items, false)
+        val itemBinding =
+          CreditItemCreditBinding.inflate(LayoutInflater.from(requireContext()), items, false)
 
-        val headshot = view.findViewById<RemoteImageView>(R.id.headshot)
-        val name = view.findViewById<TextView>(R.id.name)
-        val job = view.findViewById<TextView>(R.id.job)
-
-        headshot.setImage(credit.getHeadshot())
-        name.text = credit.getName()
+        itemBinding.headshot.setImage(credit.getHeadshot())
+        itemBinding.name.text = credit.getName()
         if (credit.getJob() != null) {
-          job.text = credit.getJob()
+          itemBinding.job.text = credit.getJob()
         } else {
-          job.text = credit.getCharacter()
+          itemBinding.job.text = credit.getCharacter()
         }
 
-        view.setOnClickListener { navigationListener.onDisplayPerson(credit.getPersonId()) }
+        itemBinding.root.setOnClickListener { navigationListener.onDisplayPerson(credit.getPersonId()) }
 
-        items.addView(view)
+        items.addView(itemBinding.root)
         i++
       }
     } else {

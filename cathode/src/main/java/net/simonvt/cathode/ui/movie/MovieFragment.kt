@@ -22,7 +22,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -38,8 +37,9 @@ import net.simonvt.cathode.common.util.Intents
 import net.simonvt.cathode.common.util.Joiner
 import net.simonvt.cathode.common.util.guava.Preconditions
 import net.simonvt.cathode.common.widget.CircleTransformation
-import net.simonvt.cathode.common.widget.RemoteImageView
 import net.simonvt.cathode.databinding.FragmentMovieBinding
+import net.simonvt.cathode.databinding.SectionPeopleItemBinding
+import net.simonvt.cathode.databinding.SectionRelatedItemBinding
 import net.simonvt.cathode.entity.CastMember
 import net.simonvt.cathode.entity.Comment
 import net.simonvt.cathode.entity.Movie
@@ -489,8 +489,8 @@ class MovieFragment @Inject constructor(
       binding.content.cast.cast.visibility = View.VISIBLE
 
       for (castMember in cast!!) {
-        val v = LayoutInflater.from(requireContext()).inflate(
-          R.layout.section_people_item,
+        val itemBinding = SectionPeopleItemBinding.inflate(
+          LayoutInflater.from(requireContext()),
           binding.content.cast.container.container,
           false
         )
@@ -498,19 +498,14 @@ class MovieFragment @Inject constructor(
         val headshotUri =
           ImageUri.create(ImageUri.ITEM_PERSON, ImageType.PROFILE, castMember.person.id)
 
-        val headshot = v.findViewById<RemoteImageView>(R.id.headshot)
-        headshot.addTransformation(CircleTransformation())
-        headshot.setImage(headshotUri)
+        itemBinding.headshot.addTransformation(CircleTransformation())
+        itemBinding.headshot.setImage(headshotUri)
+        itemBinding.personName.text = castMember.person.name
+        itemBinding.personJob.text = castMember.character
 
-        val name = v.findViewById<TextView>(R.id.person_name)
-        name.text = castMember.person.name
+        itemBinding.root.setOnClickListener { navigationListener.onDisplayPerson(castMember.person.id) }
 
-        val character = v.findViewById<TextView>(R.id.person_job)
-        character.text = castMember.character
-
-        v.setOnClickListener { navigationListener.onDisplayPerson(castMember.person.id) }
-
-        binding.content.cast.container.container.addView(v)
+        binding.content.cast.container.container.addView(itemBinding.root)
       }
     }
   }
@@ -527,20 +522,18 @@ class MovieFragment @Inject constructor(
       binding.content.related.related.visibility = View.VISIBLE
 
       for (movie in related!!) {
-        val v = LayoutInflater.from(requireContext()).inflate(
-          R.layout.section_related_item,
+        val itemBinding = SectionRelatedItemBinding.inflate(
+          LayoutInflater.from(requireContext()),
           binding.content.related.container.container,
           false
         )
 
         val poster = ImageUri.create(ImageUri.ITEM_MOVIE, ImageType.POSTER, movie.id)
 
-        val posterView = v.findViewById<RemoteImageView>(R.id.related_poster)
-        posterView.addTransformation(CircleTransformation())
-        posterView.setImage(poster)
+        itemBinding.relatedPoster.addTransformation(CircleTransformation())
+        itemBinding.relatedPoster.setImage(poster)
 
-        val titleView = v.findViewById<TextView>(R.id.related_title)
-        titleView.text = movie.title
+        itemBinding.relatedTitle.text = movie.title
 
         val formattedRating = String.format(Locale.getDefault(), "%.1f", movie.rating)
 
@@ -553,13 +546,12 @@ class MovieFragment @Inject constructor(
           ratingText = getString(R.string.related_rating, formattedRating, movie.votes)
         }
 
-        val ratingView = v.findViewById<TextView>(R.id.related_rating)
-        ratingView.text = ratingText
+        itemBinding.relatedRating.text = ratingText
 
-        v.setOnClickListener {
+        itemBinding.root.setOnClickListener {
           navigationListener.onDisplayMovie(movie.id, movie.title, movie.overview)
         }
-        binding.content.related.container.container.addView(v)
+        binding.content.related.container.container.addView(itemBinding.root)
       }
     }
   }

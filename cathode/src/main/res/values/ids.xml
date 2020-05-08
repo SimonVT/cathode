@@ -88,5 +88,6 @@
   <item name="rightSwipe" type="id"/>
 
   <item name="historyId" type="id"/>
+  <item name="historyType" type="id"/>
 
 </resources>

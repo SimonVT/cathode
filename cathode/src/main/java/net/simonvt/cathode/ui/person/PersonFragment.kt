@@ -21,7 +21,6 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
@@ -33,8 +32,8 @@ import net.simonvt.cathode.common.ui.fragment.RefreshableAppBarFragment
 import net.simonvt.cathode.common.util.Ids
 import net.simonvt.cathode.common.util.Intents
 import net.simonvt.cathode.common.util.guava.Preconditions
-import net.simonvt.cathode.common.widget.RemoteImageView
 import net.simonvt.cathode.databinding.FragmentPersonBinding
+import net.simonvt.cathode.databinding.PersonItemCreditBinding
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.LibraryType
 import net.simonvt.cathode.ui.NavigationListener
@@ -206,23 +205,19 @@ class PersonFragment @Inject constructor(
       while (i < size && i < itemCount) {
         val credit = credits!![i]
 
-        val view =
-          LayoutInflater.from(requireContext()).inflate(R.layout.person_item_credit, items, false)
+        val itemBinding =
+          PersonItemCreditBinding.inflate(LayoutInflater.from(requireContext()), items, false)
 
-        val poster = view.findViewById<RemoteImageView>(R.id.poster)
-        val title = view.findViewById<TextView>(R.id.title)
-        val job = view.findViewById<TextView>(R.id.job)
-
-        poster.setImage(credit.getPoster())
-        title.text = credit.getTitle()
+        itemBinding.poster.setImage(credit.getPoster())
+        itemBinding.title.text = credit.getTitle()
 
         if (credit.getJob() != null) {
-          job.text = credit.getJob()
+          itemBinding.job.text = credit.getJob()
         } else {
-          job.text = credit.getCharacter()
+          itemBinding.job.text = credit.getCharacter()
         }
 
-        view.setOnClickListener {
+        itemBinding.root.setOnClickListener {
           if (credit.getItemType() === ItemType.SHOW) {
             navigationListener.onDisplayShow(
               credit.getItemId(),
@@ -239,7 +234,7 @@ class PersonFragment @Inject constructor(
           }
         }
 
-        items.addView(view)
+        items.addView(itemBinding.root)
         i++
       }
     } else {

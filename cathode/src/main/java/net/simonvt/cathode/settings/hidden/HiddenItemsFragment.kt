@@ -16,7 +16,6 @@ import net.simonvt.cathode.sync.scheduler.ShowTaskScheduler
 import net.simonvt.cathode.ui.CathodeViewModelFactory
 import net.simonvt.cathode.ui.LibraryType
 import net.simonvt.cathode.ui.NavigationListener
-import java.util.ArrayList
 import javax.inject.Inject
 
 class HiddenItemsFragment @Inject constructor(
@@ -53,7 +52,7 @@ class HiddenItemsFragment @Inject constructor(
       ensureAdapter()
       adapter!!.updateHeaderItems(
         R.string.header_hidden_calendar_shows,
-        ArrayList<Any>(shows)
+        listOf(shows)
       )
     })
     viewModel.showsWatched.observe(this, Observer { shows ->
@@ -61,7 +60,7 @@ class HiddenItemsFragment @Inject constructor(
       ensureAdapter()
       adapter!!.updateHeaderItems(
         R.string.header_hidden_watched_shows,
-        ArrayList<Any>(shows)
+        listOf(shows)
       )
     })
     viewModel.showsCollected.observe(this, Observer { shows ->
@@ -69,7 +68,7 @@ class HiddenItemsFragment @Inject constructor(
       ensureAdapter()
       adapter!!.updateHeaderItems(
         R.string.header_hidden_collected_shows,
-        ArrayList<Any>(shows)
+        listOf(shows)
       )
     })
     viewModel.moviesCalendar.observe(this, Observer { movies ->
@@ -77,7 +76,7 @@ class HiddenItemsFragment @Inject constructor(
       ensureAdapter()
       adapter!!.updateHeaderItems(
         R.string.header_hidden_calendar_movies,
-        ArrayList<Any>(movies)
+        listOf(movies)
       )
     })
   }
@@ -95,7 +94,7 @@ class HiddenItemsFragment @Inject constructor(
     return resources.getInteger(R.integer.hiddenColumns)
   }
 
-  override fun onShowClicked(showId: Long, title: String, overview: String) {
+  override fun onShowClicked(showId: Long, title: String?, overview: String?) {
     navigationListener.onDisplayShow(showId, title, overview, LibraryType.WATCHED)
   }
 
