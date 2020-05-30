@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2015 Simon Vig Therkildsen
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,38 +13,43 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/swipeRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <net.simonvt.cathode.common.widget.ObservableScrollView
-      android:id="@+id/scrollView"
+  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+      android:id="@+id/swipeRefresh"
       android:layout_width="match_parent"
       android:layout_height="match_parent">
 
-    <net.simonvt.cathode.common.widget.AppBarRelativeLayout
-        android:id="@+id/appBarLayout"
+    <net.simonvt.cathode.common.widget.ObservableScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="@bool/drawsBehindStatusBar"
-        android:orientation="vertical"
-        android:paddingBottom="16dp"
-        app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd"
-        app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart">
+        android:layout_height="match_parent">
 
-      <include layout="@layout/appbar_backdrop"/>
-
-      <FrameLayout
-          android:id="@id/appBarContent"
+      <net.simonvt.cathode.common.widget.AppBarRelativeLayout
+          android:id="@+id/appBarLayout"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_below="@id/backdrop"
-          android:background="@color/contentBackground"
-          android:orientation="vertical"/>
+          android:fitsSystemWindows="@bool/drawsBehindStatusBar"
+          android:orientation="vertical"
+          android:paddingBottom="16dp"
+          app:expandedTitleMarginEnd="@dimen/appBarTitleMarginEnd"
+          app:expandedTitleMarginStart="@dimen/appBarTitleMarginStart">
 
-      <include layout="@layout/appbar_toolbar"/>
-    </net.simonvt.cathode.common.widget.AppBarRelativeLayout>
-  </net.simonvt.cathode.common.widget.ObservableScrollView>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <FrameLayout
+            android:id="@id/appBarContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/backdrop"
+            android:background="@color/contentBackground"
+            android:orientation="vertical" />
+
+        <include layout="@layout/appbar_backdrop" />
+
+        <include layout="@layout/appbar_toolbar" />
+      </net.simonvt.cathode.common.widget.AppBarRelativeLayout>
+    </net.simonvt.cathode.common.widget.ObservableScrollView>
+  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</FrameLayout>

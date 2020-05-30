@@ -82,11 +82,6 @@
   <item name="action_calendar_unhide" type="id"/>
   <item name="action_unhide" type="id"/>
 
-  <item name="front" type="id"/>
-  <item name="back" type="id"/>
-  <item name="leftSwipe" type="id"/>
-  <item name="rightSwipe" type="id"/>
-
   <item name="historyId" type="id"/>
   <item name="historyType" type="id"/>
 
