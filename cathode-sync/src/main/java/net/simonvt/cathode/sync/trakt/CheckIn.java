@@ -23,7 +23,6 @@ import android.text.format.DateUtils;
 import androidx.work.WorkManager;
 import java.io.IOException;
 import javax.inject.Inject;
-import net.simonvt.cathode.actions.user.SyncWatchedShows;
 import net.simonvt.cathode.api.body.CheckinItem;
 import net.simonvt.cathode.api.entity.CheckinResponse;
 import net.simonvt.cathode.api.entity.Sharing;
