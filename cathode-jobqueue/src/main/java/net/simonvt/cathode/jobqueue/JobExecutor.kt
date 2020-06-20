@@ -103,6 +103,7 @@ class JobExecutor(
       if (started && !failureBackoff && !executing) {
         val job = jobManager.nextJob()
         if (job != null) {
+          executing = true
           Timber.d("Queueing job: %s", job.key())
           executor.execute(JobRunnable(job))
           postOnStartJob(job)
