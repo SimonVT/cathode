@@ -21,10 +21,11 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.suspendCancellableCoroutine
 import net.simonvt.cathode.sync.jobqueue.JobHandler
 import net.simonvt.cathode.sync.jobqueue.JobHandler.JobHandlerListener
 import net.simonvt.cathode.work.ChildWorkerFactory
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class JobHandlerWorker @AssistedInject constructor(
   @Assisted val context: Context,
@@ -32,25 +33,24 @@ class JobHandlerWorker @AssistedInject constructor(
   private val jobHandler: JobHandler
 ) : CoroutineWorker(context, params) {
 
-  override suspend fun doWork(): Result {
+  override suspend fun doWork(): Result = suspendCoroutine { cont ->
     if (jobHandler.hasJobs()) {
-      suspendCancellableCoroutine<Unit> { cont ->
-        val listener = object : JobHandlerListener {
-          override fun onQueueEmpty() {
-            cont.cancel()
-          }
-
-          override fun onQueueFailed() {
-            cont.cancel()
-          }
+      val listener = object : JobHandlerListener {
+        override fun onQueueEmpty() {
+          jobHandler.unregisterListener(this)
+          cont.resume(Result.success())
         }
 
-        cont.invokeOnCancellation { jobHandler.unregisterListener(listener) }
-        jobHandler.registerListener(listener)
+        override fun onQueueFailed() {
+          jobHandler.unregisterListener(this)
+          cont.resume(Result.success())
+        }
       }
-    }
 
-    return Result.success()
+      jobHandler.registerListener(listener)
+    } else {
+      cont.resume(Result.success())
+    }
   }
 
   @AssistedInject.Factory
