@@ -230,7 +230,7 @@ abstract class BaseActivity : CathodeActivity() {
         SyncUpdatedShowsWorker.TAG,
         SyncUpdatedShowsWorker::class.java
       )
-      debugWorkManager.enqueueUniqueNow(
+      debugWorkManager.enqueueUniqueNow(  
         MarkSyncUserShowsWorker.TAG,
         MarkSyncUserShowsWorker::class.java
       )

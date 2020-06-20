@@ -6,7 +6,7 @@ import androidx.work.WorkerParameters
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.shows.MarkSyncUserShows
 import net.simonvt.cathode.work.ChildWorkerFactory
@@ -17,9 +17,7 @@ class MarkSyncUserShowsWorker @AssistedInject constructor(
   private val markSyncUserShows: MarkSyncUserShows
 ) : CoroutineWorker(context, params) {
 
-  override val coroutineContext = Dispatchers.IO
-
-  override suspend fun doWork(): Result = coroutineScope {
+  override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
     markSyncUserShows.invokeSync(Unit)
     Result.success()
   }

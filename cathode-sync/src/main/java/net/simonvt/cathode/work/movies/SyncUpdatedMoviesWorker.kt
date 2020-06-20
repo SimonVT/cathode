@@ -7,7 +7,7 @@ import androidx.work.WorkerParameters
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.movies.SyncUpdatedMovies
 import net.simonvt.cathode.work.ChildWorkerFactory
@@ -20,9 +20,7 @@ class SyncUpdatedMoviesWorker @AssistedInject constructor(
   private val syncUpdatedMovies: SyncUpdatedMovies
 ) : CoroutineWorker(context, params) {
 
-  override val coroutineContext = Dispatchers.IO
-
-  override suspend fun doWork(): Result = coroutineScope {
+  override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
     syncUpdatedMovies.invokeSync(Unit)
     workManager.enqueueNow(SyncPendingMoviesWorker::class.java)
     Result.success()

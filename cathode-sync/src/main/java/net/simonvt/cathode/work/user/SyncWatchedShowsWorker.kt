@@ -6,9 +6,10 @@ import androidx.work.WorkerParameters
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import net.simonvt.cathode.actions.invokeSync
 import net.simonvt.cathode.actions.user.SyncWatchedShows
+import net.simonvt.cathode.actions.user.SyncWatchedShows.Params
 import net.simonvt.cathode.work.ChildWorkerFactory
 
 class SyncWatchedShowsWorker @AssistedInject constructor(
@@ -17,10 +18,8 @@ class SyncWatchedShowsWorker @AssistedInject constructor(
   private val syncWatchedShows: SyncWatchedShows
 ) : CoroutineWorker(context, params) {
 
-  override val coroutineContext = Dispatchers.IO
-
-  override suspend fun doWork(): Result = coroutineScope {
-    syncWatchedShows.invokeSync(SyncWatchedShows.Params())
+  override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
+    syncWatchedShows.invokeSync(Params())
     Result.success()
   }
 
