@@ -230,7 +230,7 @@ abstract class BaseActivity : CathodeActivity() {
         SyncUpdatedShowsWorker.TAG,
         SyncUpdatedShowsWorker::class.java
       )
-      debugWorkManager.enqueueUniqueNow(  
+      debugWorkManager.enqueueUniqueNow(
         MarkSyncUserShowsWorker.TAG,
         MarkSyncUserShowsWorker::class.java
       )
@@ -248,6 +248,11 @@ abstract class BaseActivity : CathodeActivity() {
   override fun setContentView(layoutResID: Int) {
     binding.debugContent.removeAllViews()
     layoutInflater.inflate(layoutResID, binding.debugContent)
+  }
+
+  override fun setContentView(view: View?) {
+    binding.debugContent.removeAllViews()
+    binding.debugContent.addView(view)
   }
 
   companion object {
