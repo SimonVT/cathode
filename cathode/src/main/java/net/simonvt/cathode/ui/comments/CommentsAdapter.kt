@@ -128,11 +128,11 @@ class CommentsAdapter(
     holder.infoPane.setOnClickListener {
       val liked = holder.liked
       if (liked) {
-        callbacks.onLikeComment(holder.itemId)
+        callbacks.onUnlikeComment(holder.itemId)
         holder.likeCount--
         DrawableCompat.setTint(holder.likeDrawable!!, tintColor)
       } else {
-        callbacks.onUnlikeComment(holder.itemId)
+        callbacks.onLikeComment(holder.itemId)
         holder.likeCount++
         DrawableCompat.setTint(holder.likeDrawable!!, likedTintColor)
       }
