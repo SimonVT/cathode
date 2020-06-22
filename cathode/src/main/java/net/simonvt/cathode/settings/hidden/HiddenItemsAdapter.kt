@@ -147,7 +147,7 @@ class HiddenItemsAdapter(
 
   override fun onCreateHeaderHolder(parent: ViewGroup): ViewHolder {
     val binding = ListRowUpcomingHeaderBinding.inflate(LayoutInflater.from(context), parent, false)
-    return HeaderViewHolder(binding.root as TextView)
+    return HeaderViewHolder(binding.root)
   }
 
   override fun onViewRecycled(holder: ViewHolder) {
