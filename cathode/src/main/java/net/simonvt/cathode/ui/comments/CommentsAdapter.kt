@@ -24,6 +24,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewPropertyAnimator
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import net.simonvt.cathode.R
@@ -92,11 +93,11 @@ class CommentsAdapter(
     }
     val holder = ViewHolder(v)
     holder.avatar.addTransformation(CircleTransformation())
-    val likes = context.resources.getDrawable(R.drawable.ic_thumb_up)
+    val likes = context.getDrawable(R.drawable.ic_thumb_up)!!
     holder.likeDrawable = DrawableCompat.wrap(likes)
     holder.likes.setCompoundDrawablesWithIntrinsicBounds(likes, null, null, null)
     if (holder.replies != null) {
-      val replies = context.resources.getDrawable(R.drawable.ic_comment)
+      val replies = context.getDrawable(R.drawable.ic_comment)!!
       holder.repliesDrawable = DrawableCompat.wrap(replies)
       DrawableCompat.setTint(replies, tintColor)
       holder.replies.setCompoundDrawablesWithIntrinsicBounds(replies, null, null, null)
@@ -244,7 +245,7 @@ class CommentsAdapter(
 
   init {
     setHasStableIds(true)
-    tintColor = context.resources.getColor(R.color.commentIconTint)
-    likedTintColor = context.resources.getColor(R.color.commentLikedTint)
+    tintColor = ContextCompat.getColor(context, R.color.commentIconTint)
+    likedTintColor = ContextCompat.getColor(context, R.color.commentLikedTint)
   }
 }

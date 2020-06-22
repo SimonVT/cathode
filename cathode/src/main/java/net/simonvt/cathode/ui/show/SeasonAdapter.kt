@@ -18,6 +18,7 @@ package net.simonvt.cathode.ui.show
 import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import net.simonvt.cathode.R
@@ -128,10 +129,21 @@ class SeasonAdapter(
     holder.firstAired.setExtended(true)
     holder.number.text = episode.episode.toString()
     if (type === COLLECTION) {
-      holder.number.setTextColor(resources.getColorStateList(R.color.episode_number_collected))
+      ContextCompat.getColorStateList(context, R.color.episode_number_collected)
+      holder.number.setTextColor(
+        ContextCompat.getColorStateList(
+          context,
+          R.color.episode_number_collected
+        )
+      )
       holder.number.isActivated = episode.inCollection
     } else {
-      holder.number.setTextColor(resources.getColorStateList(R.color.episode_number_watched))
+      holder.number.setTextColor(
+        ContextCompat.getColorStateList(
+          context,
+          R.color.episode_number_watched
+        )
+      )
       holder.number.isActivated = episode.watched
     }
   }
