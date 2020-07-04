@@ -308,6 +308,12 @@ class MovieDatabaseHelper @Inject constructor(private val context: Context) {
     values.put(MovieColumns.SLUG, movie.ids.slug)
     values.put(MovieColumns.IMDB_ID, movie.ids.imdb)
     values.put(MovieColumns.TMDB_ID, movie.ids.tmdb)
+    if (movie.overview != null) {
+      values.put(MovieColumns.OVERVIEW, movie.overview)
+    }
+    if (movie.rating != null) {
+      values.put(MovieColumns.RATING, movie.rating)
+    }
     return values
   }
 

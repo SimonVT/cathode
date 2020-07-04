@@ -343,6 +343,12 @@ class ShowDatabaseHelper @Inject constructor(private val context: Context) {
     values.put(ShowColumns.TVDB_ID, show.ids.tvdb)
     values.put(ShowColumns.TMDB_ID, show.ids.tmdb)
     values.put(ShowColumns.TVRAGE_ID, show.ids.tvrage)
+    if (show.overview != null) {
+      values.put(ShowColumns.OVERVIEW, show.overview)
+    }
+    if (show.rating != null) {
+      values.put(ShowColumns.RATING, show.rating)
+    }
     return values
   }
 
