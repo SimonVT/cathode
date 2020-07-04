@@ -5,7 +5,6 @@ plugins {
   id 'kotlin-android'
   id 'kotlin-kapt'
   id 'org.jlleitschuh.gradle.ktlint'
-  id 'checkstyle'
 }
 
 dependencies {
@@ -108,23 +107,6 @@ def getTmdbApiKey() {
   def redirectUrl = getProperty('api', 'tmdb.apiKey')
 
   return redirectUrl
-}
-
-checkstyle {
-  configFile project.file('../config/checkstyle/checkstyle.xml')
-  showViolations true
-}
-
-android.libraryVariants.all { variant ->
-  def name = variant.buildType.name
-
-  def checkstyle = project.tasks.create "checkstyle${name.capitalize()}", Checkstyle
-  checkstyle.dependsOn variant.javaCompile
-  checkstyle.source variant.javaCompile.source
-  checkstyle.classpath = project.fileTree(variant.javaCompile.destinationDir)
-  checkstyle.exclude('**/BuildConfig.java')
-  checkstyle.exclude('**/R.java')
-  project.tasks.getByName("check").dependsOn checkstyle
 }
 
 apply from: rootProject.file('deps.gradle')
