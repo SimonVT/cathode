@@ -56,20 +56,20 @@ class RelatedMoviesFragment @Inject constructor(
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    movieId = arguments!!.getLong(ARG_MOVIE_ID)
+    movieId = requireArguments().getLong(ARG_MOVIE_ID)
 
     columnCount = resources.getInteger(R.integer.movieColumns)
 
     setTitle(R.string.title_related)
     setEmptyText(R.string.empty_movie_related)
 
-    viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
     viewModel.setMovieId(movieId)
+    viewModel.loading.observe(this, Observer { loading -> setRefreshing(loading) })
+    viewModel.movies.observe(this, Observer { movies -> setMovies(movies) })
   }
 
   override fun onViewCreated(view: View, inState: Bundle?) {
     super.onViewCreated(view, inState)
-    viewModel.movies.observe(this, Observer { movies -> setMovies(movies) })
   }
 
   override fun getColumnCount(): Int {

@@ -15,9 +15,7 @@
  */
 package net.simonvt.cathode.ui.show
 
-import android.R.attr
 import android.content.Context
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
@@ -36,7 +34,7 @@ import net.simonvt.cathode.ui.LibraryType.WATCHLIST
 import net.simonvt.cathode.ui.show.SeasonsAdapter.ViewHolder
 
 class SeasonsAdapter(
-  private val activity: FragmentActivity,
+  activity: FragmentActivity,
   private val clickListener: SeasonClickListener,
   private val type: LibraryType
 ) : BaseAdapter<Season, ViewHolder>(activity) {
@@ -46,9 +44,6 @@ class SeasonsAdapter(
   }
 
   private val resources = activity.resources
-
-  private val primaryColor: ColorStateList?
-  private val secondaryColor: ColorStateList?
 
   override fun getItemId(position: Int): Long {
     return list[position]!!.id
@@ -150,11 +145,5 @@ class SeasonsAdapter(
 
   init {
     setHasStableIds(true)
-
-    val a =
-      activity.obtainStyledAttributes(intArrayOf(attr.textColorPrimary, attr.textColorSecondary))
-    primaryColor = a.getColorStateList(0)
-    secondaryColor = a.getColorStateList(1)
-    a.recycle()
   }
 }

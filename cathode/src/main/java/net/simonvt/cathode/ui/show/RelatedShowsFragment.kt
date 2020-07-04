@@ -53,7 +53,7 @@ class RelatedShowsFragment @Inject constructor(
 
   override fun onCreate(inState: Bundle?) {
     super.onCreate(inState)
-    showId = arguments!!.getLong(ARG_SHOW_ID)
+    showId = requireArguments().getLong(ARG_SHOW_ID)
 
     setEmptyText(R.string.empty_show_related)
     setTitle(R.string.title_related)
