@@ -120,7 +120,7 @@ public class PersonCreditsFragment extends ToolbarGridFragment<PersonCreditsAdap
         break;
     }
 
-    viewModel = new ViewModelProvider(this).get(PersonViewModel.class);
+    viewModel = new ViewModelProvider(this, viewModelFactory).get(PersonViewModel.class);
     viewModel.setPersonId(personId);
     viewModel.getPerson().observe(this, new Observer<Person>() {
       @Override public void onChanged(Person person) {
