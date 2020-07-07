@@ -20,10 +20,13 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 import net.simonvt.cathode.common.data.MappedCursorLiveData
 import net.simonvt.cathode.common.data.StringMapper
@@ -51,7 +54,8 @@ class SearchViewModel @Inject constructor(
         SearchResult(true, emptyList())
       }
     }
-    .asLiveData()
+    .flowOn(Dispatchers.IO)
+    .asLiveData(viewModelScope.coroutineContext)
 
   init {
     recents = MappedCursorLiveData(
