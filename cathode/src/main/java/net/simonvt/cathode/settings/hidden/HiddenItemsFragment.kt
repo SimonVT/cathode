@@ -52,7 +52,7 @@ class HiddenItemsFragment @Inject constructor(
       ensureAdapter()
       adapter!!.updateHeaderItems(
         R.string.header_hidden_calendar_shows,
-        listOf(shows)
+        shows.toList()
       )
     })
     viewModel.showsWatched.observe(this, Observer { shows ->
@@ -60,7 +60,7 @@ class HiddenItemsFragment @Inject constructor(
       ensureAdapter()
       adapter!!.updateHeaderItems(
         R.string.header_hidden_watched_shows,
-        listOf(shows)
+        shows.toList()
       )
     })
     viewModel.showsCollected.observe(this, Observer { shows ->
@@ -68,7 +68,7 @@ class HiddenItemsFragment @Inject constructor(
       ensureAdapter()
       adapter!!.updateHeaderItems(
         R.string.header_hidden_collected_shows,
-        listOf(shows)
+        shows.toList()
       )
     })
     viewModel.moviesCalendar.observe(this, Observer { movies ->
@@ -76,7 +76,7 @@ class HiddenItemsFragment @Inject constructor(
       ensureAdapter()
       adapter!!.updateHeaderItems(
         R.string.header_hidden_calendar_movies,
-        listOf(movies)
+        movies.toList()
       )
     })
   }
